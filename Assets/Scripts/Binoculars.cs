@@ -1,51 +1,53 @@
-using System;
-using Cinemachine;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Cinemachine;
 
 public class Binoculars : MonoBehaviour
 {
-    // need header area for adding camera
-    // and space for the UI
     [Header("Dependencies")]
-    
-    // need vcam to use existing followcamera
     public CinemachineVirtualCamera vcam;
-    public GameObject binocularUI; // the binocular image will go here
+    public GameObject binocularUI;
 
-    // Header for Settings
     [Header("Settings")]
     public float zoomFov = 15f;
     public float normalFov = 60f;
     public float zoomSpeed = 5f;
 
-    public bool isUsing = false;
+    private bool _isUsing = false;
+    private float _currentFov;
+
+    void Start()
+    {
+        if (vcam == null)
+            vcam = Object.FindFirstObjectByType<CinemachineVirtualCamera>();
+
+        if (binocularUI == null)
+        {
+            binocularUI = transform.GetComponentInChildren<Canvas>(true)?
+                        .transform.Find("BinocularOverlay")?.gameObject;
+        }
+
+        _currentFov = normalFov;
+    }
+
+    /// <summary>Called by Hotbar when left click is pressed on binoculars slot.</summary>
+    public void ToggleZoom()
+    {
+        _isUsing = true;
+        if (binocularUI != null) binocularUI.SetActive(true);
+    }
+
+    /// <summary>Called by Hotbar when left click is released, or slot is switched.</summary>
+    public void ResetView()
+    {
+        _isUsing = false;
+        if (binocularUI != null) binocularUI.SetActive(false);
+    }
 
     void Update()
     {
-        // Check the toggled state
-        // NEW PLAYER INPUT
-        if (Keyboard.current.bKey.wasPressedThisFrame)
-        {
-            isUsing = !isUsing;
+        float target = _isUsing ? zoomFov : normalFov;
 
-            if (binocularUI != null)
-            {
-                binocularUI.SetActive(isUsing);
-            }
-        }
-        
-        float target;
-        if (isUsing)
-        {
-            target = zoomFov; // if nocs are on, aim for zoom distance
-        }
-        else
-        {
-            target = normalFov; // if they are off, zoom back to normal
-        }
-
-        // Using LERP (smooth, gradual zooming) 
-        vcam.m_Lens.FieldOfView = Mathf.Lerp(vcam.m_Lens.FieldOfView, target, Time.deltaTime * zoomSpeed);
+        if (vcam != null)
+            vcam.m_Lens.FieldOfView = Mathf.Lerp(vcam.m_Lens.FieldOfView, target, Time.deltaTime * zoomSpeed);
     }
 }
