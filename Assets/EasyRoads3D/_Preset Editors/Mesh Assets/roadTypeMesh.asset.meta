@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 41ba524a9121cab4a9dfde57e4d63fb8
+timeCreated: 1530599625
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/_Preset Editors/Mesh Assets/roadTypeMesh.asset
+  uploadId: 888308

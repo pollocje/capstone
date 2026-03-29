@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7a76dd25c6c74a84599f5fb51e496aa8
+timeCreated: 1471875086
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/html/quick_start.html
+  uploadId: 888308

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &124348
+--- !u!1 &102934
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 493484}
-  - component: {fileID: 11423194}
+  - component: {fileID: 478378}
+  - component: {fileID: 11461768}
   m_Layer: 0
   m_Name: ERProjectLog
   m_TagString: Untagged
@@ -17,28 +17,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &493484
+--- !u!4 &478378
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 124348}
-  serializedVersion: 2
+  m_GameObject: {fileID: 102934}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &11423194
+--- !u!114 &11461768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 124348}
+  m_GameObject: {fileID: 102934}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 353395545, guid: f56d46228aee4734f9114056c53bb57e, type: 3}
@@ -48,11 +48,16 @@ MonoBehaviour:
   ints: 
   roadPresets:
   - roadTypeName: Default Road
-    id: 0
-    timestamp: 1450386558.4872544
+    id: 1
+    timestamp: 1481875527.1197023
     roadWidth: 5
+    totalLanes: 0
+    laneWidth: 0
+    medianWidth: 0
+    shoulderWidthLeft: 0
+    shoulderWidthRight: 0
     advancedWidthSettings: 0
-    faceDistance: 4
+    faceDistance: 2
     angleTreshold: 45
     uvTiling: 1
     uv4Type: 0
@@ -83,12 +88,13 @@ MonoBehaviour:
       selectedLaneNode: 0
       isSymmetrical: 0
       isset: 0
-    excludeFromTrafficAI: 0
     minSpeed: 0
     maxSpeed: 0
     speedLimit: 0
     speedLimitConnections: 0
-    roadShape: []
+    roadShape:
+    - {x: -3, y: 0}
+    - {x: 3, y: 0}
     roadShapeExt: []
     roadShapeExt2: []
     doConnectionTri: 
@@ -110,32 +116,80 @@ MonoBehaviour:
     crosswalkPrefab: {fileID: 0}
     crosswalkHeightOffset: 0
     crosswalkType: 0
-    crosswalkDecal: {fileID: 0}
     roadMaterial: {fileID: 2100000, guid: f182e2714eb8a714a99ed091081ce16c, type: 2}
     roadMaterials: []
-    roadPhysicsMaterial: {fileID: 2100000, guid: f182e2714eb8a714a99ed091081ce16c, type: 2}
+    roadPhysicsMaterial: {fileID: 2100000, guid: f182e2714eb8a714a99ed091081ce16c,
+      type: 2}
     roadPhysicsMaterials: []
-    connectionMaterial: {fileID: 2100000, guid: 3c555588afad81d428ad1704d5d015a7, type: 2}
+    connectionMaterial: {fileID: 2100000, guid: 3c555588afad81d428ad1704d5d015a7,
+      type: 2}
     isSideObject: 0
     isCustomRoad: 0
-    subSegments: 0
+    subSegments: 1
     soData: []
     soDataExt: []
-    soDataLog: []
+    soDataLog:
+    - id: 1439970267.5877771
+      active: 0
+    - id: 4
+      active: 0
+    - id: 3
+      active: 0
+    - id: 1422295189.0945766
+      active: 0
+    - id: 1422205435.6632535
+      active: 0
+    - id: 1422205525.016364
+      active: 0
+    - id: 1422201194.1206512
+      active: 0
+    - id: 1422201446.4010808
+      active: 0
+    - id: 1
+      active: 0
+    - id: 2
+      active: 0
+    - id: 1422283879.5397072
+      active: 0
+    - id: 1422283828.2437732
+      active: 0
+    - id: 1422360239.977985
+      active: 0
+    - id: 1422360127.2965398
+      active: 0
+    - id: 1477318170.983913
+      active: 0
+    - id: 1422283787.149423
+      active: 0
+    - id: 1422280172.2846642
+      active: 0
+    - id: 1454519638.6173558
+      active: 0
+    - id: 6
+      active: 0
+    - id: 5
+      active: 0
+    - id: 1438703293.2729063
+      active: 0
+    - id: 1454521147.777675
+      active: 0
+    - id: 1424540279.96035
+      active: 0
+    - id: 1424540150.6289527
+      active: 0
     layer: 0
     isStatic: 0
     tag: 
-    renderingLayerMask: 0
     splatMapActive: 0
     splatIndex: 0
-    expandLevel: 1
-    smoothLevel: 1
-    splatOpacity: 1
+    expandLevel: 0
+    smoothLevel: 0
+    splatOpacity: 0
     followTerrainContours: 0
     terrainContoursOffset: 0
     terrainDeformation: 1
-    defaultIndent: 3
-    defaultSurrounding: 3
+    defaultIndent: 0
+    defaultSurrounding: 0
     maxRoadheight: 0
     maxTerrainHeightOffset: 0
     minTerrainHeightDistance: 0
@@ -182,54 +236,6 @@ MonoBehaviour:
     trafficPosts: []
     activeTrafficPostIndex: 0
     showTrafficPosts: 0
-    materialCreator: 0
-    synchRoadWidth: 0
-    totalLanes: 0
-    laneWidth: 0
-    shoulderWidthLeft: 0
-    shoulderWidthRight: 0
-    leftLineMarkingWidth: 0
-    rightLineMarkingWidth: 0
-    leftLineMarkingColor: {r: 0, g: 0, b: 0, a: 0}
-    rightLineMarkingColor: {r: 0, g: 0, b: 0, a: 0}
-    leftLineMarkingStyle: 0
-    rightLineMarkingStyle: 0
-    leftLineMarkingSize: 0
-    rightLineMarkingSize: 0
-    leftLineMarkingInterval: 0
-    rightLineMarkingInterval: 0
-    laneMarkingStyle: 0
-    LaneMarkingColor: {r: 0, g: 0, b: 0, a: 0}
-    laneMarkingWidth: 0
-    laneMarkingSize: 0
-    laneMarkingInterval: 0
-    medianIsland: 0
-    medianWidth: 0
-    medianLineMarkingStyle: 0
-    medianLineMarkingWidth: 0
-    medianLineMarkingSize: 0
-    medianLineMarkingInterval: 0
-    medianLineMarkingSpace: 0
-    medianLeftLineMarkingColor: {r: 0, g: 0, b: 0, a: 0}
-    medianRightLineMarkingColor: {r: 0, g: 0, b: 0, a: 0}
-    materialType: 0
-    baseTexture: {fileID: 0}
-    baseTextureSize: 0
-    baseTexture2: {fileID: 0}
-    normalMap: {fileID: 0}
-    pbrTexture: {fileID: 0}
-    pbrLaneStrength: 0
-    pbrCurveStrength: 0
-    noiseTexture: {fileID: 0}
-    noiseTexture2: {fileID: 0}
-    linesTexture: {fileID: 0}
-    linesTextureSize: 0
-    linesNormalMapBlend: 0
-    normalMapScale: 0
-    metallicScale: 0
-    smoothnessScale: 0
-    aoScale: 0
-    lineMaskQuality: 0
   crossingCornerPresets: []
   sidewalkPresets: []
   textureData: []
@@ -237,6 +243,4 @@ MonoBehaviour:
   logIndex: 0
   updateInt: 2
   resourcesFolder: Resources
-  projectid: 177448477538996
-  isHDRP: 0
-  isURP: 0
+  projectid: -1

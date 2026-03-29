@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 89141500ea2b95f488191219f049f7c5
+timeCreated: 1541537102
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/Resources/dynamic prefabs/Default T Crossing.prefab
+  uploadId: 888308

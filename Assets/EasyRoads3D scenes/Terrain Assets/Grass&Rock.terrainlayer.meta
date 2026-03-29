@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6fb39163031ce944b889ea2281e9055e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 8574412962073106934
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D scenes/Terrain Assets/Grass&Rock.terrainlayer
+  uploadId: 888308

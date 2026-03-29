@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ddc53dabe97741446a69e08ee5de51ab
+timeCreated: 1471875087
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/html/creating_roads.html
+  uploadId: 888308

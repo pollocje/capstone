@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ce75f594e43cda9459533dcb39d8a2af
+timeCreated: 1480534125
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D scenes/scene main.unity
+  uploadId: 888308

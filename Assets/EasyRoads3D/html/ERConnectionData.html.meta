@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 01425a971b5438945bf9ab5850f8a97d
+timeCreated: 1477929400
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/html/ERConnectionData.html
+  uploadId: 888308
