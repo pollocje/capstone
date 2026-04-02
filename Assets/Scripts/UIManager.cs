@@ -3,18 +3,27 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField] private MicroBar healthBar;
 
-    [SerializeField] MicroBar healthBar;
-    void Start()
+    private void Start()
     {
+        if (healthBar == null)
+        {
+            Debug.LogError("UIManager: healthBar is not assigned.", this);
+            return;
+        }
+
         healthBar.Initialize(100f);
     }
 
-    public void Damage() { 
-    
+    public void Damage()
+    {
+        if (healthBar == null)
+        {
+            Debug.LogError("UIManager: healthBar is not assigned.", this);
+            return;
+        }
+
         healthBar.UpdateBar(healthBar.CurrentValue - 10f);
-
     }
-
-    
 }
