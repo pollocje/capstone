@@ -1,9 +1,9 @@
-Imported URP version: 17.0.3
+Imported URP version: 17.2.0 for Unity 6000.2.0f1 and more recent. The URP_17_0_3 package works for previous Unity 6000.0.x versions. 
 
 Demo Scene Steps:
 
-1) Upgrade built-in materials to URP
-   Unity horizontal menu > Window > Rendering > Render Pipeline Converter
+1) Upgrade built-in materials / shaders to URP
+	Main Horizontal Menu > Window > Rendering > Render Pipeline Converter  
 
 2) Select the Directional Light object, this should update the lighting if necessary
 

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ff75334702bc1a74891ce1559e585ecb
+timeCreated: 1528301534
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/lib/DelaunayER.txt
+  uploadId: 888308

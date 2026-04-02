@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: fa5a670963bd9c44c9d20fdf64cdb721
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/shaders/ER Road Decal.shader
+  uploadId: 888308

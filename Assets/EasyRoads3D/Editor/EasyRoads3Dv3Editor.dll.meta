@@ -1,9 +1,40 @@
 fileFormatVersion: 2
-guid: 23be3c786750a9543ba20f3d7b38128d
+guid: 7230513edc2621d43b0be9dc3f104aae
+PluginImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  iconMap: {}
+  executionOrder: {}
+  defineConstraints: []
+  isPreloaded: 0
+  isOverridable: 0
+  isExplicitlyReferenced: 0
+  validateReferences: 1
+  platformData:
+  - first:
+      Any: 
+    second:
+      enabled: 0
+      settings: {}
+  - first:
+      Editor: Editor
+    second:
+      enabled: 1
+      settings:
+        DefaultValueInitialized: true
+  - first:
+      Windows Store Apps: WindowsStoreApps
+    second:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 987
-  packageName: EasyRoads3D Free v3
-  packageVersion: v3.2.4f3
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
   assetPath: Assets/EasyRoads3D/Editor/EasyRoads3Dv3Editor.dll
-  uploadId: 701396
+  uploadId: 888308

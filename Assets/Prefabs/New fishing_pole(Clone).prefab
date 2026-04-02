@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 960925068000365884}
   - component: {fileID: 4561589901228873671}
   - component: {fileID: 7751835468185369322}
-  - component: {fileID: 3960107048833520578}
   - component: {fileID: 4745050428841072234}
   m_Layer: 0
   m_Name: New fishing_pole(Clone)
@@ -160,20 +159,6 @@ MonoBehaviour:
   onChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3960107048833520578
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8160434337724115581}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 589f6419d58554f4f8cab5ac723188e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HotbarItemDetector
-  item: {fileID: 0}
-  pickupPrompt: {fileID: 0}
 --- !u!54 &4745050428841072234
 Rigidbody:
   m_ObjectHideFlags: 0

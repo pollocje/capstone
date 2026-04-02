@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 8add2216a299bb04a96254601a49cc2a
-timeCreated: 1482423087
+guid: b2b629637819a1049a5cebc7e93cab52
+timeCreated: 1486497306
 licenseType: Store
 NativeFormatImporter:
   userData: 
@@ -8,8 +8,8 @@ NativeFormatImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 987
-  packageName: EasyRoads3D Free v3
-  packageVersion: v3.2.4f3
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
   assetPath: Assets/EasyRoads3D/Resources/ERProjectLog.prefab
-  uploadId: 701396
+  uploadId: 888308

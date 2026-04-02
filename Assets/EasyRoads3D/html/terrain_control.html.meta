@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 30c061594789db549881362891d9635d
+timeCreated: 1471875086
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/html/terrain_control.html
+  uploadId: 888308

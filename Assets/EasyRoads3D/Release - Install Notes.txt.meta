@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e34a1ded0fee2244b9115c0c47e48be6
+timeCreated: 1516983798
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/Release - Install Notes.txt
+  uploadId: 888308

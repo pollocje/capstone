@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8201016becff039428a4e3ee32a16ab3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4300000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/prefab meshes/Roundabout 4 connections_dynamic.asset
+  uploadId: 888308

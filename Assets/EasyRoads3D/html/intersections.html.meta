@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d2a0732dc5c9c05468cc194dd1dc09ba
+timeCreated: 1471875087
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 469
+  packageName: EasyRoads3D Pro v3
+  packageVersion: v3.2.4f5
+  assetPath: Assets/EasyRoads3D/html/intersections.html
+  uploadId: 888308
