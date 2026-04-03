@@ -155,7 +155,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -613, y: 294}
+  m_AnchoredPosition: {x: -582, y: 294}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &90770818
@@ -405,7 +405,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1478192520}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &518277028
@@ -420,6 +421,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38d0082e7d679b643ae7226d043e3cd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyMenu
+  lobbyCodeText: {fileID: 1013305473}
+  teammate1: {fileID: 2143033411}
+  teammate2: {fileID: 1841879985}
+  teammate3: {fileID: 1094341887}
+  teammate4: {fileID: 1398941876}
+  startGameButton: {fileID: 601829603}
 --- !u!1 &554388664
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,7 +574,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -309}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 189.8, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &601829605
 MonoBehaviour:
@@ -612,7 +619,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 601829606}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518277028}
+        m_TargetAssemblyTypeName: LobbyMenu, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &601829606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -927,7 +946,7 @@ GameObject:
   - component: {fileID: 1013305474}
   - component: {fileID: 1013305473}
   m_Layer: 0
-  m_Name: Text (TMP) (1)
+  m_Name: Lobby Code
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1064,7 +1083,7 @@ GameObject:
   - component: {fileID: 1037670591}
   - component: {fileID: 1037670590}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1201,7 +1220,7 @@ GameObject:
   - component: {fileID: 1094341888}
   - component: {fileID: 1094341887}
   m_Layer: 0
-  m_Name: Text (TMP) (4)
+  m_Name: Member3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1612,7 +1631,7 @@ GameObject:
   - component: {fileID: 1398941877}
   - component: {fileID: 1398941876}
   m_Layer: 0
-  m_Name: Text (TMP) (5)
+  m_Name: Member4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1761,13 +1780,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1478192519}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 740.79736, y: 321.7244, z: -713.90485}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 554388665}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 518277027}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1737621173
 GameObject:
@@ -1856,7 +1875,7 @@ GameObject:
   - component: {fileID: 1841879986}
   - component: {fileID: 1841879985}
   m_Layer: 0
-  m_Name: Text (TMP) (3)
+  m_Name: Member2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1993,7 +2012,7 @@ GameObject:
   - component: {fileID: 2143033412}
   - component: {fileID: 2143033411}
   m_Layer: 0
-  m_Name: Text (TMP) (2)
+  m_Name: Member1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2125,4 +2144,3 @@ SceneRoots:
   - {fileID: 1359903010}
   - {fileID: 681561643}
   - {fileID: 518277027}
-  - {fileID: 1478192520}
