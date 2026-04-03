@@ -71,7 +71,7 @@ public class LobbyMenu : MonoBehaviour
 
         if (NetworkManager.Singleton.IsHost) { 
         
-          NetworkManager.Singleton.SceneManager.LoadScene("Prototype", LoadSceneMode.Single);
+          NetworkManager.Singleton.SceneManager.LoadScene("Prototype_World", LoadSceneMode.Single);
 
         }
 
