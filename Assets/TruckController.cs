@@ -31,6 +31,9 @@ public class TruckWheelDrive : MonoBehaviour
     private float steerInput;
     private bool isBraking;
     private float currentSteerAngle;
+    private bool inputEnabled = true;
+
+    public void SetInputEnabled(bool enabled) => inputEnabled = enabled;
 
     private void Awake()
     {
@@ -50,9 +53,18 @@ public class TruckWheelDrive : MonoBehaviour
 
     private void Update()
     {
-        moveInput = Input.GetAxisRaw("Vertical");
-        steerInput = Input.GetAxisRaw("Horizontal");
-        isBraking = Input.GetKey(KeyCode.Space);
+        if (!inputEnabled)
+        {
+            moveInput = 0f;
+            steerInput = 0f;
+            isBraking = false;
+        }
+        else
+        {
+            moveInput = Input.GetAxisRaw("Vertical");
+            steerInput = Input.GetAxisRaw("Horizontal");
+            isBraking = Input.GetKey(KeyCode.Space);
+        }
 
         UpdateWheelVisual(frontLeftCollider, frontLeftWheel);
         UpdateWheelVisual(frontRightCollider, frontRightWheel);

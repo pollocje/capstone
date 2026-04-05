@@ -19,15 +19,10 @@ public class TruckFollowCamera : MonoBehaviour
     private float yaw;
     private float pitch = 15f;
 
-    private void Start()
+    private void OnEnable()
     {
         if (target != null)
-        {
             yaw = target.eulerAngles.y;
-        }
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void LateUpdate()
