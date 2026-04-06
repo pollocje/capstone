@@ -11,14 +11,12 @@ public class VehicleEnterExit : MonoBehaviour
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
 
-    [Header("Player")]
-    [SerializeField] private GameObject playerRoot;
-
     [Header("UI")]
     [SerializeField] private GameObject enterPromptUI;
 
     private bool playerInRange;
     private bool inVehicle;
+    private GameObject playerRoot;
 
     private void Start()
     {
@@ -31,6 +29,7 @@ public class VehicleEnterExit : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+        playerRoot = other.transform.root.gameObject;
         playerInRange = true;
         if (enterPromptUI != null && !inVehicle)
             enterPromptUI.SetActive(true);
