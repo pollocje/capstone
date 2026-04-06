@@ -20,6 +20,13 @@ public class Hotbar : MonoBehaviour
     {
         _binoculars = GetComponent<Binoculars>();
 
+        // If not manually assigned, find the spawned player by tag
+        if (playerTransform == null)
+        {
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) playerTransform = player.transform;
+        }
+
         if (items.Length > slotCount)
             System.Array.Resize(ref items, slotCount);
 
