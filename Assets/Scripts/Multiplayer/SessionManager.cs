@@ -24,7 +24,6 @@ public class SessionManager : MonoBehaviour
             if (!AuthenticationService.Instance.IsSignedIn)
             {
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                Debug.Log("Signed in anonymously with Player ID: " + AuthenticationService.Instance.PlayerId);
             }
 
             isReady = true;
@@ -62,8 +61,6 @@ public class SessionManager : MonoBehaviour
         var options = new SessionOptions { MaxPlayers = maxPlayers }.WithRelayNetwork();
 
         currentSession = await MultiplayerService.Instance.CreateSessionAsync(options);
-
-        Debug.Log("Session Code:" + currentSession.Code);
         return currentSession.Code;
     }
 

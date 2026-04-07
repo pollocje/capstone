@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator WaitAndSetupSpawning()
     {
-        // NetworkTestBootstrapper may not have run yet — wait until NGO is actually listening
         yield return new WaitUntil(() => NetworkManager.Singleton.IsListening);
 
         if (NetworkManager.Singleton.IsServer)

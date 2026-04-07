@@ -121,7 +121,6 @@ public class PlayerSpawnManager : MonoBehaviour
             if (availableGroups.Count == 0) return null;
 
             _lockedGroup = availableGroups[Random.Range(0, availableGroups.Count)];
-            Debug.Log($"PlayerSpawnManager: Locked spawn group '{_lockedGroup}'.");
         }
 
         // Prefer points not yet used this session
