@@ -91,17 +91,20 @@ public class PlayerSpawnManager : MonoBehaviour
 
     void HookUpCamera(GameObject player)
     {
-        var vcam = FindAnyObjectByType<CinemachineVirtualCamera>();
+        // The VCam's Follow is pre-wired to PlayerCameraRoot in the prefab.
+        // This is a safety net in case that wiring is missing.
+        // LookAt intentionally left alone — camera orientation is driven by
+        // FirstPersonController rotating PlayerCameraRoot, not Cinemachine aim.
+        var vcam = player.GetComponentInChildren<CinemachineVirtualCamera>();
         if (vcam == null) return;
+
+        if (vcam.Follow != null) return; // already wired by prefab
 
         var target = player.GetComponentsInChildren<Transform>()
             .FirstOrDefault(t => t.CompareTag("CinemachineTarget"));
 
         if (target != null)
-        {
             vcam.Follow = target;
-            vcam.LookAt = target;
-        }
     }
 
     SpawnPoint GetSpawnPoint()

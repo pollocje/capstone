@@ -2,20 +2,26 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
 using StarterAssets;
+using Cinemachine;
 
 public class PlayerNetworkSetup : NetworkBehaviour
 {
-    private GameObject _cameraRoot;
+    private GameObject _cameraRoot;   // MainCamera GO (Camera + CinemachineBrain)
+    private GameObject _vcamRoot;     // PlayerFollowCamera GO (VirtualCamera)
 
     void Awake()
     {
         var cam = GetComponentInChildren<Camera>(includeInactive: true);
         _cameraRoot = cam != null ? cam.gameObject : null;
+
+        var vcam = GetComponentInChildren<CinemachineVirtualCamera>(includeInactive: true);
+        _vcamRoot = vcam != null ? vcam.gameObject : null;
     }
 
     public override void OnNetworkSpawn()
     {
-        // Disable non-owned players immediately
+        // Disable non-owned players immediately — camera and VCam both off so
+        // their VCam doesn't compete with the owner's on the shared CinemachineBrain.
         if (!IsOwner)
         {
             SetCameraEnabled(false);
@@ -23,9 +29,8 @@ public class PlayerNetworkSetup : NetworkBehaviour
             return;
         }
 
-        // For the owning client, wait one frame before enabling the camera so any
-        // other players' CinemachineBrains are already disabled — prevents Cinemachine
-        // latching onto the wrong brain during the brief window when all are active.
+        // For the owning client, wait one frame before enabling so all non-owner
+        // cameras/VCams are already disabled before ours comes online.
         SetPlayerControlsEnabled(true);
         StartCoroutine(EnableCameraNextFrame());
     }
@@ -38,19 +43,20 @@ public class PlayerNetworkSetup : NetworkBehaviour
 
     void SetCameraEnabled(bool enabled)
     {
-        if (_cameraRoot != null)
-            _cameraRoot.SetActive(enabled);
+        if (_cameraRoot != null) _cameraRoot.SetActive(enabled);
+        if (_vcamRoot != null)   _vcamRoot.SetActive(enabled);
     }
 
     void SetPlayerControlsEnabled(bool enabled)
     {
-        var playerInput = GetComponent<PlayerInput>();
+        // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
+        var playerInput = GetComponentInChildren<PlayerInput>();
         if (playerInput != null) playerInput.enabled = enabled;
 
-        var fpc = GetComponent<FirstPersonController>();
+        var fpc = GetComponentInChildren<FirstPersonController>();
         if (fpc != null) fpc.enabled = enabled;
 
-        var inputs = GetComponent<StarterAssetsInputs>();
+        var inputs = GetComponentInChildren<StarterAssetsInputs>();
         if (inputs != null) inputs.enabled = enabled;
     }
 }

@@ -70287,52 +70287,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1 &1001451104
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1001451106}
-  - component: {fileID: 1001451105}
-  m_Layer: 0
-  m_Name: MultiplayerTest
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1001451105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1001451104}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b54226341ee93c449eff04af417a2e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetworkTestBootstrapper
-  serverAddress: 127.0.0.1
-  serverPort: 7777
---- !u!4 &1001451106
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1001451104}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1005181690
 GameObject:
   m_ObjectHideFlags: 0
@@ -158481,6 +158435,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e51e65a1c7030ad48ad33092bd618b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
+  hotbarRoot: {fileID: 0}
+  slotPrefab: {fileID: 0}
+  normalColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
+  selectedColor: {r: 0.9, g: 0.7, b: 0.1, a: 0.9}
 --- !u!114 &1844350604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188167,4 +188125,3 @@ SceneRoots:
   - {fileID: 2010981765}
   - {fileID: 389132964}
   - {fileID: 211650356}
-  - {fileID: 1001451106}

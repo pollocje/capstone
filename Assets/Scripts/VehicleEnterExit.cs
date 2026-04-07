@@ -70,10 +70,11 @@ public class VehicleEnterExit : MonoBehaviour
     {
         // Cache and disable player components instead of deactivating the whole GO.
         // Deactivating a NetworkObject causes NGO lifecycle conflicts.
-        _cc = playerRoot.GetComponent<CharacterController>();
-        _fpc = playerRoot.GetComponent<FirstPersonController>();
-        _inputs = playerRoot.GetComponent<StarterAssetsInputs>();
-        _playerInput = playerRoot.GetComponent<PlayerInput>();
+        // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
+        _cc = playerRoot.GetComponentInChildren<CharacterController>();
+        _fpc = playerRoot.GetComponentInChildren<FirstPersonController>();
+        _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>();
+        _playerInput = playerRoot.GetComponentInChildren<PlayerInput>();
 
         if (_cc != null) _cc.enabled = false;
         if (_fpc != null) _fpc.enabled = false;
