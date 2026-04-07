@@ -5,11 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class JoinMenu : MonoBehaviour
 {
-
-
     public TMP_InputField code_input;
-
     public TextMeshProUGUI statusText;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 
 
     public async void Submit() {

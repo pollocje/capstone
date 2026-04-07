@@ -21,6 +21,9 @@ public class LobbyMenu : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         teammateTexts = new TextMeshProUGUI[] { teammate1, teammate2, teammate3, teammate4 };
         session = SessionManager.Instance.GetSession();
 
@@ -50,21 +53,28 @@ public class LobbyMenu : MonoBehaviour
 
     }
 
-    void UpdatePlayerText() { 
-        foreach(var slot in teammateTexts){
-
+    void UpdatePlayerText()
+    {
+        foreach (var slot in teammateTexts)
             slot.text = "Waiting for player...";
-        }
 
-        int i = 0;
+        try
+        {
+            // Snapshot IDs first to avoid iterating a collection modified on a background thread
+            var playerIds = new System.Collections.Generic.List<string>();
+            foreach (var player in session.Players)
+                playerIds.Add(player.Id);
 
-        foreach(var player in session.Players) { 
-            if (i < teammateTexts.Length) { 
-                teammateTexts[i].text = player.Id.Substring(0,5);
-                i++;
+            for (int i = 0; i < playerIds.Count && i < teammateTexts.Length; i++)
+            {
+                var id = playerIds[i];
+                teammateTexts[i].text = id.Length >= 5 ? id.Substring(0, 5) : id;
             }
         }
-
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("UpdatePlayerText error: " + e.Message);
+        }
     }
     public void StartGame()
     {

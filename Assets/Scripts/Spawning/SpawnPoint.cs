@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    [Tooltip("Filter spawn points by group. e.g. 'Default', 'TeamA', 'Safe'")]
+    [Tooltip("Spawn group name. All points sharing a name belong to the same group. e.g. 'GroupA', 'GroupB'")]
     public string spawnTag = "Default";
 
     [Tooltip("Temporarily disables this point without removing it from the scene.")]

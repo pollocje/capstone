@@ -1,7 +1,9 @@
 using UnityEngine;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
+using StarterAssets;
 
 public class VehicleEnterExit : MonoBehaviour
 {
@@ -18,6 +20,12 @@ public class VehicleEnterExit : MonoBehaviour
     private bool inVehicle;
     private GameObject playerRoot;
 
+    // Cached player components frozen while in the vehicle
+    private CharacterController _cc;
+    private FirstPersonController _fpc;
+    private StarterAssetsInputs _inputs;
+    private PlayerInput _playerInput;
+
     private void Start()
     {
         truckController.SetInputEnabled(false);
@@ -29,6 +37,11 @@ public class VehicleEnterExit : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+
+        // In multiplayer, ignore players we don't own
+        var netObj = other.transform.root.GetComponent<Unity.Netcode.NetworkObject>();
+        if (netObj != null && !netObj.IsOwner) return;
+
         playerRoot = other.transform.root.gameObject;
         playerInRange = true;
         if (enterPromptUI != null && !inVehicle)
@@ -55,8 +68,19 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void EnterVehicle()
     {
+        // Cache and disable player components instead of deactivating the whole GO.
+        // Deactivating a NetworkObject causes NGO lifecycle conflicts.
+        _cc = playerRoot.GetComponent<CharacterController>();
+        _fpc = playerRoot.GetComponent<FirstPersonController>();
+        _inputs = playerRoot.GetComponent<StarterAssetsInputs>();
+        _playerInput = playerRoot.GetComponent<PlayerInput>();
+
+        if (_cc != null) _cc.enabled = false;
+        if (_fpc != null) _fpc.enabled = false;
+        if (_inputs != null) _inputs.enabled = false;
+        if (_playerInput != null) _playerInput.enabled = false;
+
         playerRoot.transform.position = driverSeat.position;
-        playerRoot.SetActive(false);
 
         truckController.SetInputEnabled(true);
         followCameraObject.SetActive(true);
@@ -76,9 +100,22 @@ public class VehicleEnterExit : MonoBehaviour
         followCameraObject.SetActive(false);
 
         playerRoot.transform.position = exitPoint.position;
-        playerRoot.SetActive(true);
+
+        // Wait a fixed frame before re-enabling movement so the CharacterController
+        // has time to resolve its grounded state at the new position.
+        StartCoroutine(ReactivatePlayer());
 
         inVehicle = false;
         playerInRange = false;
+    }
+
+    private IEnumerator ReactivatePlayer()
+    {
+        yield return new WaitForFixedUpdate();
+
+        if (_cc != null) _cc.enabled = true;
+        if (_fpc != null) _fpc.enabled = true;
+        if (_inputs != null) _inputs.enabled = true;
+        if (_playerInput != null) _playerInput.enabled = true;
     }
 }

@@ -15,18 +15,24 @@ public class SessionManager : MonoBehaviour
     private bool isReady = false;
 
 
-    async void Start() {
-
-        await UnityServices.InitializeAsync();
-
-        if (!AuthenticationService.Instance.IsSignedIn)
+    async void Start()
+    {
+        try
         {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            Debug.Log("Signed in anonymously with Player ID: " + AuthenticationService.Instance.PlayerId);
+            await UnityServices.InitializeAsync();
+
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                Debug.Log("Signed in anonymously with Player ID: " + AuthenticationService.Instance.PlayerId);
+            }
+
+            isReady = true;
         }
-
-        isReady = true;
-
+        catch (System.Exception e)
+        {
+            Debug.LogError("SessionManager failed to initialize: " + e.Message);
+        }
     }
 
     private async Task WaitUntilReady() {
