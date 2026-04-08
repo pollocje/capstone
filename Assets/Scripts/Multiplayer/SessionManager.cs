@@ -15,23 +15,18 @@ public class SessionManager : MonoBehaviour
     private bool isReady = false;
 
 
-    async void Start()
-    {
-        try
-        {
-            await UnityServices.InitializeAsync();
+    async void Start() {
 
-            if (!AuthenticationService.Instance.IsSignedIn)
-            {
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            }
+        await UnityServices.InitializeAsync();
 
-            isReady = true;
-        }
-        catch (System.Exception e)
+        if (!AuthenticationService.Instance.IsSignedIn)
         {
-            Debug.LogError("SessionManager failed to initialize: " + e.Message);
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            Debug.Log("Signed in anonymously with Player ID: " + AuthenticationService.Instance.PlayerId);
         }
+
+        isReady = true;
+
     }
 
     private async Task WaitUntilReady() {
@@ -61,6 +56,8 @@ public class SessionManager : MonoBehaviour
         var options = new SessionOptions { MaxPlayers = maxPlayers }.WithRelayNetwork();
 
         currentSession = await MultiplayerService.Instance.CreateSessionAsync(options);
+
+        Debug.Log("Session Code:" + currentSession.Code);
         return currentSession.Code;
     }
 
