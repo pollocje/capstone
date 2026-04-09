@@ -71,15 +71,16 @@ public class VehicleEnterExit : MonoBehaviour
         // Cache and disable player components instead of deactivating the whole GO.
         // Deactivating a NetworkObject causes NGO lifecycle conflicts.
         // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
-        _cc = playerRoot.GetComponentInChildren<CharacterController>();
-        _fpc = playerRoot.GetComponentInChildren<FirstPersonController>();
-        _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>();
-        _playerInput = playerRoot.GetComponentInChildren<PlayerInput>();
+        _cc     = playerRoot.GetComponentInChildren<CharacterController>(true);
+        _fpc    = playerRoot.GetComponentInChildren<FirstPersonController>(true);
+        _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
+        _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
 
-        if (_cc != null) _cc.enabled = false;
+        // Disable FPC first so its Update can't call Move() on a CC we're about to deactivate.
         if (_fpc != null) _fpc.enabled = false;
         if (_inputs != null) _inputs.enabled = false;
         if (_playerInput != null) _playerInput.enabled = false;
+        if (_cc != null) _cc.enabled = false;
 
         playerRoot.transform.position = driverSeat.position;
 
@@ -100,23 +101,20 @@ public class VehicleEnterExit : MonoBehaviour
         truckController.SetInputEnabled(false);
         followCameraObject.SetActive(false);
 
-        playerRoot.transform.position = exitPoint.position;
+        // Raycast down from above the exit point to place on actual terrain surface.
+        Vector3 spawnPos = exitPoint.position;
+        if (Physics.Raycast(exitPoint.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 15f))
+            spawnPos = hit.point + Vector3.up * 0.1f;
 
-        // Wait a fixed frame before re-enabling movement so the CharacterController
-        // has time to resolve its grounded state at the new position.
-        StartCoroutine(ReactivatePlayer());
-
-        inVehicle = false;
-        playerInRange = false;
-    }
-
-    private IEnumerator ReactivatePlayer()
-    {
-        yield return new WaitForFixedUpdate();
+        playerRoot.transform.position = spawnPos;
+        Physics.SyncTransforms();
 
         if (_cc != null) _cc.enabled = true;
         if (_fpc != null) _fpc.enabled = true;
         if (_inputs != null) _inputs.enabled = true;
         if (_playerInput != null) _playerInput.enabled = true;
+
+        inVehicle = false;
+        playerInRange = false;
     }
 }

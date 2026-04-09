@@ -4,7 +4,6 @@ using TMPro;
 using Unity.Services.Multiplayer;
 using Unity.Netcode;
 using System.Collections;
-using Unity.Services.Lobbies;
 public class LobbyMenu : MonoBehaviour
 {
     public TextMeshProUGUI lobbyCodeText;
