@@ -32,7 +32,18 @@ public class PlayerNetworkSetup : NetworkBehaviour
         // For the owning client, wait one frame before enabling so all non-owner
         // cameras/VCams are already disabled before ours comes online.
         SetPlayerControlsEnabled(true);
+        HookUpHotbar();
         StartCoroutine(EnableCameraNextFrame());
+    }
+
+    void HookUpHotbar()
+    {
+        // hotbarUI lives on a scene Canvas, so it can't be wired inside the player
+        // prefab itself — connect it here now that this client's player is spawned.
+        var hotbar = GetComponentInChildren<Hotbar>(true);
+        if (hotbar == null || hotbar.hotbarUI != null) return;
+
+        hotbar.hotbarUI = FindFirstObjectByType<HotbarUI>();
     }
 
     System.Collections.IEnumerator EnableCameraNextFrame()

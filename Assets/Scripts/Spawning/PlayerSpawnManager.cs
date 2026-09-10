@@ -45,6 +45,7 @@ public class PlayerSpawnManager : MonoBehaviour
         _usedPoints.Add(point);
         var player = Instantiate(playerPrefab, point.transform.position, point.transform.rotation);
         HookUpCamera(player);
+        HookUpHotbar(player);
         return player;
     }
 
@@ -105,6 +106,16 @@ public class PlayerSpawnManager : MonoBehaviour
 
         if (target != null)
             vcam.Follow = target;
+    }
+
+    void HookUpHotbar(GameObject player)
+    {
+        // hotbarUI lives on a scene Canvas, so it can't be wired inside the player
+        // prefab itself — connect it here now that the player actually exists in the scene.
+        var hotbar = player.GetComponentInChildren<Hotbar>(true);
+        if (hotbar == null || hotbar.hotbarUI != null) return;
+
+        hotbar.hotbarUI = FindFirstObjectByType<HotbarUI>();
     }
 
     SpawnPoint GetSpawnPoint()

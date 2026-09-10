@@ -40,7 +40,7 @@ public class VehicleEnterExit : MonoBehaviour
 
         // In multiplayer, ignore players we don't own
         var netObj = other.transform.root.GetComponent<Unity.Netcode.NetworkObject>();
-        if (netObj != null && !netObj.IsOwner) return;
+        if (netObj != null && netObj.IsSpawned && !netObj.IsOwner) return;
 
         playerRoot = other.transform.root.gameObject;
         playerInRange = true;
