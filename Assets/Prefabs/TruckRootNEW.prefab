@@ -164,7 +164,7 @@ WheelCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_ProvidesContacts: 0
 --- !u!1 &1872393255199248531
 GameObject:
@@ -325,7 +325,7 @@ WheelCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_ProvidesContacts: 0
 --- !u!1 &3084432488611670104
 GameObject:
@@ -538,8 +538,9 @@ GameObject:
   - component: {fileID: 6013205719889161242}
   - component: {fileID: 7491145656114059241}
   - component: {fileID: 2085650846117974833}
+  - component: {fileID: 9207439639549017042}
   m_Layer: 0
-  m_Name: TruckRoot
+  m_Name: TruckRootNEW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -625,7 +626,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95181395b8c834a4287e60696f2dc152, type: 3}
   m_Name: 
@@ -652,7 +653,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 495c2d5367d9b4fe3a3a2307fc1c9318, type: 3}
   m_Name: 
@@ -669,7 +670,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
@@ -694,7 +695,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
@@ -984,7 +985,7 @@ WheelCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_ProvidesContacts: 0
 --- !u!1 &5706751525788926465
 GameObject:
@@ -1558,7 +1559,7 @@ WheelCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_ProvidesContacts: 0
 --- !u!1 &7422023962072376941
 GameObject:
@@ -2042,3 +2043,49 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &9207439639549017042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4163358734833904195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95eed535dfffb80adb84b373b007fa26, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: '::'
+  frontLeft:
+    rayOrigin: {fileID: 1252912475902597690}
+    visual: {fileID: 8687769045504017402}
+    isSteered: 1
+    isDriven: 0
+  frontRight:
+    rayOrigin: {fileID: 1235695013477328597}
+    visual: {fileID: 1538434758009770747}
+    isSteered: 1
+    isDriven: 0
+  backLeft:
+    rayOrigin: {fileID: 6764224328308453062}
+    visual: {fileID: 2703871601552980208}
+    isSteered: 0
+    isDriven: 1
+  backRight:
+    rayOrigin: {fileID: 972439677164279923}
+    visual: {fileID: 3109604078916640494}
+    isSteered: 0
+    isDriven: 1
+  restLength: 0.3
+  suspensionTravel: 0.3
+  suspensionStrength: 22000
+  suspensionDamping: 5500
+  wheelRadius: 0.42
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  driveForce: 3000
+  brakeForce: 6000
+  maxSpeedKmh: 85
+  maxSteerAngle: 24
+  steerSpeed: 120
+  gripStrength: 1
