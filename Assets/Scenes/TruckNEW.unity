@@ -534,6 +534,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TruckRootNEW
       objectReference: {fileID: 0}
+    - target: {fileID: 6013205719889161242, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
