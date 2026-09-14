@@ -8,7 +8,9 @@ using StarterAssets;
 public class VehicleEnterExit : MonoBehaviour
 {
     [Header("Truck")]
-    [SerializeField] private TruckWheelDrive truckController;
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck or the raycast experiment - and leave the other empty. Both expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [SerializeField] private TruckWheelDrive wheelColliderTruck;
+    [SerializeField] private TruckNewTEST raycastTruck;
     [SerializeField] private GameObject followCameraObject;
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
@@ -28,10 +30,16 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void Start()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
+    }
+
+    private void SetTruckInputEnabled(bool enabled)
+    {
+        if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
+        if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -84,7 +92,7 @@ public class VehicleEnterExit : MonoBehaviour
 
         playerRoot.transform.position = driverSeat.position;
 
-        truckController.SetInputEnabled(true);
+        SetTruckInputEnabled(true);
         followCameraObject.SetActive(true);
 
         if (enterPromptUI != null)
@@ -98,7 +106,7 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void ExitVehicle()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
         followCameraObject.SetActive(false);
 
         // Raycast down from above the exit point to place on actual terrain surface.

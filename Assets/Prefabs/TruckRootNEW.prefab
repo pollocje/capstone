@@ -646,6 +646,8 @@ MonoBehaviour:
   steerSpeed: 120
   centerOfMass: {fileID: 2933046601177028535}
   downforce: 60
+  antiRollFront: 5000
+  antiRollRear: 5000
 --- !u!114 &6013205719889161242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,12 +655,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 495c2d5367d9b4fe3a3a2307fc1c9318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleEnterExit
-  truckController: {fileID: 3708210728060355179}
+  wheelColliderTruck: {fileID: 0}
+  raycastTruck: {fileID: 9207439639549017042}
   followCameraObject: {fileID: 3498299886586562869}
   driverSeat: {fileID: 910563179736835974}
   exitPoint: {fileID: 2605171035413938644}
@@ -675,7 +678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3743039645
+  GlobalObjectIdHash: 4057378837
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -734,6 +737,89 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &9207439639549017042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4163358734833904195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95eed535dfffb80adb84b373b007fa26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  showDebugOverlay: 1
+  frontLeft:
+    rayOrigin: {fileID: 1252912475902597690}
+    visual: {fileID: 8687769045504017402}
+    isSteered: 1
+    isDriven: 0
+    suspensionOffset: 0
+    previousSuspensionOffset: 0
+    springLength: 0
+    grounded: 0
+    contactPoint: {x: 0, y: 0, z: 0}
+    currentSteerAngle: 0
+    spinAngle: 0
+    debugSuspensionForce: 0
+    debugGripForce: 0
+  frontRight:
+    rayOrigin: {fileID: 1235695013477328597}
+    visual: {fileID: 1538434758009770747}
+    isSteered: 1
+    isDriven: 0
+    suspensionOffset: 0
+    previousSuspensionOffset: 0
+    springLength: 0
+    grounded: 0
+    contactPoint: {x: 0, y: 0, z: 0}
+    currentSteerAngle: 0
+    spinAngle: 0
+    debugSuspensionForce: 0
+    debugGripForce: 0
+  backLeft:
+    rayOrigin: {fileID: 6764224328308453062}
+    visual: {fileID: 2703871601552980208}
+    isSteered: 0
+    isDriven: 1
+    suspensionOffset: 0
+    previousSuspensionOffset: 0
+    springLength: 0
+    grounded: 0
+    contactPoint: {x: 0, y: 0, z: 0}
+    currentSteerAngle: 0
+    spinAngle: 0
+    debugSuspensionForce: 0
+    debugGripForce: 0
+  backRight:
+    rayOrigin: {fileID: 972439677164279923}
+    visual: {fileID: 3109604078916640494}
+    isSteered: 0
+    isDriven: 1
+    suspensionOffset: 0
+    previousSuspensionOffset: 0
+    springLength: 0
+    grounded: 0
+    contactPoint: {x: 0, y: 0, z: 0}
+    currentSteerAngle: 0
+    spinAngle: 0
+    debugSuspensionForce: 0
+    debugGripForce: 0
+  restLength: 0.3
+  suspensionTravel: 0.3
+  suspensionStrength: 22000
+  suspensionDamping: 5500
+  wheelRadius: 0.42
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  driveForce: 3000
+  brakeForce: 6000
+  maxSpeedKmh: 85
+  maxSteerAngle: 24
+  steerSpeed: 120
+  gripStrength: 1
 --- !u!1 &4330043122443332861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,49 +2129,3 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &9207439639549017042
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95eed535dfffb80adb84b373b007fa26, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: '::'
-  frontLeft:
-    rayOrigin: {fileID: 1252912475902597690}
-    visual: {fileID: 8687769045504017402}
-    isSteered: 1
-    isDriven: 0
-  frontRight:
-    rayOrigin: {fileID: 1235695013477328597}
-    visual: {fileID: 1538434758009770747}
-    isSteered: 1
-    isDriven: 0
-  backLeft:
-    rayOrigin: {fileID: 6764224328308453062}
-    visual: {fileID: 2703871601552980208}
-    isSteered: 0
-    isDriven: 1
-  backRight:
-    rayOrigin: {fileID: 972439677164279923}
-    visual: {fileID: 3109604078916640494}
-    isSteered: 0
-    isDriven: 1
-  restLength: 0.3
-  suspensionTravel: 0.3
-  suspensionStrength: 22000
-  suspensionDamping: 5500
-  wheelRadius: 0.42
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  driveForce: 3000
-  brakeForce: 6000
-  maxSpeedKmh: 85
-  maxSteerAngle: 24
-  steerSpeed: 120
-  gripStrength: 1
