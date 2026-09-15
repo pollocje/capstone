@@ -12,6 +12,19 @@ using UnityEngine;
 //   3) Grip ("no sideways slip") - sideways along the wheel's right axis. Measures how fast
 //      the contact point is moving sideways and cancels it, so the truck can't skid sideways.
 //
+// Two things sit on top of that per-wheel model, both there because of the same root issue:
+// the per-wheel grip correction (2) reacts to each wheel's own contact-point velocity, which
+// includes a contribution from the chassis's angular velocity (GetPointVelocity = v_com +
+// omega x r). Front and rear wheels sit on opposite sides of the center of mass, so any
+// existing yaw rotation makes their corrections point in opposite world directions - a torque
+// couple that can sustain or grow a spin instead of damping it out.
+//   - A lateral dead zone and a tunable, lower grip force cap shrink how big that couple can
+//     get and stop it reacting to pure numerical noise.
+//   - A continuous, gentle angular-velocity damping (ApplyContinuousStabilization) runs at all
+//     times as a real backstop, and a much stronger hard stop (ApplyParkingBrake) takes over
+//     whenever nobody's asking the truck to move - see the comments on each for why a direct
+//     velocity pull is used instead of trying to fix the per-wheel force math itself.
+//
 // This is deliberately a separate experiment from TruckController.cs/TruckWheelDrive (the
 // WheelCollider-based truck) - that one is untouched. This script is meant to be tuned from
 // a blank slate in its own test scene before anyone considers swapping it into the real truck.
@@ -37,11 +50,14 @@ public class TruckNewTEST : MonoBehaviour
         [HideInInspector] public float spinAngle;
         [HideInInspector] public float debugSuspensionForce;
         [HideInInspector] public float debugGripForce;
+        [HideInInspector] public float debugLateralSpeed;
     }
 
     [Header("Debug")]
     [Tooltip("Draws an on-screen readout of each wheel's live grounded/offset/force numbers while playing, so what's actually happening doesn't have to be guessed from how it looks.")]
     [SerializeField] private bool showDebugOverlay = true;
+    [Tooltip("Draws each wheel's ground ray in the Scene view (green = grounded, red = airborne).")]
+    [SerializeField] private bool drawWheelRays = true;
 
     [Header("Wheels")]
     [SerializeField] private Wheel frontLeft;
@@ -71,7 +87,19 @@ public class TruckNewTEST : MonoBehaviour
     [Header("Grip")]
     [Tooltip("0 = no sideways grip (slides like ice). 1 = sideways velocity fully cancelled every step - the truck cannot slide sideways at all.")]
     [Range(0f, 1f)]
-    [SerializeField] private float gripStrength = 1f;
+    [SerializeField] private float gripStrength = 0.85f;
+    [Tooltip("Grip force is capped at suspensionForce * gripStrength * this multiplier - real tires only grip as hard as they're pressed into the road. Lower = softer cap = less potential energy for the per-wheel correction to feed into an unwanted spin.")]
+    [SerializeField] private float gripForceMultiplier = 2f;
+    [Tooltip("Sideways speeds smaller than this are treated as zero, so pure floating-point/solver noise can't constantly generate corrective forces.")]
+    [SerializeField] private float lateralDeadZone = 0.03f;
+
+    [Header("Stabilization")]
+    [Tooltip("Always-on angular decay rate (fraction/second, exponential) applied on top of the per-wheel grip, regardless of input. Keep this weak - real steering works through much larger asymmetric grip forces and shouldn't feel fought - it only needs to be strong enough that stray spin (bumps, grip noise) actually decays instead of finding a nonzero equilibrium.")]
+    [SerializeField] private float angularStabilization = 3f;
+    [Tooltip("Horizontal slide decay rate (fraction/second, exponential) applied directly on the Rigidbody whenever nobody's asking the truck to move forward/backward.")]
+    [SerializeField] private float parkingBrakeLinearDamping = 15f;
+    [Tooltip("Spin decay rate (fraction/second, exponential) applied directly on the Rigidbody whenever nobody's asking the truck to move forward/backward.")]
+    [SerializeField] private float parkingBrakeAngularDamping = 20f;
 
     private Rigidbody rb;
     private float moveInput;
@@ -115,6 +143,52 @@ public class TruckNewTEST : MonoBehaviour
         RunWheel(frontRight);
         RunWheel(backLeft);
         RunWheel(backRight);
+
+        // Gated on "nobody's asking this truck to go forward/backward right now", not just
+        // "unoccupied" - a driver who's seated but has let off the pedals (coasting to a stop,
+        // or just sitting still) leaves moveInput at exactly 0 too, and needs the same stabilizing
+        // treatment. Without this broader gate, releasing the pedals handed control straight back
+        // to the unstable per-wheel grip correction below with nothing backstopping it - which is
+        // exactly the "truck starts sliding again the moment I stop driving it" symptom this covers.
+        // While actually driving, the much gentler continuous stabilization below still runs, so
+        // stray spin bleeds off instead of building up during normal driving too.
+        if (Mathf.Approximately(moveInput, 0f))
+            ApplyParkingBrake();
+        else
+            ApplyContinuousStabilization();
+    }
+
+    // Always-on, gentle angular damping - a real backstop against the per-wheel grip correction
+    // in RunWheel(), which can turn any existing yaw rotation into a self-sustaining or even
+    // growing spin instead of damping it out (see the class comment at the top of the file).
+    //
+    // This removes a FRACTION of the current angular velocity each step (exponential decay),
+    // not a fixed absolute amount. That distinction matters: an earlier version of this used
+    // Vector3.MoveTowards, which only ever removes a fixed rad/s per second regardless of how
+    // big the current spin is. The per-wheel grip correction can inject more angular velocity
+    // in a single step than that fixed amount can remove, so instead of converging to zero it
+    // settled into a permanent back-and-forth oscillation - measured directly at ~+-0.4 rad/s,
+    // never decaying, across a 12-second test. A proportional/exponential reduction can't lose
+    // that race: it always removes a large percentage of whatever exists, so it scales with any
+    // disturbance instead of racing a fixed one against it.
+    private void ApplyContinuousStabilization()
+    {
+        rb.angularVelocity *= Mathf.Clamp01(1f - angularStabilization * Time.fixedDeltaTime);
+    }
+
+    // Kill horizontal slide and spin directly on the Rigidbody instead of leaning on the per-wheel
+    // grip correction in RunWheel(). Vertical velocity is left alone so the suspension can still
+    // legitimately settle/bounce under gravity. Exponential decay, same reasoning as
+    // ApplyContinuousStabilization above - just much stronger, since nothing should be able to
+    // out-fight a full stop.
+    private void ApplyParkingBrake()
+    {
+        Vector3 vel = rb.linearVelocity;
+        Vector3 horizontal = new Vector3(vel.x, 0f, vel.z);
+        Vector3 dampedHorizontal = horizontal * Mathf.Clamp01(1f - parkingBrakeLinearDamping * Time.fixedDeltaTime);
+        rb.linearVelocity = new Vector3(dampedHorizontal.x, vel.y, dampedHorizontal.z);
+
+        rb.angularVelocity *= Mathf.Clamp01(1f - parkingBrakeAngularDamping * Time.fixedDeltaTime);
     }
 
     private void RunWheel(Wheel wheel)
@@ -124,6 +198,9 @@ public class TruckNewTEST : MonoBehaviour
         float maxRayDistance = restLength + suspensionTravel + wheelRadius;
         wheel.grounded = Physics.Raycast(wheel.rayOrigin.position, -wheel.rayOrigin.up, out RaycastHit hit,
             maxRayDistance, groundMask, QueryTriggerInteraction.Ignore);
+
+        if (drawWheelRays)
+            Debug.DrawRay(wheel.rayOrigin.position, -wheel.rayOrigin.up * maxRayDistance, wheel.grounded ? Color.green : Color.red);
 
         // Steering happens whether or not the wheel is currently touching the ground, same as
         // a real steering rack - only the forces below need the wheel to actually be grounded.
@@ -140,6 +217,7 @@ public class TruckNewTEST : MonoBehaviour
             wheel.previousSuspensionOffset = 0f;
             wheel.debugSuspensionForce = 0f;
             wheel.debugGripForce = 0f;
+            wheel.debugLateralSpeed = 0f;
             return;
         }
 
@@ -191,18 +269,29 @@ public class TruckNewTEST : MonoBehaviour
         // fine as long as lateralSpeed only ever reflects gentle sideways drift, but the moment
         // the chassis has any rotation (e.g. settling onto its suspension right after spawning),
         // GetPointVelocity includes a contribution from angular velocity that can spike this
-        // number - and an unbounded force reacting to that spike is exactly what was flipping
-        // the truck the instant the wheels started actually touching the ground. Real tires
-        // don't have infinite grip either: they're limited by how hard they're pressed into the
-        // road (friction proportional to normal load). Capping the correction the same way -
-        // to a multiple of this wheel's own suspension force - keeps grip physically bounded no
-        // matter what the raw velocity math says.
+        // number - see the class comment at the top for why that's the root of the sliding/
+        // spinning/jitter problems this file has had, and why ApplyContinuousStabilization and
+        // ApplyParkingBrake exist as backstops rather than trying to solve it per-wheel here.
+        // Real tires don't have infinite grip either: they're limited by how hard they're pressed
+        // into the road (friction proportional to normal load). Capping the correction the same
+        // way - to a multiple of this wheel's own suspension force - keeps grip physically bounded
+        // no matter what the raw velocity math says, and the dead zone below stops it reacting to
+        // pure numerical noise in the first place.
         float lateralSpeed = Vector3.Dot(contactVelocity, wheelRight);
-        float desiredForce = -lateralSpeed * (rb.mass * 0.25f) / Time.fixedDeltaTime;
-        float maxGripForce = suspensionForceMagnitude * gripStrength * 3f;
-        float clampedForce = Mathf.Clamp(desiredForce, -maxGripForce, maxGripForce);
-        wheel.debugGripForce = clampedForce;
-        rb.AddForceAtPosition(wheelRight * clampedForce, wheel.contactPoint);
+        wheel.debugLateralSpeed = lateralSpeed;
+
+        if (Mathf.Abs(lateralSpeed) < lateralDeadZone)
+        {
+            wheel.debugGripForce = 0f;
+        }
+        else
+        {
+            float desiredForce = -lateralSpeed * (rb.mass * 0.25f) / Time.fixedDeltaTime;
+            float maxGripForce = suspensionForceMagnitude * gripStrength * gripForceMultiplier;
+            float clampedForce = Mathf.Clamp(desiredForce, -maxGripForce, maxGripForce);
+            wheel.debugGripForce = clampedForce;
+            rb.AddForceAtPosition(wheelRight * clampedForce, wheel.contactPoint);
+        }
     }
 
     private void UpdateVisual(Wheel wheel)
@@ -227,7 +316,7 @@ public class TruckNewTEST : MonoBehaviour
     {
         if (!showDebugOverlay) return;
 
-        GUI.Label(new Rect(10, 10, 500, 20), $"speed: {rb.linearVelocity.magnitude * 3.6f:F1} km/h   angularVel: {rb.angularVelocity.magnitude:F2}");
+        GUI.Label(new Rect(10, 10, 700, 20), $"speed: {rb.linearVelocity.magnitude * 3.6f:F1} km/h   angularVel: {rb.angularVelocity.magnitude:F2}");
         DrawWheelDebug("FL", frontLeft, 30);
         DrawWheelDebug("FR", frontRight, 50);
         DrawWheelDebug("BL", backLeft, 70);
@@ -238,8 +327,8 @@ public class TruckNewTEST : MonoBehaviour
     {
         if (wheel == null) return;
         string text = wheel.grounded
-            ? $"{label}: grounded  spring={wheel.springLength:F3}m offset={wheel.suspensionOffset:F3}m susForce={wheel.debugSuspensionForce:F0}N gripForce={wheel.debugGripForce:F0}N"
+            ? $"{label}: grounded  spring={wheel.springLength:F3}m offset={wheel.suspensionOffset:F3}m susForce={wheel.debugSuspensionForce:F0}N gripForce={wheel.debugGripForce:F0}N lat={wheel.debugLateralSpeed:F3}"
             : $"{label}: AIRBORNE";
-        GUI.Label(new Rect(10, y, 700, 20), text);
+        GUI.Label(new Rect(10, y, 900, 20), text);
     }
 }

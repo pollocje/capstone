@@ -366,7 +366,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2741689340894528705}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 14aff46cfe1e32c4db32b3f635e4ed8e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -804,6 +804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   showDebugOverlay: 1
+  drawWheelRays: 1
   frontLeft:
     rayOrigin: {fileID: 1252912475902597690}
     visual: {fileID: 8687769045504017402}
@@ -818,6 +819,7 @@ MonoBehaviour:
     spinAngle: 0
     debugSuspensionForce: 0
     debugGripForce: 0
+    debugLateralSpeed: 0
   frontRight:
     rayOrigin: {fileID: 1235695013477328597}
     visual: {fileID: 1538434758009770747}
@@ -832,6 +834,7 @@ MonoBehaviour:
     spinAngle: 0
     debugSuspensionForce: 0
     debugGripForce: 0
+    debugLateralSpeed: 0
   backLeft:
     rayOrigin: {fileID: 6764224328308453062}
     visual: {fileID: 2703871601552980208}
@@ -846,6 +849,7 @@ MonoBehaviour:
     spinAngle: 0
     debugSuspensionForce: 0
     debugGripForce: 0
+    debugLateralSpeed: 0
   backRight:
     rayOrigin: {fileID: 972439677164279923}
     visual: {fileID: 3109604078916640494}
@@ -860,6 +864,7 @@ MonoBehaviour:
     spinAngle: 0
     debugSuspensionForce: 0
     debugGripForce: 0
+    debugLateralSpeed: 0
   restLength: 0.3
   suspensionTravel: 0.3
   suspensionStrength: 22000
@@ -867,13 +872,18 @@ MonoBehaviour:
   wheelRadius: 0.42
   groundMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967231
   driveForce: 3000
   brakeForce: 6000
   maxSpeedKmh: 85
   maxSteerAngle: 24
   steerSpeed: 120
   gripStrength: 1
+  gripForceMultiplier: 2
+  lateralDeadZone: 0.03
+  angularStabilization: 1.5
+  parkingBrakeLinearDamping: 8
+  parkingBrakeAngularDamping: 8
 --- !u!1 &4330043122443332861
 GameObject:
   m_ObjectHideFlags: 0

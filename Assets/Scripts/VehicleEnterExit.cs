@@ -24,13 +24,19 @@ public class VehicleEnterExit : MonoBehaviour
 
     // Cached player components frozen while in the vehicle
     private CharacterController _cc;
-    private FirstPersonController _fpc;
+    private StarterAssets.FirstPersonController _fpc;
     private StarterAssetsInputs _inputs;
     private PlayerInput _playerInput;
 
     private void Start()
     {
         SetTruckInputEnabled(false);
+
+        // Unoccupied at scene start - the driving camera has no business being live
+        // until someone actually gets in. ExitVehicle() also turns this off, but that
+        // only covers the enter->exit round trip, not the initial state.
+        if (followCameraObject != null)
+            followCameraObject.SetActive(false);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
@@ -80,7 +86,7 @@ public class VehicleEnterExit : MonoBehaviour
         // Deactivating a NetworkObject causes NGO lifecycle conflicts.
         // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
         _cc     = playerRoot.GetComponentInChildren<CharacterController>(true);
-        _fpc    = playerRoot.GetComponentInChildren<FirstPersonController>(true);
+        _fpc    = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
         _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
         _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
 
