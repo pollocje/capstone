@@ -15,6 +15,8 @@ public class Binoculars : MonoBehaviour
     private bool _isUsing = false;
     private float _currentFov;
 
+    public bool IsUsing => _isUsing;
+
     void Start()
     {
         if (vcam == null)
