@@ -8,7 +8,9 @@ using StarterAssets;
 public class VehicleEnterExit : MonoBehaviour
 {
     [Header("Truck")]
-    [SerializeField] private TruckWheelDrive truckController;
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck or the raycast experiment - and leave the other empty. Both expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [SerializeField] private TruckWheelDrive wheelColliderTruck;
+    [SerializeField] private TruckNewTEST raycastTruck;
     [SerializeField] private GameObject followCameraObject;
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
@@ -22,16 +24,28 @@ public class VehicleEnterExit : MonoBehaviour
 
     // Cached player components frozen while in the vehicle
     private CharacterController _cc;
-    private FirstPersonController _fpc;
+    private StarterAssets.FirstPersonController _fpc;
     private StarterAssetsInputs _inputs;
     private PlayerInput _playerInput;
 
     private void Start()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
+
+        // Unoccupied at scene start - the driving camera has no business being live
+        // until someone actually gets in. ExitVehicle() also turns this off, but that
+        // only covers the enter->exit round trip, not the initial state.
+        if (followCameraObject != null)
+            followCameraObject.SetActive(false);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
+    }
+
+    private void SetTruckInputEnabled(bool enabled)
+    {
+        if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
+        if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -72,7 +86,7 @@ public class VehicleEnterExit : MonoBehaviour
         // Deactivating a NetworkObject causes NGO lifecycle conflicts.
         // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
         _cc     = playerRoot.GetComponentInChildren<CharacterController>(true);
-        _fpc    = playerRoot.GetComponentInChildren<FirstPersonController>(true);
+        _fpc    = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
         _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
         _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
 
@@ -84,7 +98,7 @@ public class VehicleEnterExit : MonoBehaviour
 
         playerRoot.transform.position = driverSeat.position;
 
-        truckController.SetInputEnabled(true);
+        SetTruckInputEnabled(true);
         followCameraObject.SetActive(true);
 
         if (enterPromptUI != null)
@@ -98,7 +112,7 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void ExitVehicle()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
         followCameraObject.SetActive(false);
 
         // Raycast down from above the exit point to place on actual terrain surface.

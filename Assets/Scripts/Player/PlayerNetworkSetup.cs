@@ -64,7 +64,7 @@ public class PlayerNetworkSetup : NetworkBehaviour
         var playerInput = GetComponentInChildren<PlayerInput>();
         if (playerInput != null) playerInput.enabled = enabled;
 
-        var fpc = GetComponentInChildren<FirstPersonController>();
+        var fpc = GetComponentInChildren<StarterAssets.FirstPersonController>();
         if (fpc != null) fpc.enabled = enabled;
 
         var inputs = GetComponentInChildren<StarterAssetsInputs>();

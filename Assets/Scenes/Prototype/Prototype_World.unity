@@ -330,7 +330,7 @@ GameObject:
   - component: {fileID: 19464757}
   - component: {fileID: 19464756}
   - component: {fileID: 19464755}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1127,7 +1127,7 @@ GameObject:
   - component: {fileID: 60887480}
   - component: {fileID: 60887479}
   - component: {fileID: 60887478}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1629,7 +1629,7 @@ GameObject:
   - component: {fileID: 77567611}
   - component: {fileID: 77567610}
   - component: {fileID: 77567609}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1755,7 +1755,7 @@ GameObject:
   - component: {fileID: 88861127}
   - component: {fileID: 88861126}
   - component: {fileID: 88861125}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1881,7 +1881,7 @@ GameObject:
   - component: {fileID: 91884943}
   - component: {fileID: 91884942}
   - component: {fileID: 91884941}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4824,7 +4824,7 @@ GameObject:
   - component: {fileID: 107839863}
   - component: {fileID: 107839862}
   - component: {fileID: 107839861}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0018
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9727,7 +9727,7 @@ GameObject:
   - component: {fileID: 143220079}
   - component: {fileID: 143220078}
   - component: {fileID: 143220077}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10219,7 +10219,7 @@ GameObject:
   - component: {fileID: 177361660}
   - component: {fileID: 177361659}
   - component: {fileID: 177361658}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0025
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11954,7 +11954,7 @@ GameObject:
   - component: {fileID: 190669759}
   - component: {fileID: 190669758}
   - component: {fileID: 190669757}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default X Crossing (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20816,7 +20816,7 @@ GameObject:
   - component: {fileID: 282962535}
   - component: {fileID: 282962534}
   - component: {fileID: 282962533}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default X Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25600,7 +25600,7 @@ GameObject:
   - component: {fileID: 301904784}
   - component: {fileID: 301904783}
   - component: {fileID: 301904782}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0020
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28638,7 +28638,7 @@ GameObject:
   - component: {fileID: 305133248}
   - component: {fileID: 305133247}
   - component: {fileID: 305133246}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28764,7 +28764,7 @@ GameObject:
   - component: {fileID: 309593088}
   - component: {fileID: 309593087}
   - component: {fileID: 309593086}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29167,7 +29167,7 @@ GameObject:
   - component: {fileID: 326777885}
   - component: {fileID: 326777884}
   - component: {fileID: 326777883}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29392,7 +29392,7 @@ GameObject:
   - component: {fileID: 333835534}
   - component: {fileID: 333835533}
   - component: {fileID: 333835532}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29816,7 +29816,7 @@ GameObject:
   - component: {fileID: 350495177}
   - component: {fileID: 350495176}
   - component: {fileID: 350495175}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default X Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36912,7 +36912,7 @@ GameObject:
   - component: {fileID: 399046898}
   - component: {fileID: 399046897}
   - component: {fileID: 399046896}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37394,7 +37394,7 @@ GameObject:
   - component: {fileID: 416704186}
   - component: {fileID: 416704185}
   - component: {fileID: 416704184}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37797,7 +37797,7 @@ GameObject:
   - component: {fileID: 430996949}
   - component: {fileID: 430996948}
   - component: {fileID: 430996947}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37923,7 +37923,7 @@ GameObject:
   - component: {fileID: 442929132}
   - component: {fileID: 442929131}
   - component: {fileID: 442929130}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39857,6 +39857,79 @@ MonoBehaviour:
   markerStartUVY: 0
   customPoints: []
   handleObject: {fileID: 0}
+--- !u!1001 &555735862
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3498299886586562869, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4163358734833904195, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_Name
+      value: TruckRootNEW
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 379.71542
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0000014583271
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 618.9247
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6154466878306387134, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491145656114059241, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1961864328
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491145656114059241, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491145656114059241, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3512678046
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3b8507fa9506c8254a724bcfb9e70cf9, type: 3}
 --- !u!43 &586110383
 Mesh:
   m_ObjectHideFlags: 0
@@ -40425,7 +40498,7 @@ GameObject:
   - component: {fileID: 609331661}
   - component: {fileID: 609331660}
   - component: {fileID: 609331659}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45652,7 +45725,7 @@ GameObject:
   - component: {fileID: 620258257}
   - component: {fileID: 620258256}
   - component: {fileID: 620258255}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45778,7 +45851,7 @@ GameObject:
   - component: {fileID: 624123754}
   - component: {fileID: 624123753}
   - component: {fileID: 624123752}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46933,7 +47006,7 @@ GameObject:
   - component: {fileID: 692695260}
   - component: {fileID: 692695259}
   - component: {fileID: 692695258}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0017
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48685,7 +48758,7 @@ GameObject:
   - component: {fileID: 711675912}
   - component: {fileID: 711675911}
   - component: {fileID: 711675910}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49009,7 +49082,7 @@ GameObject:
   - component: {fileID: 720893640}
   - component: {fileID: 720893639}
   - component: {fileID: 720893638}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52677,7 +52750,7 @@ GameObject:
   - component: {fileID: 774946697}
   - component: {fileID: 774946696}
   - component: {fileID: 774946695}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55144,7 +55217,7 @@ GameObject:
   - component: {fileID: 778329746}
   - component: {fileID: 778329745}
   - component: {fileID: 778329744}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55270,7 +55343,7 @@ GameObject:
   - component: {fileID: 780154237}
   - component: {fileID: 780154236}
   - component: {fileID: 780154235}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0024
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58629,7 +58702,7 @@ GameObject:
   - component: {fileID: 784550086}
   - component: {fileID: 784550085}
   - component: {fileID: 784550084}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59525,7 +59598,7 @@ GameObject:
   - component: {fileID: 820336621}
   - component: {fileID: 820336620}
   - component: {fileID: 820336619}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65620,7 +65693,7 @@ GameObject:
   - component: {fileID: 857994070}
   - component: {fileID: 857994069}
   - component: {fileID: 857994068}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67349,7 +67422,7 @@ GameObject:
   - component: {fileID: 923499441}
   - component: {fileID: 923499440}
   - component: {fileID: 923499439}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 003_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71967,7 +72040,7 @@ GameObject:
   - component: {fileID: 1058897419}
   - component: {fileID: 1058897418}
   - component: {fileID: 1058897417}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72098,7 +72171,7 @@ GameObject:
   - component: {fileID: 1072912468}
   - component: {fileID: 1072912467}
   - component: {fileID: 1072912466}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75734,7 +75807,7 @@ GameObject:
   - component: {fileID: 1096984829}
   - component: {fileID: 1096984828}
   - component: {fileID: 1096984827}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81078,7 +81151,7 @@ GameObject:
   - component: {fileID: 1117167080}
   - component: {fileID: 1117167079}
   - component: {fileID: 1117167078}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86619,7 +86692,7 @@ GameObject:
   - component: {fileID: 1133421016}
   - component: {fileID: 1133421015}
   - component: {fileID: 1133421014}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93941,7 +94014,7 @@ GameObject:
   - component: {fileID: 1177099447}
   - component: {fileID: 1177099446}
   - component: {fileID: 1177099445}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94608,7 +94681,7 @@ GameObject:
   - component: {fileID: 1248108744}
   - component: {fileID: 1248108743}
   - component: {fileID: 1248108742}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101038,7 +101111,7 @@ GameObject:
   - component: {fileID: 1271214104}
   - component: {fileID: 1271214103}
   - component: {fileID: 1271214102}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106265,7 +106338,7 @@ GameObject:
   - component: {fileID: 1300203294}
   - component: {fileID: 1300203293}
   - component: {fileID: 1300203292}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0015
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109177,7 +109250,7 @@ GameObject:
   - component: {fileID: 1303791133}
   - component: {fileID: 1303791132}
   - component: {fileID: 1303791131}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109403,7 +109476,7 @@ GameObject:
   - component: {fileID: 1305147255}
   - component: {fileID: 1305147254}
   - component: {fileID: 1305147253}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default X Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116141,7 +116214,7 @@ GameObject:
   - component: {fileID: 1309494628}
   - component: {fileID: 1309494627}
   - component: {fileID: 1309494626}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default X Crossing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122976,7 +123049,7 @@ GameObject:
   - component: {fileID: 1315554160}
   - component: {fileID: 1315554159}
   - component: {fileID: 1315554158}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128381,7 +128454,7 @@ GameObject:
   - component: {fileID: 1318216128}
   - component: {fileID: 1318216127}
   - component: {fileID: 1318216126}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128607,7 +128680,7 @@ GameObject:
   - component: {fileID: 1320638449}
   - component: {fileID: 1320638448}
   - component: {fileID: 1320638447}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133834,7 +133907,7 @@ GameObject:
   - component: {fileID: 1322660771}
   - component: {fileID: 1322660770}
   - component: {fileID: 1322660769}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135055,7 +135128,7 @@ GameObject:
   - component: {fileID: 1406491100}
   - component: {fileID: 1406491099}
   - component: {fileID: 1406491098}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: road_0001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139171,7 +139244,7 @@ GameObject:
   - component: {fileID: 1464503927}
   - component: {fileID: 1464503926}
   - component: {fileID: 1464503925}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139297,7 +139370,7 @@ GameObject:
   - component: {fileID: 1465674509}
   - component: {fileID: 1465674508}
   - component: {fileID: 1465674507}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140249,7 +140322,7 @@ GameObject:
   - component: {fileID: 1514331843}
   - component: {fileID: 1514331842}
   - component: {fileID: 1514331841}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0019
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141327,7 +141400,7 @@ GameObject:
   - component: {fileID: 1514433454}
   - component: {fileID: 1514433453}
   - component: {fileID: 1514433452}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142280,7 +142353,7 @@ GameObject:
   - component: {fileID: 1586886378}
   - component: {fileID: 1586886377}
   - component: {fileID: 1586886376}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142730,7 +142803,7 @@ GameObject:
   - component: {fileID: 1621202309}
   - component: {fileID: 1621202308}
   - component: {fileID: 1621202307}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default X Crossing (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147890,7 +147963,7 @@ GameObject:
   - component: {fileID: 1635143868}
   - component: {fileID: 1635143867}
   - component: {fileID: 1635143866}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148285,6 +148358,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6154466878306387134, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
   m_PrefabInstance: {fileID: 2010981765}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1661567162 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3708210728060355179, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
+  m_PrefabInstance: {fileID: 2010981765}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95181395b8c834a4287e60696f2dc152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1670534384
 GameObject:
   m_ObjectHideFlags: 0
@@ -149601,7 +149685,7 @@ GameObject:
   - component: {fileID: 1699524562}
   - component: {fileID: 1699524561}
   - component: {fileID: 1699524560}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default T Crossing (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155125,7 +155209,7 @@ GameObject:
   - component: {fileID: 1724749597}
   - component: {fileID: 1724749596}
   - component: {fileID: 1724749595}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155251,7 +155335,7 @@ GameObject:
   - component: {fileID: 1725851722}
   - component: {fileID: 1725851721}
   - component: {fileID: 1725851720}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155699,7 +155783,7 @@ RectTransform:
   m_GameObject: {fileID: 1742995578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1805612356}
@@ -156099,7 +156183,7 @@ GameObject:
   - component: {fileID: 1759970834}
   - component: {fileID: 1759970833}
   - component: {fileID: 1759970832}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156649,7 +156733,7 @@ GameObject:
   - component: {fileID: 1797546035}
   - component: {fileID: 1797546034}
   - component: {fileID: 1797546033}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158638,6 +158722,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e51e65a1c7030ad48ad33092bd618b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
+  hotbarRoot: {fileID: 0}
+  slotPrefab: {fileID: 0}
+  normalColor:
+    r: 0.1
+    g: 0.1
+    b: 0.1
+    a: 0.75
+  selectedColor:
+    r: 0.9
+    g: 0.7
+    b: 0.1
+    a: 0.9
 --- !u!114 &1844350604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158885,7 +158981,7 @@ GameObject:
   - component: {fileID: 1873298854}
   - component: {fileID: 1873298853}
   - component: {fileID: 1873298852}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160362,7 +160458,7 @@ GameObject:
   - component: {fileID: 1885966836}
   - component: {fileID: 1885966835}
   - component: {fileID: 1885966834}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0023
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163824,7 +163920,7 @@ GameObject:
   - component: {fileID: 1902031599}
   - component: {fileID: 1902031598}
   - component: {fileID: 1902031597}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0021
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166701,7 +166797,7 @@ GameObject:
   - component: {fileID: 1902201980}
   - component: {fileID: 1902201979}
   - component: {fileID: 1902201978}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167104,7 +167200,7 @@ GameObject:
   - component: {fileID: 1922112414}
   - component: {fileID: 1922112413}
   - component: {fileID: 1922112412}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167329,7 +167425,7 @@ GameObject:
   - component: {fileID: 1925728538}
   - component: {fileID: 1925728537}
   - component: {fileID: 1925728536}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0016
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173204,7 +173300,7 @@ GameObject:
   - component: {fileID: 1944532603}
   - component: {fileID: 1944532602}
   - component: {fileID: 1944532601}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174176,7 +174272,7 @@ GameObject:
   - component: {fileID: 1974566578}
   - component: {fileID: 1974566577}
   - component: {fileID: 1974566576}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0014
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177288,7 +177384,7 @@ PrefabInstance:
       objectReference: {fileID: 1661567158}
     - target: {fileID: 2933046601177028535, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.35
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 3498299886586562869, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_IsActive
@@ -177296,7 +177392,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3708210728060355179, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: downforce
-      value: 150
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3708210728060355179, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
+      propertyPath: antiRollRear
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3708210728060355179, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
+      propertyPath: antiRollFront
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 4163358734833904195, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_Name
@@ -177331,20 +177435,24 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6013205719889161242, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
+      propertyPath: wheelColliderTruck
+      value: 
+      objectReference: {fileID: 1661567162}
+    - target: {fileID: 6013205719889161242, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: characterController
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6154466878306387134, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 396.34
+      value: 395.105
       objectReference: {fileID: 0}
     - target: {fileID: 6154466878306387134, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.19
+      value: 1.571
       objectReference: {fileID: 0}
     - target: {fileID: 6154466878306387134, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 612.79
+      value: 610.769
       objectReference: {fileID: 0}
     - target: {fileID: 6154466878306387134, guid: 170dfd35a8de3434fa49f2df3beb0f85, type: 3}
       propertyPath: m_LocalRotation.w
@@ -178562,7 +178670,7 @@ GameObject:
   - component: {fileID: 2063057848}
   - component: {fileID: 2063057847}
   - component: {fileID: 2063057846}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178787,7 +178895,7 @@ GameObject:
   - component: {fileID: 2071422787}
   - component: {fileID: 2071422786}
   - component: {fileID: 2071422785}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 0022
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181424,7 +181532,7 @@ GameObject:
   - component: {fileID: 2093495668}
   - component: {fileID: 2093495667}
   - component: {fileID: 2093495666}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183744,7 +183852,7 @@ GameObject:
   - component: {fileID: 2093647247}
   - component: {fileID: 2093647246}
   - component: {fileID: 2093647245}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183870,7 +183978,7 @@ GameObject:
   - component: {fileID: 2094055618}
   - component: {fileID: 2094055617}
   - component: {fileID: 2094055616}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Road 004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187565,7 +187673,7 @@ GameObject:
   - component: {fileID: 2123477929}
   - component: {fileID: 2123477928}
   - component: {fileID: 2123477927}
-  m_Layer: 31
+  m_Layer: 6
   m_Name: surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188329,3 +188437,4 @@ SceneRoots:
   - {fileID: 211650356}
   - {fileID: 403468633}
   - {fileID: 1742995582}
+  - {fileID: 555735862}
