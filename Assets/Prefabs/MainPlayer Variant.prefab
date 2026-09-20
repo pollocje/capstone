@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: hotbarUI
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 118398616419850311, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      propertyPath: 'items.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: e6efafd45823c80448e2cb97abdf59ce, type: 2}
     - target: {fileID: 192810504923431974, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       propertyPath: m_LocalPosition.x
       value: 396.02298
@@ -105,6 +109,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 722729078790404064}
+    - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 471203614894031976}
   m_SourcePrefab: {fileID: 100100000, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
 --- !u!114 &1388518422351299338 stripped
 MonoBehaviour:
@@ -117,6 +124,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &3653676379582566691 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+  m_PrefabInstance: {fileID: 7830765261270790765}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &471203614894031976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3653676379582566691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f175fb3aa0eff6145b3c255bdbddd23c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkFlareLauncher
+  flarePrefab: {fileID: 8152308009408251769, guid: ab54eac7ef3ffa04c85605972c644bc3, type: 3}
+  throwOrigin: {fileID: 0}
+  heldFlareVisual: {fileID: 0}
+  throwForce: 18
+  upwardArc: 0.15
 --- !u!1 &6236277211100521691 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
