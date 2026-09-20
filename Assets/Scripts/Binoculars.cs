@@ -1,7 +1,7 @@
 using UnityEngine;
 using Cinemachine;
 
-public class Binoculars : MonoBehaviour
+public class Binoculars : MonoBehaviour, IEquippable
 {
     [Header("Dependencies")]
     public CinemachineVirtualCamera vcam;
@@ -52,4 +52,11 @@ public class Binoculars : MonoBehaviour
         if (vcam != null)
             vcam.m_Lens.FieldOfView = Mathf.Lerp(vcam.m_Lens.FieldOfView, target, Time.deltaTime * zoomSpeed);
     }
+
+    // ── IEquippable ──────────────────────────────────────────────────────────
+
+    public void OnEquip() { }
+    public void OnUnequip() => ResetView();
+    public void OnUseDown() => ToggleZoom();
+    public void OnUseUp() => ResetView();
 }

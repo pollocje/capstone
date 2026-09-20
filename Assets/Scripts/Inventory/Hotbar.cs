@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Hotbar : MonoBehaviour
@@ -14,11 +15,12 @@ public class Hotbar : MonoBehaviour
     public InventoryItem[] items;
 
     private int selectedIndex = 0;
-    private Binoculars _binoculars;
+    private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
 
     void Start()
     {
-        _binoculars = GetComponent<Binoculars>();
+        RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
+        RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
 
         // If not manually assigned, find the spawned player by tag
         if (playerTransform == null)
@@ -45,14 +47,14 @@ public class Hotbar : MonoBehaviour
     {
         for (int i = 0; i < slotCount && i < 9; i++)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i) && i != selectedIndex)
             {
-                // If switching away from binoculars, reset the view
-                if (GetSelectedItem()?.itemType == ItemType.Binoculars)
-                    _binoculars?.ResetView();
+                GetEquippable(GetSelectedItem())?.OnUnequip();
 
                 selectedIndex = i;
                 hotbarUI?.UpdateSelection(selectedIndex);
+
+                GetEquippable(GetSelectedItem())?.OnEquip();
             }
         }
     }
@@ -62,21 +64,18 @@ public class Hotbar : MonoBehaviour
         InventoryItem item = GetSelectedItem();
         if (item == null) return;
 
-        switch (item.itemType)
+        if (item.itemType == ItemType.Droppable)
         {
-            case ItemType.Droppable:
-                if (Input.GetMouseButtonDown(0))
-                    DropItem();
-                break;
-
-            case ItemType.Binoculars:
-                // Hold left click to zoom, release to unzoom
-                if (Input.GetMouseButtonDown(0))
-                    _binoculars?.ToggleZoom();
-                if (Input.GetMouseButtonUp(0))
-                    _binoculars?.ResetView();
-                break;
+            if (Input.GetMouseButtonDown(0))
+                DropItem();
+            return;
         }
+
+        IEquippable equippable = GetEquippable(item);
+        if (equippable == null) return;
+
+        if (Input.GetMouseButtonDown(0)) equippable.OnUseDown();
+        if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -92,11 +91,30 @@ public class Hotbar : MonoBehaviour
 
         Instantiate(item.dropPrefab, spawnPos, playerTransform.rotation);
 
+        ConsumeSelected();
+    }
+
+    /// <summary>Clears the currently selected slot (used by one-shot/consumable items).</summary>
+    public void ConsumeSelected()
+    {
         items[selectedIndex] = null;
         hotbarUI?.Refresh(items, selectedIndex);
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    void RegisterEquippable(ItemType type, IEquippable equippable)
+    {
+        if (equippable != null)
+            _equippables[type] = equippable;
+    }
+
+    IEquippable GetEquippable(InventoryItem item)
+    {
+        if (item == null) return null;
+        _equippables.TryGetValue(item.itemType, out var equippable);
+        return equippable;
+    }
 
     public InventoryItem GetSelectedItem()
     {

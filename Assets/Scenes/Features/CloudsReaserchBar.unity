@@ -263,6 +263,10 @@ PrefabInstance:
       propertyPath: hotbarUI
       value: 
       objectReference: {fileID: 1686461625}
+    - target: {fileID: 118398616419850311, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      propertyPath: 'items.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: e6efafd45823c80448e2cb97abdf59ce, type: 2}
     - target: {fileID: 192810504923431974, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.03
@@ -305,7 +309,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2266639754770537038, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       propertyPath: field of view
-      value: 59.94394
+      value: 59.99994
       objectReference: {fileID: 0}
     - target: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       propertyPath: m_Name
@@ -313,13 +317,38 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9217027451401957735, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       propertyPath: m_Lens.FieldOfView
-      value: 59.94394
+      value: 59.99994
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 520506682}
   m_SourcePrefab: {fileID: 100100000, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+--- !u!1 &520506681 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+  m_PrefabInstance: {fileID: 520506680}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &520506682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 520506681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f175fb3aa0eff6145b3c255bdbddd23c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkFlareLauncher
+  flarePrefab: {fileID: 8152308009408251769, guid: ab54eac7ef3ffa04c85605972c644bc3, type: 3}
+  throwOrigin: {fileID: 0}
+  heldFlareVisual: {fileID: 0}
+  throwForce: 18
+  upwardArc: 0.15
 --- !u!1 &525110255
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,7 +829,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.03321, y: 2.97737, z: -0.67235}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3.1036, y: 3.1036, z: 3.1036}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
