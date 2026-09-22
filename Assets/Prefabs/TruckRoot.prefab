@@ -141,7 +141,7 @@ WheelCollider:
     spring: 25000
     damper: 3500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0.1
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -302,7 +302,7 @@ WheelCollider:
     spring: 25000
     damper: 3500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0.1
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -492,6 +492,37 @@ MonoBehaviour:
   mouseSensitivity: 3
   minPitch: 10
   maxPitch: 45
+--- !u!1 &3950357620096962959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 441702109478782998}
+  m_Layer: 0
+  m_Name: ExitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &441702109478782998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3950357620096962959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 1.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6154466878306387134}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4163358734833904195
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,6 +565,7 @@ Transform:
   - {fileID: 4847000004419192930}
   - {fileID: 910563179736835974}
   - {fileID: 2605171035413938644}
+  - {fileID: 441702109478782998}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2260390780057353642
@@ -602,13 +634,13 @@ MonoBehaviour:
   backRightCollider: {fileID: 7267546912212905891}
   frontLeftWheel: {fileID: 8687769045504017402}
   frontRightWheel: {fileID: 1538434758009770747}
-  backLeftWheel: {fileID: 3109604078916640494}
+  backLeftWheel: {fileID: 2703871601552980208}
   backRightWheel: {fileID: 3109604078916640494}
-  motorTorque: 2200
+  motorTorque: 1400
   brakeTorque: 12000
   maxSteerAngle: 24
   maxSpeedKmh: 85
-  steerSmoothness: 5
+  steerSpeed: 120
   centerOfMass: {fileID: 2933046601177028535}
   downforce: 60
 --- !u!114 &6013205719889161242
@@ -857,7 +889,7 @@ WheelCollider:
     spring: 25000
     damper: 3500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0.1
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1431,7 +1463,7 @@ WheelCollider:
     spring: 25000
     damper: 3500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.15
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0.1
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1705,7 +1737,7 @@ Transform:
   m_GameObject: {fileID: 8244068176665771973}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

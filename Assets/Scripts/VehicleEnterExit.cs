@@ -1,12 +1,16 @@
 using UnityEngine;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
+using StarterAssets;
 
 public class VehicleEnterExit : MonoBehaviour
 {
     [Header("Truck")]
-    [SerializeField] private TruckWheelDrive truckController;
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck or the raycast experiment - and leave the other empty. Both expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [SerializeField] private TruckWheelDrive wheelColliderTruck;
+    [SerializeField] private TruckNewTEST raycastTruck;
     [SerializeField] private GameObject followCameraObject;
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
@@ -18,17 +22,40 @@ public class VehicleEnterExit : MonoBehaviour
     private bool inVehicle;
     private GameObject playerRoot;
 
+    // Cached player components frozen while in the vehicle
+    private CharacterController _cc;
+    private StarterAssets.FirstPersonController _fpc;
+    private StarterAssetsInputs _inputs;
+    private PlayerInput _playerInput;
+
     private void Start()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
+
+        // Unoccupied at scene start - the driving camera has no business being live
+        // until someone actually gets in. ExitVehicle() also turns this off, but that
+        // only covers the enter->exit round trip, not the initial state.
+        if (followCameraObject != null)
+            followCameraObject.SetActive(false);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
     }
 
+    private void SetTruckInputEnabled(bool enabled)
+    {
+        if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
+        if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+
+        // In multiplayer, ignore players we don't own
+        var netObj = other.transform.root.GetComponent<Unity.Netcode.NetworkObject>();
+        if (netObj != null && netObj.IsSpawned && !netObj.IsOwner) return;
+
         playerRoot = other.transform.root.gameObject;
         playerInRange = true;
         if (enterPromptUI != null && !inVehicle)
@@ -55,10 +82,23 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void EnterVehicle()
     {
-        playerRoot.transform.position = driverSeat.position;
-        playerRoot.SetActive(false);
+        // Cache and disable player components instead of deactivating the whole GO.
+        // Deactivating a NetworkObject causes NGO lifecycle conflicts.
+        // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
+        _cc     = playerRoot.GetComponentInChildren<CharacterController>(true);
+        _fpc    = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
+        _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
+        _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
 
-        truckController.SetInputEnabled(true);
+        // Disable FPC first so its Update can't call Move() on a CC we're about to deactivate.
+        if (_fpc != null) _fpc.enabled = false;
+        if (_inputs != null) _inputs.enabled = false;
+        if (_playerInput != null) _playerInput.enabled = false;
+        if (_cc != null) _cc.enabled = false;
+
+        playerRoot.transform.position = driverSeat.position;
+
+        SetTruckInputEnabled(true);
         followCameraObject.SetActive(true);
 
         if (enterPromptUI != null)
@@ -72,11 +112,21 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void ExitVehicle()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
         followCameraObject.SetActive(false);
 
-        playerRoot.transform.position = exitPoint.position;
-        playerRoot.SetActive(true);
+        // Raycast down from above the exit point to place on actual terrain surface.
+        Vector3 spawnPos = exitPoint.position;
+        if (Physics.Raycast(exitPoint.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 15f))
+            spawnPos = hit.point + Vector3.up * 0.1f;
+
+        playerRoot.transform.position = spawnPos;
+        Physics.SyncTransforms();
+
+        if (_cc != null) _cc.enabled = true;
+        if (_fpc != null) _fpc.enabled = true;
+        if (_inputs != null) _inputs.enabled = true;
+        if (_playerInput != null) _playerInput.enabled = true;
 
         inVehicle = false;
         playerInRange = false;

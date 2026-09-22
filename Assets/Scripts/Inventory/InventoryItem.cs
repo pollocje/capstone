@@ -3,7 +3,8 @@ using UnityEngine;
 public enum ItemType
 {
     Droppable,      // e.g. Barrel — left click drops it
-    Binoculars      // left click hold to zoom
+    Binoculars,     // left click hold to zoom
+    Firework        // left click throws a flare; consumed on use
 }
  
 [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]

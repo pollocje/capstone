@@ -112,6 +112,7 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			if (!_controller.enabled) return;
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
@@ -195,7 +196,8 @@ namespace StarterAssets
 			}
 
 			// move the player
-			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			if (_controller.enabled)
+				_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 
 		private void JumpAndGravity()
