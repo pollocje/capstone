@@ -101,6 +101,12 @@ public class Hotbar : MonoBehaviour
         hotbarUI?.Refresh(items, selectedIndex);
     }
 
+    /// <summary>Re-pushes current state to hotbarUI — call after wiring it up post-spawn.</summary>
+    public void RefreshUI()
+    {
+        hotbarUI?.Refresh(items, selectedIndex);
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     void RegisterEquippable(ItemType type, IEquippable equippable)

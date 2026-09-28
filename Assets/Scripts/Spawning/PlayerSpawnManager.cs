@@ -116,6 +116,7 @@ public class PlayerSpawnManager : MonoBehaviour
         if (hotbar == null || hotbar.hotbarUI != null) return;
 
         hotbar.hotbarUI = FindFirstObjectByType<HotbarUI>();
+        hotbar.RefreshUI();
     }
 
     SpawnPoint GetSpawnPoint()

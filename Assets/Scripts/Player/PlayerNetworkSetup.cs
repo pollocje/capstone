@@ -44,6 +44,7 @@ public class PlayerNetworkSetup : NetworkBehaviour
         if (hotbar == null || hotbar.hotbarUI != null) return;
 
         hotbar.hotbarUI = FindFirstObjectByType<HotbarUI>();
+        hotbar.RefreshUI();
     }
 
     System.Collections.IEnumerator EnableCameraNextFrame()
