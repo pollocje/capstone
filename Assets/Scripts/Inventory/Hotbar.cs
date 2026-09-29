@@ -4,6 +4,7 @@ using UnityEngine;
 public class Hotbar : MonoBehaviour
 {
     [Header("Settings")]
+    public KeyCode dropKey = KeyCode.G;
     public int slotCount = 5;
     public float dropDistance = 2f;
     public Transform playerTransform;
@@ -21,6 +22,7 @@ public class Hotbar : MonoBehaviour
     {
         RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
         RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
+        RegisterEquippable(ItemType.Map, GetComponent<MapItem>());
 
         // If not manually assigned, find the spawned player by tag
         if (playerTransform == null)
@@ -39,6 +41,7 @@ public class Hotbar : MonoBehaviour
     {
         HandleNumberKeys();
         HandleUse();
+        HandleDrop();
     }
 
     // ── Input ────────────────────────────────────────────────────────────────
@@ -77,7 +80,17 @@ public class Hotbar : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) equippable.OnUseDown();
         if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
     }
+void HandleDrop()
+{
+    if (!Input.GetKeyDown(dropKey)) return;
 
+    InventoryItem item = GetSelectedItem();
+    if (item == null || item.dropPrefab == null) return;
+    if (item.itemType == ItemType.Droppable) return;  // those drop on left click already
+
+    GetEquippable(item)?.OnUnequip();
+    DropItem();
+}
     // ── Actions ──────────────────────────────────────────────────────────────
 
     void DropItem()
