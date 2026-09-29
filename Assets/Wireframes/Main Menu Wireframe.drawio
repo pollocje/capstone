@@ -1,0 +1,34 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="-uTsmCU8doi8q5ZHltw9">
+    <mxGraphModel dx="2032" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Space for Title" vertex="1">
+          <mxGeometry height="320" width="440" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="80" width="320" x="1080" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="Create Game&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="100" x="1190" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Join Game" vertex="1">
+          <mxGeometry height="80" width="320" x="1080" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Space for Truck/Backdrop" vertex="1">
+          <mxGeometry height="440" width="800" x="40" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="80" width="320" x="1080" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;div&gt;Settings&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="70" x="1205" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="UHzp-Yu9gFCCiHg7b7zP-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Quit Game" vertex="1">
+          <mxGeometry height="80" width="320" x="1080" y="640" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
