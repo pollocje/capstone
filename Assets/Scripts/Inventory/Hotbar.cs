@@ -11,8 +11,8 @@ public class Hotbar : MonoBehaviour
     [Header("UI")]
     public HotbarUI hotbarUI;
 
-    [Header("Items")]
-    public InventoryItem[] items;
+    // Always starts empty (see Start) — items are picked up in-game, e.g. from an ItemDispenser
+    [HideInInspector] public InventoryItem[] items;
 
     private int selectedIndex = 0;
     private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
@@ -29,8 +29,8 @@ public class Hotbar : MonoBehaviour
             if (player != null) playerTransform = player.transform;
         }
 
-        if (items.Length > slotCount)
-            System.Array.Resize(ref items, slotCount);
+        // Every player spawns with an empty hotbar, one slot per slotCount
+        items = new InventoryItem[slotCount];
 
         hotbarUI?.Refresh(items, selectedIndex);
     }
@@ -101,6 +101,12 @@ public class Hotbar : MonoBehaviour
         hotbarUI?.Refresh(items, selectedIndex);
     }
 
+    /// <summary>Re-pushes current state to hotbarUI — call after wiring it up post-spawn.</summary>
+    public void RefreshUI()
+    {
+        hotbarUI?.Refresh(items, selectedIndex);
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     void RegisterEquippable(ItemType type, IEquippable equippable)
@@ -121,6 +127,11 @@ public class Hotbar : MonoBehaviour
         if (selectedIndex < 0 || selectedIndex >= items.Length)
             return null;
         return items[selectedIndex];
+    }
+
+    public bool HasFreeSlot()
+    {
+        return System.Array.IndexOf(items, null) >= 0;
     }
 
     public bool AddItem(InventoryItem item)
