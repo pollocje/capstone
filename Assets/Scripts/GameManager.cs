@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        spawnManager?.SpawnPlayer();
+        // Online: the host spawns networked players automatically (PlayerSpawnManager).
+        // Offline: spawn a local player like before.
+        if (spawnManager != null && !PlayerSpawnManager.IsNetworked)
+            spawnManager.SpawnPlayer();
     }
 }

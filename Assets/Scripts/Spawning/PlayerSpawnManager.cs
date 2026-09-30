@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
@@ -20,15 +21,70 @@ public class PlayerSpawnManager : MonoBehaviour
     private readonly HashSet<ulong> _spawnedClients = new();
     private int _roundRobinIndex = 0;
 
+    /// <summary>True when we're in an online session (host or client).</summary>
+    public static bool IsNetworked =>
+        NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
+
     void Awake()
     {
         if (spawnPoints.Count == 0)
             spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None).ToList();
     }
 
+    // ---------------------------------------------------------------------
+    // Multiplayer: the HOST spawns a networked player for every client once
+    // they've all finished loading this scene. Clients do nothing here —
+    // their player arrives over the network. - sebastion
+    // ---------------------------------------------------------------------
+
+    void OnEnable()
+    {
+        if (!IsNetworked || !NetworkManager.Singleton.IsServer) return;
+
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoadCompleted;
+        NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnLateJoinerSynced;
+    }
+
+    void OnDisable()
+    {
+        if (NetworkManager.Singleton == null || NetworkManager.Singleton.SceneManager == null) return;
+
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
+        NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnLateJoinerSynced;
+    }
+
+    // Fires on the host after everyone (host + clients) has loaded the scene.
+    void OnSceneLoadCompleted(string sceneName, LoadSceneMode mode,
+                              List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        if (sceneName != gameObject.scene.name) return;
+
+        foreach (ulong clientId in clientsCompleted)
+            SpawnNetworkedPlayer(clientId);
+
+        if (clientsTimedOut.Count > 0)
+            Debug.LogWarning($"PlayerSpawnManager: {clientsTimedOut.Count} client(s) timed out loading {sceneName}.");
+    }
+
+    // Fires on the host when someone joins after the game already started.
+    void OnLateJoinerSynced(ulong clientId)
+    {
+        SpawnNetworkedPlayer(clientId);
+    }
+
+    // ---------------------------------------------------------------------
+
     // Singleplayer: spawns locally and wires up the camera.
+    // Do NOT call this in an online session — other players won't see this player. -  Sebastion
     public GameObject SpawnPlayer()
     {
+        if (IsNetworked)
+        {
+            Debug.LogWarning("PlayerSpawnManager: SpawnPlayer() called during an online session — ignored. " +
+                             "Networked players are spawned automatically by the host.");
+            return null;
+        }
+
         if (playerPrefab == null)
         {
             Debug.LogError("PlayerSpawnManager: No player prefab assigned.");
@@ -49,11 +105,13 @@ public class PlayerSpawnManager : MonoBehaviour
         return player;
     }
 
-    // Multiplayer: spawns as a networked player object owned by clientId.
+    // Multiplayer: spawns as a networked player object owned by clientId. Host only.
     // Camera hookup is handled by PlayerNetworkSetup on the player prefab.
     public void SpawnNetworkedPlayer(ulong clientId)
     {
+        if (!NetworkManager.Singleton.IsServer) return;
         if (!_spawnedClients.Add(clientId)) return; // already spawned for this client
+
         if (playerPrefab == null)
         {
             Debug.LogError("PlayerSpawnManager: No player prefab assigned.");
@@ -78,7 +136,8 @@ public class PlayerSpawnManager : MonoBehaviour
             return;
         }
 
-        networkObject.SpawnAsPlayerObject(clientId);
+        networkObject.SpawnAsPlayerObject(clientId, destroyWithScene: true);
+        Debug.Log($"PlayerSpawnManager: Spawned networked player for client {clientId}.");
     }
 
     // Call between rounds/sessions to allow a new group to be selected.
@@ -153,10 +212,10 @@ public class PlayerSpawnManager : MonoBehaviour
 
         return strategy switch
         {
-            SpawnStrategy.Random     => candidates[Random.Range(0, candidates.Count)],
-            SpawnStrategy.First      => candidates[0],
+            SpawnStrategy.Random => candidates[Random.Range(0, candidates.Count)],
+            SpawnStrategy.First => candidates[0],
             SpawnStrategy.RoundRobin => RoundRobin(candidates),
-            _                        => candidates[0],
+            _ => candidates[0],
         };
     }
 
