@@ -61,11 +61,17 @@ public class SessionManager : MonoBehaviour
         return currentSession.Code;
     }
 
-    public async Task JoinSession(string Code) { 
-    
+    public async Task JoinSession(string Code)
+    {
+
         await WaitUntilReady();
-        currentSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(Code);
-    
+
+        // Strip hidden characters/spaces and normalize case.
+        string cleanCode = new string(System.Linq.Enumerable.ToArray(
+            System.Linq.Enumerable.Where(Code ?? "", char.IsLetterOrDigit))).ToUpperInvariant();
+
+        currentSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(cleanCode);
+
     }
 
     public async void LeaveSession() {
