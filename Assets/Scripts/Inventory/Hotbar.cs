@@ -17,12 +17,14 @@ public class Hotbar : MonoBehaviour
 
     private int selectedIndex = 0;
     private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
+    private PlayerGrabController _grab;
 
     void Start()
     {
         RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
         RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
         RegisterEquippable(ItemType.Map, GetComponent<MapItem>());
+        _grab = GetComponent<PlayerGrabController>();
 
         // If not manually assigned, find the spawned player by tag
         if (playerTransform == null)
@@ -64,6 +66,9 @@ public class Hotbar : MonoBehaviour
 
     void HandleUse()
     {
+        // While physically carrying something, left click belongs to the carried item.
+        if (_grab != null && _grab.Held != null) return;
+
         InventoryItem item = GetSelectedItem();
         if (item == null) return;
 
