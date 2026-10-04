@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 65652539fbddfca4bafab0e5b461c379
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 370650
+  packageName: URP Dynamic Weather System
+  packageVersion: 1.0
+  assetPath: Assets/DynamicWeatherSystem/Documentation/API_Reference.md
+  uploadId: 891376

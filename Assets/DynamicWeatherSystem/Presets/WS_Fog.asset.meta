@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cd7c28e3d14de144faeac607d8ce3b65
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 370650
+  packageName: URP Dynamic Weather System
+  packageVersion: 1.0
+  assetPath: Assets/DynamicWeatherSystem/Presets/WS_Fog.asset
+  uploadId: 891376
