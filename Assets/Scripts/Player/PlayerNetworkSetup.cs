@@ -70,5 +70,8 @@ public class PlayerNetworkSetup : NetworkBehaviour
 
         var inputs = GetComponentInChildren<StarterAssetsInputs>();
         if (inputs != null) inputs.enabled = enabled;
+
+        var cc = GetComponentInChildren<CharacterController>();
+        if (cc != null) cc.enabled = enabled;
     }
 }

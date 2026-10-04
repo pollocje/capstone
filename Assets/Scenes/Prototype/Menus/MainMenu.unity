@@ -2427,13 +2427,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1284247476}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: -0.1242389, y: 0.8834197, z: 0.40394413, w: 0.2023943}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: -49.818, y: 156.505, z: -4.979}
 --- !u!1 &1313498486
 GameObject:
   m_ObjectHideFlags: 0
@@ -2445,7 +2445,7 @@ GameObject:
   - component: {fileID: 1313498489}
   - component: {fileID: 1313498487}
   m_Layer: 0
-  m_Name: SessionManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2575,10 +2575,10 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
-    Address: 127.0.0.1
+    Address: 0.0.0.0
     Port: 7777
     WebSocketPath: /
-    ServerListenAddress: 127.0.0.1
+    ServerListenAddress: 0.0.0.0
     ClientBindPort: 0
   DebugSimulator:
     PacketDelayMS: 0

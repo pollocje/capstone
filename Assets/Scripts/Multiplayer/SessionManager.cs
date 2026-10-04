@@ -15,23 +15,18 @@ public class SessionManager : MonoBehaviour
     private bool isReady = false;
 
 
-    async void Start()
-    {
-        try
-        {
-            await UnityServices.InitializeAsync();
+    async void Start() {
 
-            if (!AuthenticationService.Instance.IsSignedIn)
-            {
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            }
+        await UnityServices.InitializeAsync();
 
-            isReady = true;
-        }
-        catch (System.Exception e)
+        if (!AuthenticationService.Instance.IsSignedIn)
         {
-            Debug.LogError("SessionManager failed to initialize: " + e.Message);
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            Debug.Log("Signed in anonymously with Player ID: " + AuthenticationService.Instance.PlayerId);
         }
+
+        isReady = true;
+
     }
 
     private async Task WaitUntilReady() {
@@ -61,14 +56,22 @@ public class SessionManager : MonoBehaviour
         var options = new SessionOptions { MaxPlayers = maxPlayers }.WithRelayNetwork();
 
         currentSession = await MultiplayerService.Instance.CreateSessionAsync(options);
+
+        Debug.Log("Session Code:" + currentSession.Code);
         return currentSession.Code;
     }
 
-    public async Task JoinSession(string Code) { 
-    
+    public async Task JoinSession(string Code)
+    {
+
         await WaitUntilReady();
-        currentSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(Code);
-    
+
+        // Strip hidden characters/spaces and normalize case.
+        string cleanCode = new string(System.Linq.Enumerable.ToArray(
+            System.Linq.Enumerable.Where(Code ?? "", char.IsLetterOrDigit))).ToUpperInvariant();
+
+        currentSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(cleanCode);
+
     }
 
     public async void LeaveSession() {

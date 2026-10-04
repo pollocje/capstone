@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Services.Multiplayer;
 using Unity.Netcode;
 using System.Collections;
+
 public class LobbyMenu : MonoBehaviour
 {
     public TextMeshProUGUI lobbyCodeText;
@@ -15,78 +16,82 @@ public class LobbyMenu : MonoBehaviour
 
     public GameObject startGameButton;
 
+    [Tooltip("How long to wait for the join to finish before giving up.")]
+    public float sessionWaitTimeout = 10f;
+
     private TextMeshProUGUI[] teammateTexts;
     private ISession session;
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
         teammateTexts = new TextMeshProUGUI[] { teammate1, teammate2, teammate3, teammate4 };
-        session = SessionManager.Instance.GetSession();
 
-        if (session == null) { 
-            
-            Debug.LogError("No session found. Returning to main menu.");
-            return;
+        // Hide host-only controls until we know who we are.
+        startGameButton.SetActive(false);
+        lobbyCodeText.text = "Code: ...";
+
+        StartCoroutine(WaitForSessionThenSetup());
+    }
+
+    IEnumerator WaitForSessionThenSetup()
+    {
+        // Clients can arrive here (via the host's scene sync) slightly before
+        // JoinSessionByCodeAsync has finished, so wait for the session to be set.
+        float timer = sessionWaitTimeout;
+        while (SessionManager.Instance.GetSession() == null && timer > 0f)
+        {
+            timer -= Time.unscaledDeltaTime;
+            yield return null;
         }
 
-        lobbyCodeText.text = "Code: " + session.Code; ;
+        session = SessionManager.Instance.GetSession();
 
-        startGameButton.SetActive(NetworkManager.Singleton.IsHost);
+        if (session == null)
+        {
+            Debug.LogError("No session found. Returning to main menu.");
+            yield break;
+        }
+
+        lobbyCodeText.text = "Code: " + session.Code;
+        startGameButton.SetActive(NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost);
 
         StartCoroutine(RefreshPlayerList());
     }
 
     IEnumerator RefreshPlayerList()
     {
-
-        while (true) {
-
+        while (true)
+        {
             UpdatePlayerText();
             yield return new WaitForSeconds(1f); // Refresh every second
-
         }
-
-
     }
 
     void UpdatePlayerText()
     {
         foreach (var slot in teammateTexts)
-            slot.text = "Waiting for player...";
-
-        try
         {
-            // Snapshot IDs first to avoid iterating a collection modified on a background thread
-            var playerIds = new System.Collections.Generic.List<string>();
-            foreach (var player in session.Players)
-                playerIds.Add(player.Id);
+            slot.text = "Waiting for player...";
+        }
 
-            for (int i = 0; i < playerIds.Count && i < teammateTexts.Length; i++)
+        int i = 0;
+        foreach (var player in session.Players)
+        {
+            if (i < teammateTexts.Length)
             {
-                var id = playerIds[i];
-                teammateTexts[i].text = id.Length >= 5 ? id.Substring(0, 5) : id;
+                teammateTexts[i].text = player.Id.Substring(0, 5);
+                i++;
             }
         }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning("UpdatePlayerText error: " + e.Message);
-        }
     }
+
     public void StartGame()
     {
-
-        if (NetworkManager.Singleton.IsHost) { 
-        
-          NetworkManager.Singleton.SceneManager.LoadScene("Prototype_World", LoadSceneMode.Single);
-
+        if (NetworkManager.Singleton.IsHost)
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("Prototype_World", LoadSceneMode.Single);
         }
-
-
     }
-
 
     public void ExitLobby()
     {
@@ -94,5 +99,4 @@ public class LobbyMenu : MonoBehaviour
         SessionManager.Instance.LeaveSession();
         SceneManager.LoadScene("MainMenu");
     }
-
 }

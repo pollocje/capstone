@@ -4,8 +4,9 @@ using System.Collections;
 using UnityEngine.InputSystem;
 #endif
 using StarterAssets;
+using Unity.Netcode; 
 
-public class VehicleEnterExit : MonoBehaviour
+public class VehicleEnterExit : NetworkBehaviour
 {
     [Header("Truck")]
     [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck or the raycast experiment - and leave the other empty. Both expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
@@ -27,6 +28,9 @@ public class VehicleEnterExit : MonoBehaviour
     private StarterAssets.FirstPersonController _fpc;
     private StarterAssetsInputs _inputs;
     private PlayerInput _playerInput;
+
+    // Online: True while someone is driving. Only the host changes it; everyone can read it.
+    private readonly NetworkVariable<bool> occupied = new NetworkVariable<bool>(false);
 
     private void Start()
     {
@@ -72,6 +76,11 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void Update()
     {
+        // Online: Keep the driver's body in the seat so other players see them ride along.
+        // (The capsule is what's network-synced, so move it rather than the root.)
+        if (inVehicle && _cc != null)
+            _cc.transform.SetPositionAndRotation(driverSeat.position, driverSeat.rotation);
+
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
         if (!inVehicle && playerInRange)
@@ -82,11 +91,19 @@ public class VehicleEnterExit : MonoBehaviour
 
     private void EnterVehicle()
     {
+        // Online: don't enter if someone else is driving, otherwise ask the host for ownership
+        // so this machine's driving is what gets synced to everyone.
+        if (IsSpawned)
+        {
+            if (occupied.Value) return;
+            RequestDriveRpc();
+        }
+
         // Cache and disable player components instead of deactivating the whole GO.
         // Deactivating a NetworkObject causes NGO lifecycle conflicts.
         // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
-        _cc     = playerRoot.GetComponentInChildren<CharacterController>(true);
-        _fpc    = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
+        _cc = playerRoot.GetComponentInChildren<CharacterController>(true);
+        _fpc = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
         _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
         _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
 
@@ -96,7 +113,9 @@ public class VehicleEnterExit : MonoBehaviour
         if (_playerInput != null) _playerInput.enabled = false;
         if (_cc != null) _cc.enabled = false;
 
-        playerRoot.transform.position = driverSeat.position;
+        // Online:Move the capsule (the part that actually moves/syncs), not the root.
+        if (_cc != null) _cc.transform.position = driverSeat.position;
+        else playerRoot.transform.position = driverSeat.position;
 
         SetTruckInputEnabled(true);
         followCameraObject.SetActive(true);
@@ -115,12 +134,17 @@ public class VehicleEnterExit : MonoBehaviour
         SetTruckInputEnabled(false);
         followCameraObject.SetActive(false);
 
+        // [Online: Free the truck for other players.
+        if (IsSpawned) ReleaseDriveRpc();
+
         // Raycast down from above the exit point to place on actual terrain surface.
         Vector3 spawnPos = exitPoint.position;
         if (Physics.Raycast(exitPoint.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 15f))
             spawnPos = hit.point + Vector3.up * 0.1f;
 
-        playerRoot.transform.position = spawnPos;
+        // Online: Move the capsule (the part that actually moves/syncs), not the root.
+        if (_cc != null) _cc.transform.position = spawnPos;
+        else playerRoot.transform.position = spawnPos;
         Physics.SyncTransforms();
 
         if (_cc != null) _cc.enabled = true;
@@ -130,5 +154,22 @@ public class VehicleEnterExit : MonoBehaviour
 
         inVehicle = false;
         playerInRange = false;
+    }
+
+    // ---------------------------------------------------------------------
+    // Online: Runs on the host: hand the truck to whoever asked to drive.
+    // ---------------------------------------------------------------------
+    [Rpc(SendTo.Server)]
+    private void RequestDriveRpc(RpcParams rpcParams = default)
+    {
+        if (occupied.Value) return; // someone got in first
+        occupied.Value = true;
+        NetworkObject.ChangeOwnership(rpcParams.Receive.SenderClientId);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void ReleaseDriveRpc()
+    {
+        occupied.Value = false;
     }
 }
