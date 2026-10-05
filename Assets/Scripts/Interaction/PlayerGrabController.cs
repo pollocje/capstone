@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// REPO-style physical carrying. Interact (E) raycasts from the camera for a Grabbable and
-/// hangs it off a HoldPoint in front of the camera with a ConfigurableJoint, so the item lags,
-/// swings and still collides with the world. Interact again drops it; hold Throw (right mouse)
-/// to charge and release to throw.
-/// Sits alongside Hotbar on the player — it doesn't replace ItemPickup's hotbar pickup.
+/// Interact (E) handler. If the player is looking at (or standing near) an ItemPickup, E puts it
+/// in the hotbar. Otherwise it does REPO-style physical carrying: raycasts from the camera for a
+/// Grabbable and hangs it off a HoldPoint in front of the camera with a ConfigurableJoint, so the
+/// item lags, swings and still collides with the world. Interact again drops it; hold Throw
+/// (right mouse) to charge and release to throw.
 /// </summary>
 public class PlayerGrabController : MonoBehaviour
 {
@@ -25,6 +25,8 @@ public class PlayerGrabController : MonoBehaviour
     [SerializeField] private LayerMask grabMask = ~0;
     [Tooltip("HoldPoint offset from the camera, in camera space.")]
     [SerializeField] private Vector3 holdOffset = new Vector3(0f, -0.2f, 1.5f);
+    [Tooltip("If E isn't aimed at a hotbar pickup, the closest one within this radius of the player is taken.")]
+    [SerializeField] private float pickupRadius = 1.5f;
 
     [Header("Joint — carrying (values are per kg of item mass)")]
     [Tooltip("How hard the item is pulled toward the HoldPoint. Higher = snappier, less lag.")]
@@ -59,6 +61,7 @@ public class PlayerGrabController : MonoBehaviour
 
     private InputAction _interact;
     private InputAction _throw;
+    private Hotbar _hotbar;
 
     private Transform _holdPoint;
     private Rigidbody _holdBody;
@@ -75,6 +78,7 @@ public class PlayerGrabController : MonoBehaviour
     private float _chargeStart;
 
     private readonly RaycastHit[] _hits = new RaycastHit[16];
+    private readonly Collider[] _nearby = new Collider[32];
 
     void Awake()
     {
@@ -88,6 +92,7 @@ public class PlayerGrabController : MonoBehaviour
         if (playerInput == null) playerInput = transform.root.GetComponentInChildren<PlayerInput>(true);
 
         _ownColliders = transform.root.GetComponentsInChildren<Collider>(true);
+        _hotbar = transform.root.GetComponentInChildren<Hotbar>(true);
     }
 
     void Start()
@@ -120,7 +125,7 @@ public class PlayerGrabController : MonoBehaviour
         if (_interact != null && _interact.WasPressedThisFrame())
         {
             if (Held != null) Release();
-            else TryGrab();
+            else TryInteract();
         }
 
         if (Held == null)
@@ -192,7 +197,7 @@ public class PlayerGrabController : MonoBehaviour
         _holdBody.isKinematic = true;
     }
 
-    void TryGrab()
+    void TryInteract()
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         int count = Physics.RaycastNonAlloc(ray, _hits, interactRange, grabMask, QueryTriggerInteraction.Ignore);
@@ -204,10 +209,20 @@ public class PlayerGrabController : MonoBehaviour
             if (_hits[i].collider.transform.IsChildOf(transform.root)) continue;
             if (best == null || _hits[i].distance < best.Value.distance) best = _hits[i];
         }
-        if (best == null) return;
+        // Hotbar items win: looking at one, or else standing near one, puts it in the hotbar.
+        var pickup = best?.collider.GetComponentInParent<ItemPickup>();
+        if (pickup != null)
+        {
+            pickup.TryPickup(_hotbar);
+            return;
+        }
 
-        var grabbable = best.Value.collider.GetComponentInParent<Grabbable>();
-        if (grabbable == null || grabbable.IsHeld) return;
+        var grabbable = best?.collider.GetComponentInParent<Grabbable>();
+        if (grabbable == null || grabbable.IsHeld)
+        {
+            TryPickupNearby();
+            return;
+        }
 
         // NETWORK: this is where to ask the server for ownership of the item's NetworkObject
         // (e.g. a RequestGrabServerRpc that calls ChangeOwnership + sets the holder
@@ -292,6 +307,55 @@ public class PlayerGrabController : MonoBehaviour
         // NETWORK: apply on whichever machine owns the Rigidbody at the time (holder or server).
         float impulse = Mathf.Lerp(minThrowImpulse, maxThrowImpulse, charge);
         rb.AddForce(cameraTransform.forward * impulse, ForceMode.Impulse);
+    }
+
+    /// <summary>Picks up the closest ItemPickup within pickupRadius of the player, if any.</summary>
+    bool TryPickupNearby()
+    {
+        ItemPickup closest = FindNearbyPickup();
+        return closest != null && closest.TryPickup(_hotbar);
+    }
+
+    /// <summary>
+    /// The hotbar item E would pick up right now (aimed at, else nearest in range), or null.
+    /// Used by InteractPrompt to show "Press E".
+    /// </summary>
+    public ItemPickup FindPickupTarget()
+    {
+        if (cameraTransform == null || Held != null) return null;
+
+        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        int count = Physics.RaycastNonAlloc(ray, _hits, interactRange, grabMask, QueryTriggerInteraction.Ignore);
+        RaycastHit? best = null;
+        for (int i = 0; i < count; i++)
+        {
+            if (_hits[i].collider.transform.IsChildOf(transform.root)) continue;
+            if (best == null || _hits[i].distance < best.Value.distance) best = _hits[i];
+        }
+
+        var aimed = best?.collider.GetComponentInParent<ItemPickup>();
+        return aimed != null ? aimed : FindNearbyPickup();
+    }
+
+    ItemPickup FindNearbyPickup()
+    {
+        int count = Physics.OverlapSphereNonAlloc(transform.position, pickupRadius, _nearby, ~0, QueryTriggerInteraction.Collide);
+
+        ItemPickup closest = null;
+        float closestDist = float.MaxValue;
+        for (int i = 0; i < count; i++)
+        {
+            var pickup = _nearby[i].GetComponentInParent<ItemPickup>();
+            if (pickup == null) continue;
+
+            float dist = (_nearby[i].ClosestPoint(transform.position) - transform.position).sqrMagnitude;
+            if (dist < closestDist)
+            {
+                closest = pickup;
+                closestDist = dist;
+            }
+        }
+        return closest;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

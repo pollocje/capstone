@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// Implement on any component of a Grabbable's GameObject to make the held item stop
-/// swinging while some condition is true (e.g. MapGrabbable while the map is being viewed).
+/// swinging while some condition is true (e.g. an item that should hold still while it is being used).
 /// </summary>
 public interface IGrabSwingSuppressor
 {

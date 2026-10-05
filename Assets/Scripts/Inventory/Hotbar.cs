@@ -33,10 +33,13 @@ public class Hotbar : MonoBehaviour
             if (player != null) playerTransform = player.transform;
         }
 
-        if (items.Length > slotCount)
+        // One entry per slot, so slots beyond the starting items exist as empty slots
+        // that pickups can fill (the prefab only lists the starting items).
+        if (items == null || items.Length != slotCount)
             System.Array.Resize(ref items, slotCount);
 
         hotbarUI?.Refresh(items, selectedIndex);
+        GetEquippable(GetSelectedItem())?.OnEquip();
     }
 
     void Update()
@@ -52,15 +55,8 @@ public class Hotbar : MonoBehaviour
     {
         for (int i = 0; i < slotCount && i < 9; i++)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1 + i) && i != selectedIndex)
-            {
-                GetEquippable(GetSelectedItem())?.OnUnequip();
-
-                selectedIndex = i;
-                hotbarUI?.UpdateSelection(selectedIndex);
-
-                GetEquippable(GetSelectedItem())?.OnEquip();
-            }
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                SelectSlot(i);
         }
     }
 
@@ -119,6 +115,19 @@ void HandleDrop()
         hotbarUI?.Refresh(items, selectedIndex);
     }
 
+    /// <summary>Selects a slot (what the number keys do): unequips the old item, equips the new one.</summary>
+    public void SelectSlot(int index)
+    {
+        if (index < 0 || index >= items.Length || index == selectedIndex) return;
+
+        GetEquippable(GetSelectedItem())?.OnUnequip();
+
+        selectedIndex = index;
+        hotbarUI?.UpdateSelection(selectedIndex);
+
+        GetEquippable(GetSelectedItem())?.OnEquip();
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     void RegisterEquippable(ItemType type, IEquippable equippable)
@@ -141,6 +150,7 @@ void HandleDrop()
         return items[selectedIndex];
     }
 
+    /// <summary>Puts the item in the lowest-numbered empty slot. Returns false if the hotbar is full.</summary>
     public bool AddItem(InventoryItem item)
     {
         for (int i = 0; i < items.Length; i++)
@@ -149,9 +159,15 @@ void HandleDrop()
             {
                 items[i] = item;
                 hotbarUI?.Refresh(items, selectedIndex);
+
+                // Landed in the slot already in hand — equip it now, same as pressing its number key.
+                if (i == selectedIndex) GetEquippable(item)?.OnEquip();
                 return true;
             }
         }
         return false;
     }
+
+    /// <summary>Slot index holding this item, or -1.</summary>
+    public int IndexOf(InventoryItem item) => item == null ? -1 : System.Array.IndexOf(items, item);
 }

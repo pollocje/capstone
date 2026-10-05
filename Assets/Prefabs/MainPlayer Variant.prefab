@@ -284,6 +284,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1622628094750875384}
+    - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6946007866939939721}
   m_SourcePrefab: {fileID: 100100000, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
 --- !u!114 &1388518422351299338 stripped
 MonoBehaviour:
@@ -344,6 +347,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   holdOffset: {x: 0, y: -0.2, z: 1.5}
+  pickupRadius: 1.5
   spring: 150
   damper: 12
   maxDistance: 1
@@ -369,8 +373,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapItem
   mapUI: {fileID: 2227832516117759772}
-  mapVisual: {fileID: 0}
-  holdToView: 1
+  heldModel: {fileID: 7251931797159497302, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+  cameraTransform: {fileID: 0}
+  toggleKey: 9
+  holdPosition: {x: 0.22, y: -0.22, z: 0.5}
+  holdEuler: {x: -65, y: 0, z: 0}
+  holdScale: 0.5
+--- !u!114 &6946007866939939721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3653676379582566691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72f4fdca787ab4783abe95ec599aa783, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractPrompt
+  canvas: {fileID: 0}
+  fontSize: 32
+  bottomOffset: 190
 --- !u!1 &6236277211100521691 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
