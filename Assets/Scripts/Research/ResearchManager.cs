@@ -1,5 +1,6 @@
 using Microlight.MicroBar;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>Persistent HUD bar tracking total cloud research progress.</summary>
 public class ResearchManager : MonoBehaviour
@@ -8,6 +9,11 @@ public class ResearchManager : MonoBehaviour
 
     [SerializeField] private MicroBar researchBar;
     [SerializeField] private float maxResearch = 100f;
+
+    [Tooltip("Fires once, the moment the research bar reaches its max value.")]
+    public UnityEvent onResearchComplete;
+
+    private bool _completed;
 
     void Awake()
     {
@@ -36,5 +42,11 @@ public class ResearchManager : MonoBehaviour
         if (researchBar == null) return;
 
         researchBar.UpdateBar(researchBar.CurrentValue + amount, UpdateAnim.Heal);
+
+        if (!_completed && researchBar.CurrentValue >= researchBar.MaxValue)
+        {
+            _completed = true;
+            onResearchComplete?.Invoke();
+        }
     }
 }
