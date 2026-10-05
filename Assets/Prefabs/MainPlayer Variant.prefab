@@ -109,6 +109,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6384675416207076998}
+    - targetCorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 137500103747622479}
     - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 471203614894031976}
@@ -284,3 +287,21 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &137500103747622479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236277211100521691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e90977e06f7813243b18406129167340, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerModelSelector
+  ShowTopMostFoldoutHeaderGroup: 1
+  models:
+  - {fileID: 919132149155446097, guid: 3b291ba28f2786e4494faaaca63ac515, type: 3}
+  - {fileID: 919132149155446097, guid: cb1cc3fbf85aa9840b144deb424a21dd, type: 3}
+  - {fileID: 919132149155446097, guid: 9af5fb8bdc5f02f40ba36b07731f64e6, type: 3}
+  - {fileID: 919132149155446097, guid: 44f31f01537bb754a88a19339c25cc2a, type: 3}
