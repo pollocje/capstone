@@ -1,5 +1,7 @@
 ﻿<Solution>
+  <Project Path="DynamicWeatherSystem.Runtime.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
-  <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="DynamicWeatherSystem.Editor.csproj" />
 </Solution>

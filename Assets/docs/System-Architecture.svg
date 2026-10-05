@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1056 816" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1056" height="816" fill="#ffffff"/>
+
+  <!-- ============ ROW 1 outer groups ============ -->
+  <rect x="40" y="40" width="308" height="200" rx="10" fill="#d6f5e9" stroke="#3fae87" stroke-width="1.5"/>
+  <text x="194" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#1f5c4a">Unity Cloud Services (external)</text>
+
+  <rect x="372" y="40" width="308" height="200" rx="10" fill="#ffe9d1" stroke="#e08a3c" stroke-width="1.5"/>
+  <text x="526" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#7a4413">Bootstrap</text>
+
+  <rect x="704" y="40" width="308" height="200" rx="10" fill="#d7f3fb" stroke="#3fa9c9" stroke-width="1.5"/>
+  <text x="858" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#155a70">Spawning</text>
+
+  <!-- Row1 inner boxes -->
+  <rect x="60" y="75" width="268" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="194" y="107" text-anchor="middle" font-size="14" fill="#1f2937">Unity Authentication</text>
+
+  <rect x="60" y="150" width="268" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="194" y="173" text-anchor="middle" font-size="14" fill="#1f2937">Multiplayer Services</text>
+  <text x="194" y="190" text-anchor="middle" font-size="14" fill="#1f2937">/ Relay</text>
+
+  <rect x="412" y="115" width="228" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="526" y="147" text-anchor="middle" font-size="14" fill="#1f2937">SessionManager</text>
+
+  <rect x="724" y="70" width="268" height="50" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="858" y="100" text-anchor="middle" font-size="14" fill="#1f2937">PlayerSpawnManager</text>
+
+  <rect x="724" y="150" width="268" height="50" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="858" y="180" text-anchor="middle" font-size="14" fill="#1f2937">SpawnPoint</text>
+
+  <!-- uses: PlayerSpawnManager -> SpawnPoint -->
+  <path d="M858,120 L858,150" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="880" y="139" font-size="11" fill="#444">uses</text>
+
+  <!-- Row1 horizontal arrows -->
+  <path d="M348,140 L372,140" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="360" y="130" text-anchor="middle" font-size="11" fill="#333">Auth + Relay</text>
+
+  <path d="M680,140 L704,140" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="692" y="130" text-anchor="middle" font-size="11" fill="#333">session ready</text>
+
+  <!-- ============ Cross-row connector: Spawning -> Player ============ -->
+  <path d="M858,240 L858,250 L194,250 L194,280" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <rect x="386" y="240" width="240" height="18" fill="#ffffff" opacity="0.9"/>
+  <text x="506" y="253" text-anchor="middle" font-size="12" fill="#333">SpawnAsPlayerObject(clientId)</text>
+
+  <!-- ============ ROW 2 outer groups ============ -->
+  <rect x="40" y="280" width="308" height="460" rx="10" fill="#e6e0fb" stroke="#8a73d1" stroke-width="1.5"/>
+  <text x="194" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#4a3a80">Player (per-client)</text>
+
+  <rect x="372" y="280" width="308" height="460" rx="10" fill="#fbdada" stroke="#d1615e" stroke-width="1.5"/>
+  <text x="526" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#7a2b28">Inventory</text>
+
+  <rect x="704" y="280" width="308" height="460" rx="10" fill="#fbf3ce" stroke="#cbb23f" stroke-width="1.5"/>
+  <text x="858" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#6b5b1a">Research (client-only)</text>
+
+  <!-- Player inner boxes -->
+  <rect x="60" y="310" width="268" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="194" y="341" text-anchor="middle" font-size="14" fill="#1f2937">PlayerNetworkSetup</text>
+  <text x="194" y="358" text-anchor="middle" font-size="11" fill="#555">NetworkBehaviour</text>
+
+  <rect x="60" y="410" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="194" y="445" text-anchor="middle" font-size="14" fill="#1f2937">ClientNetworkTransform</text>
+
+  <rect x="60" y="500" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="194" y="535" text-anchor="middle" font-size="14" fill="#1f2937">PlayerModelSwapper</text>
+
+  <!-- Inventory inner boxes -->
+  <rect x="392" y="310" width="268" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="526" y="341" text-anchor="middle" font-size="14" fill="#1f2937">ItemDispenser</text>
+  <text x="526" y="358" text-anchor="middle" font-size="11" fill="#555">NetworkBehaviour</text>
+
+  <rect x="392" y="440" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="526" y="475" text-anchor="middle" font-size="14" fill="#1f2937">Hotbar</text>
+
+  <rect x="392" y="570" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="526" y="605" text-anchor="middle" font-size="14" fill="#1f2937">HotbarUI / SlotUI</text>
+
+  <path d="M526,380 L526,440" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <rect x="446" y="400" width="160" height="16" fill="#ffffff" opacity="0.9"/>
+  <text x="526" y="412" text-anchor="middle" font-size="11" fill="#333">GiveItemRpc / DenyItemRpc</text>
+
+  <path d="M526,500 L526,570" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <!-- Research inner boxes -->
+  <rect x="744" y="310" width="228" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="858" y="350" text-anchor="middle" font-size="14" fill="#1f2937">BinocularScanner</text>
+
+  <rect x="724" y="440" width="120" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="784" y="475" text-anchor="middle" font-size="14" fill="#1f2937">Scannable</text>
+
+  <rect x="864" y="440" width="120" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="924" y="475" text-anchor="middle" font-size="11.5" fill="#1f2937">ResearchManager</text>
+
+  <path d="M820,380 L820,410 L784,410 L784,440" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <path d="M896,380 L896,410 L924,410 L924,440" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <!-- ============ Row2 cross-column arrows from PlayerNetworkSetup ============ -->
+  <!-- -> ItemDispenser: RequestItemRpc -->
+  <path d="M328,345 L392,345" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="360" y="335" text-anchor="middle" font-size="10.5" fill="#333">RequestItemRpc</text>
+
+  <!-- -> Hotbar: HookUpHotbar() -->
+  <path d="M328,365 L352,365 L352,470 L392,470" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="356" y="420" font-size="10.5" fill="#333" transform="rotate(90 356 420)">HookUpHotbar()</text>
+
+  <!-- -> BinocularScanner: uses (dotted, routed in the gap above row 2, below the row titles) -->
+  <path d="M194,280 L194,270 L858,270 L858,280" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <rect x="480" y="262" width="36" height="16" fill="#ffffff" opacity="0.95"/>
+  <text x="498" y="274" text-anchor="middle" font-size="11" fill="#333">uses</text>
+
+  <!-- ============ Legend ============ -->
+  <g transform="translate(40,760)">
+    <line x1="0" y1="4" x2="26" y2="4" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <text x="32" y="9" font-size="11" fill="#333">networked call (RPC / spawn)</text>
+    <line x1="260" y1="4" x2="286" y2="4" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+    <text x="292" y="9" font-size="11" fill="#333">local reference / dependency</text>
+    <rect x="560" y="-6" width="14" height="14" fill="#fbdada" stroke="#d1615e"/>
+    <text x="580" y="5" font-size="11" fill="#333">server-authoritative</text>
+    <rect x="760" y="-6" width="14" height="14" fill="#e6e0fb" stroke="#8a73d1"/>
+    <text x="780" y="5" font-size="11" fill="#333">client-local</text>
+  </g>
+</svg>

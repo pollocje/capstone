@@ -1,0 +1,22 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="lFSy6HT7t6mhGjk_WTkS">
+    <mxGraphModel dx="2032" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="SZIj88rBy0-vuYhZMHVI-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Exit" vertex="1">
+          <mxGeometry height="80" width="160" x="160" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="SZIj88rBy0-vuYhZMHVI-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Code Entry Feld&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="740" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="SZIj88rBy0-vuYhZMHVI-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="Enter code:&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="90" x="610" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="SZIj88rBy0-vuYhZMHVI-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;Submit&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="740" y="520" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

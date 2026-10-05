@@ -44,6 +44,7 @@ public class PlayerNetworkSetup : NetworkBehaviour
         if (hotbar == null || hotbar.hotbarUI != null) return;
 
         hotbar.hotbarUI = FindFirstObjectByType<HotbarUI>();
+        hotbar.RefreshUI();
     }
 
     System.Collections.IEnumerator EnableCameraNextFrame()
@@ -69,5 +70,8 @@ public class PlayerNetworkSetup : NetworkBehaviour
 
         var inputs = GetComponentInChildren<StarterAssetsInputs>();
         if (inputs != null) inputs.enabled = enabled;
+
+        var cc = GetComponentInChildren<CharacterController>();
+        if (cc != null) cc.enabled = enabled;
     }
 }

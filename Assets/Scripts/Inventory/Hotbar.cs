@@ -12,8 +12,8 @@ public class Hotbar : MonoBehaviour
     [Header("UI")]
     public HotbarUI hotbarUI;
 
-    [Header("Items")]
-    public InventoryItem[] items;
+    // Always starts empty (see Start) — items are picked up in-game, e.g. from an ItemDispenser
+    [HideInInspector] public InventoryItem[] items;
 
     private int selectedIndex = 0;
     private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
@@ -33,10 +33,8 @@ public class Hotbar : MonoBehaviour
             if (player != null) playerTransform = player.transform;
         }
 
-        // One entry per slot, so slots beyond the starting items exist as empty slots
-        // that pickups can fill (the prefab only lists the starting items).
-        if (items == null || items.Length != slotCount)
-            System.Array.Resize(ref items, slotCount);
+        // Every player spawns with an empty hotbar, one slot per slotCount
+        items = new InventoryItem[slotCount];
 
         hotbarUI?.Refresh(items, selectedIndex);
         GetEquippable(GetSelectedItem())?.OnEquip();
@@ -81,17 +79,19 @@ public class Hotbar : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) equippable.OnUseDown();
         if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
     }
-void HandleDrop()
-{
-    if (!Input.GetKeyDown(dropKey)) return;
 
-    InventoryItem item = GetSelectedItem();
-    if (item == null || item.dropPrefab == null) return;
-    if (item.itemType == ItemType.Droppable) return;  // those drop on left click already
+    void HandleDrop()
+    {
+        if (!Input.GetKeyDown(dropKey)) return;
 
-    GetEquippable(item)?.OnUnequip();
-    DropItem();
-}
+        InventoryItem item = GetSelectedItem();
+        if (item == null || item.dropPrefab == null) return;
+        if (item.itemType == ItemType.Droppable) return;  // those drop on left click already
+
+        GetEquippable(item)?.OnUnequip();
+        DropItem();
+    }
+
     // ── Actions ──────────────────────────────────────────────────────────────
 
     void DropItem()
@@ -128,6 +128,12 @@ void HandleDrop()
         GetEquippable(GetSelectedItem())?.OnEquip();
     }
 
+    /// <summary>Re-pushes current state to hotbarUI — call after wiring it up post-spawn.</summary>
+    public void RefreshUI()
+    {
+        hotbarUI?.Refresh(items, selectedIndex);
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     void RegisterEquippable(ItemType type, IEquippable equippable)
@@ -148,6 +154,11 @@ void HandleDrop()
         if (selectedIndex < 0 || selectedIndex >= items.Length)
             return null;
         return items[selectedIndex];
+    }
+
+    public bool HasFreeSlot()
+    {
+        return System.Array.IndexOf(items, null) >= 0;
     }
 
     /// <summary>Puts the item in the lowest-numbered empty slot. Returns false if the hotbar is full.</summary>
