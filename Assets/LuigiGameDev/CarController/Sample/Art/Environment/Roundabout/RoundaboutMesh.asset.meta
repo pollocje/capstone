@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6d75faef00895594a9b42feef996b35f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Roundabout/RoundaboutMesh.asset
+  uploadId: 1010126

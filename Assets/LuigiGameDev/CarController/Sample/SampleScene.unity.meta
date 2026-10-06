@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 412fc420f9a792245b85b5f5332f9750
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/SampleScene.unity
+  uploadId: 1010126

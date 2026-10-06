@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 24c49764d0039754eb3f2d0e730a1916
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/Vehicles/SchoolBusMesh.prefab
+  uploadId: 1010126

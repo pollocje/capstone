@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 6a76073bd0f1fdd46ba09ed87aa8e287
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Scripts/BallHitSound.cs
+  uploadId: 1010126

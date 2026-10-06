@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 9575418ea1c41744fb920e333a0ca45e
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Scripts/View/Visual/CarBrakeLightsVisual.cs
+  uploadId: 1010126

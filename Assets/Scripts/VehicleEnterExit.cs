@@ -9,9 +9,10 @@ using Unity.Netcode;
 public class VehicleEnterExit : NetworkBehaviour
 {
     [Header("Truck")]
-    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck or the raycast experiment - and leave the other empty. Both expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck, the raycast experiment, or the LuigiGameDev Car Controller - and leave the others empty. All three expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
     [SerializeField] private TruckWheelDrive wheelColliderTruck;
     [SerializeField] private TruckNewTEST raycastTruck;
+    [SerializeField] private LuigiCarDriveBridge luigiCarTruck;
     [SerializeField] private GameObject followCameraObject;
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
@@ -50,6 +51,7 @@ public class VehicleEnterExit : NetworkBehaviour
     {
         if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
         if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
+        if (luigiCarTruck != null) luigiCarTruck.SetInputEnabled(enabled);
     }
 
     private void OnTriggerEnter(Collider other)

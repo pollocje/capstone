@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 044ad299959e62648b851ddeeec1b77d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Cone/ConeMaterial.mat
+  uploadId: 1010126

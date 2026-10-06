@@ -454,8 +454,8 @@ GameObject:
   - component: {fileID: 6154466878306387134}
   - component: {fileID: 2260390780057353642}
   - component: {fileID: 2841424872014896506}
-  - component: {fileID: 6013205719889161242}
   - component: {fileID: 7491145656114059241}
+  - component: {fileID: 6013205719889161242}
   - component: {fileID: 2085650846117974833}
   - component: {fileID: 9207439639549017042}
   - component: {fileID: 8292217413816325421}
@@ -489,7 +489,6 @@ Transform:
   - {fileID: 910563179736835974}
   - {fileID: 2605171035413938644}
   - {fileID: 441702109478782998}
-  - {fileID: 1749497328117751792}
   - {fileID: 438991789651910350}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -541,25 +540,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.017795, y: 1.5, z: 6.73363}
   m_Center: {x: -0.04309106, y: 0.79999995, z: 0.027993083}
---- !u!114 &6013205719889161242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4163358734833904195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 495c2d5367d9b4fe3a3a2307fc1c9318, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VehicleEnterExit
-  ShowTopMostFoldoutHeaderGroup: 1
-  wheelColliderTruck: {fileID: 0}
-  raycastTruck: {fileID: 9207439639549017042}
-  followCameraObject: {fileID: 3498299886586562869}
-  driverSeat: {fileID: 910563179736835974}
-  exitPoint: {fileID: 2605171035413938644}
-  enterPromptUI: {fileID: 0}
 --- !u!114 &7491145656114059241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -585,6 +565,25 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &6013205719889161242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4163358734833904195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 495c2d5367d9b4fe3a3a2307fc1c9318, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleEnterExit
+  ShowTopMostFoldoutHeaderGroup: 1
+  wheelColliderTruck: {fileID: 0}
+  raycastTruck: {fileID: 9207439639549017042}
+  followCameraObject: {fileID: 3498299886586562869}
+  driverSeat: {fileID: 910563179736835974}
+  exitPoint: {fileID: 2605171035413938644}
+  enterPromptUI: {fileID: 0}
 --- !u!114 &2085650846117974833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -645,6 +644,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   showDebugOverlay: 1
   drawWheelRays: 1
+  enableSuspension: 1
+  enableSteering: 1
+  enableDrive: 1
+  enableGrip: 1
+  enableAntiRoll: 1
+  enableRollStabilization: 1
+  enableYawRollDamping: 1
+  enableParkingBrake: 1
   frontLeft:
     rayOrigin: {fileID: 1252912475902597690}
     visual: {fileID: 8687769045504017402}
@@ -654,12 +661,19 @@ MonoBehaviour:
     previousSuspensionOffset: 0
     springLength: 0
     grounded: 0
+    wasGrounded: 0
     contactPoint: {x: 0, y: 0, z: 0}
     currentSteerAngle: 0
     spinAngle: 0
+    wheelForward: {x: 0, y: 0, z: 0}
+    wheelRight: {x: 0, y: 0, z: 0}
+    forwardSpeed: 0
+    lateralSpeed: 0
+    normalLoad: 0
     debugSuspensionForce: 0
     debugGripForce: 0
     debugLateralSpeed: 0
+    debugSlipAngle: 0
   frontRight:
     rayOrigin: {fileID: 1235695013477328597}
     visual: {fileID: 1538434758009770747}
@@ -669,12 +683,19 @@ MonoBehaviour:
     previousSuspensionOffset: 0
     springLength: 0
     grounded: 0
+    wasGrounded: 0
     contactPoint: {x: 0, y: 0, z: 0}
     currentSteerAngle: 0
     spinAngle: 0
+    wheelForward: {x: 0, y: 0, z: 0}
+    wheelRight: {x: 0, y: 0, z: 0}
+    forwardSpeed: 0
+    lateralSpeed: 0
+    normalLoad: 0
     debugSuspensionForce: 0
     debugGripForce: 0
     debugLateralSpeed: 0
+    debugSlipAngle: 0
   backLeft:
     rayOrigin: {fileID: 6764224328308453062}
     visual: {fileID: 2703871601552980208}
@@ -684,12 +705,19 @@ MonoBehaviour:
     previousSuspensionOffset: 0
     springLength: 0
     grounded: 0
+    wasGrounded: 0
     contactPoint: {x: 0, y: 0, z: 0}
     currentSteerAngle: 0
     spinAngle: 0
+    wheelForward: {x: 0, y: 0, z: 0}
+    wheelRight: {x: 0, y: 0, z: 0}
+    forwardSpeed: 0
+    lateralSpeed: 0
+    normalLoad: 0
     debugSuspensionForce: 0
     debugGripForce: 0
     debugLateralSpeed: 0
+    debugSlipAngle: 0
   backRight:
     rayOrigin: {fileID: 972439677164279923}
     visual: {fileID: 3109604078916640494}
@@ -699,31 +727,52 @@ MonoBehaviour:
     previousSuspensionOffset: 0
     springLength: 0
     grounded: 0
+    wasGrounded: 0
     contactPoint: {x: 0, y: 0, z: 0}
     currentSteerAngle: 0
     spinAngle: 0
+    wheelForward: {x: 0, y: 0, z: 0}
+    wheelRight: {x: 0, y: 0, z: 0}
+    forwardSpeed: 0
+    lateralSpeed: 0
+    normalLoad: 0
     debugSuspensionForce: 0
     debugGripForce: 0
     debugLateralSpeed: 0
+    debugSlipAngle: 0
   restLength: 0.3
   suspensionTravel: 0.3
   suspensionStrength: 22000
   suspensionDamping: 5500
+  maxSuspensionVelocity: 5
+  maxSuspensionForce: 50000
   wheelRadius: 0.42
   groundMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 4294967295
+  bumpStopThreshold: 0.75
+  bumpStopStiffness: 65000
+  antiRollFront: 20000
+  antiRollRear: 20000
+  rollStabilizationStrength: 8000
+  rollStabilizationDamping: 2000
   driveForce: 3000
   brakeForce: 6000
   maxSpeedKmh: 85
   maxSteerAngle: 24
+  highSpeedSteerFactor: 0.4
   steerSpeed: 120
-  gripStrength: 1
-  gripForceMultiplier: 2
+  tireGrip: 1
+  peakSlipAngle: 8
+  lowSpeedSlipReference: 2
   lateralDeadZone: 0.03
   angularStabilization: 1.5
+  yawStabilizationWhenStraight: 3
+  parkSpeedThreshold: 1.5
   parkingBrakeLinearDamping: 8
   parkingBrakeAngularDamping: 8
+  autoCenterOfMass: 1
+  centerOfMassOffset: {x: 0, y: -0.2, z: 0}
 --- !u!114 &8292217413816325421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1466,6 +1515,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 972439677164279923}
+  - component: {fileID: 7267546912212905891}
   m_Layer: 0
   m_Name: WheelCollider_BR
   m_TagString: Untagged

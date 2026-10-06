@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d91539b8229be3e43b4af77e49e15952
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 15600000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/SpringsBoxTerrain/SpringsBoxTerrain.asset
+  uploadId: 1010126

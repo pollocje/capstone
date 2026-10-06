@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8fb9dcb9b18cc6f4282c7704b0d5d9be
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/Vehicles/CarMesh.prefab
+  uploadId: 1010126
