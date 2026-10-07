@@ -29,6 +29,9 @@ public class VehicleEnterExit : NetworkBehaviour
     private StarterAssets.FirstPersonController _fpc;
     private StarterAssetsInputs _inputs;
     private PlayerInput _playerInput;
+    private Camera _playerCamera;
+    private AudioListener _playerAudioListener;
+    private Renderer[] _playerRenderers;
 
     // Online: True while someone is driving. Only the host changes it; everyone can read it.
     private readonly NetworkVariable<bool> occupied = new NetworkVariable<bool>(false);
@@ -108,12 +111,32 @@ public class VehicleEnterExit : NetworkBehaviour
         _fpc = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
         _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
         _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
+        _playerCamera = playerRoot.GetComponentInChildren<Camera>(true);
+        _playerAudioListener = playerRoot.GetComponentInChildren<AudioListener>(true);
+        _playerRenderers = playerRoot.GetComponentsInChildren<Renderer>(true);
 
         // Disable FPC first so its Update can't call Move() on a CC we're about to deactivate.
         if (_fpc != null) _fpc.enabled = false;
         if (_inputs != null) _inputs.enabled = false;
         if (_playerInput != null) _playerInput.enabled = false;
         if (_cc != null) _cc.enabled = false;
+
+        // The player's own camera must not stay live once the truck's follow camera takes
+        // over - otherwise both cameras (and both AudioListeners) are active at once, and the
+        // leftover player camera ends up jammed inside the cab mesh at the driver seat position.
+        if (_playerCamera != null) _playerCamera.enabled = false;
+        if (_playerAudioListener != null) _playerAudioListener.enabled = false;
+
+        // The capsule keeps getting repositioned to the driver seat every frame (below, for
+        // other players to see), but nothing stops its own mesh from rendering - without this
+        // the player's body rides along stuck to the truck like it's bolted on. Toggling
+        // Renderer.enabled (not the GameObjects) keeps Animator/scripts intact for when NGO
+        // observers need the pose, it just stops drawing it locally.
+        if (_playerRenderers != null)
+        {
+            foreach (var renderer in _playerRenderers)
+                if (renderer != null) renderer.enabled = false;
+        }
 
         // Online:Move the capsule (the part that actually moves/syncs), not the root.
         if (_cc != null) _cc.transform.position = driverSeat.position;
@@ -153,6 +176,13 @@ public class VehicleEnterExit : NetworkBehaviour
         if (_fpc != null) _fpc.enabled = true;
         if (_inputs != null) _inputs.enabled = true;
         if (_playerInput != null) _playerInput.enabled = true;
+        if (_playerCamera != null) _playerCamera.enabled = true;
+        if (_playerAudioListener != null) _playerAudioListener.enabled = true;
+        if (_playerRenderers != null)
+        {
+            foreach (var renderer in _playerRenderers)
+                if (renderer != null) renderer.enabled = true;
+        }
 
         inVehicle = false;
         playerInRange = false;
