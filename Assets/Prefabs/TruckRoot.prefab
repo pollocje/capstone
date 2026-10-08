@@ -535,6 +535,7 @@ GameObject:
   - component: {fileID: 2260390780057353642}
   - component: {fileID: 2841424872014896506}
   - component: {fileID: 3708210728060355179}
+  - component: {fileID: -5309665983958517446}
   - component: {fileID: 6013205719889161242}
   m_Layer: 0
   m_Name: TruckRoot
@@ -645,6 +646,31 @@ MonoBehaviour:
   downforce: 60
   antiRollFront: 5000
   antiRollRear: 5000
+--- !u!114 &-5309665983958517446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4163358734833904195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1319049561
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &6013205719889161242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,8 +683,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495c2d5367d9b4fe3a3a2307fc1c9318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleEnterExit
+  ShowTopMostFoldoutHeaderGroup: 1
   wheelColliderTruck: {fileID: 0}
   raycastTruck: {fileID: 0}
+  luigiCarTruck: {fileID: 0}
   followCameraObject: {fileID: 3498299886586562869}
   driverSeat: {fileID: 910563179736835974}
   exitPoint: {fileID: 2605171035413938644}
