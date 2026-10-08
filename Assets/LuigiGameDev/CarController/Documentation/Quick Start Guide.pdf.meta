@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8a1380a9066e48941a8ab340ef1e4209
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Documentation/Quick Start Guide.pdf
+  uploadId: 1010126

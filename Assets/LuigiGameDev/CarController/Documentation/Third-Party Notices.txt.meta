@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 18a6ad5838fdc134ebe2664010fa2a88
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Documentation/Third-Party Notices.txt
+  uploadId: 1010126

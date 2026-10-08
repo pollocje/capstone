@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: eafccfe8d6c2da64889f73977a395ca0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Stadium/Materials/StadiumGridDarkBlueMaterial.mat
+  uploadId: 1010126

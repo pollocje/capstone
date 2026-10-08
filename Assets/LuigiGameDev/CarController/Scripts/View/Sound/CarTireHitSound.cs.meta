@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 9cf4201c75d11894791b66fc9f0855be
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Scripts/View/Sound/CarTireHitSound.cs
+  uploadId: 1010126

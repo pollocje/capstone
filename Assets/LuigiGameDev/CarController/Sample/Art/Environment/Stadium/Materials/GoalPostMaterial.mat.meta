@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2fa975049147b0345b9770e4a9e17bd1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Stadium/Materials/GoalPostMaterial.mat
+  uploadId: 1010126

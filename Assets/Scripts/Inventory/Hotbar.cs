@@ -4,6 +4,7 @@ using UnityEngine;
 public class Hotbar : MonoBehaviour
 {
     [Header("Settings")]
+    public KeyCode dropKey = KeyCode.G;
     public int slotCount = 5;
     public float dropDistance = 2f;
     public Transform playerTransform;
@@ -16,11 +17,14 @@ public class Hotbar : MonoBehaviour
 
     private int selectedIndex = 0;
     private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
+    private PlayerGrabController _grab;
 
     void Start()
     {
         RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
         RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
+        RegisterEquippable(ItemType.Map, GetComponent<MapItem>());
+        _grab = GetComponent<PlayerGrabController>();
 
         // If not manually assigned, find the spawned player by tag
         if (playerTransform == null)
@@ -33,12 +37,14 @@ public class Hotbar : MonoBehaviour
         items = new InventoryItem[slotCount];
 
         hotbarUI?.Refresh(items, selectedIndex);
+        GetEquippable(GetSelectedItem())?.OnEquip();
     }
 
     void Update()
     {
         HandleNumberKeys();
         HandleUse();
+        HandleDrop();
     }
 
     // ── Input ────────────────────────────────────────────────────────────────
@@ -47,20 +53,16 @@ public class Hotbar : MonoBehaviour
     {
         for (int i = 0; i < slotCount && i < 9; i++)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1 + i) && i != selectedIndex)
-            {
-                GetEquippable(GetSelectedItem())?.OnUnequip();
-
-                selectedIndex = i;
-                hotbarUI?.UpdateSelection(selectedIndex);
-
-                GetEquippable(GetSelectedItem())?.OnEquip();
-            }
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                SelectSlot(i);
         }
     }
 
     void HandleUse()
     {
+        // While physically carrying something, left click belongs to the carried item.
+        if (_grab != null && _grab.Held != null) return;
+
         InventoryItem item = GetSelectedItem();
         if (item == null) return;
 
@@ -76,6 +78,18 @@ public class Hotbar : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0)) equippable.OnUseDown();
         if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
+    }
+
+    void HandleDrop()
+    {
+        if (!Input.GetKeyDown(dropKey)) return;
+
+        InventoryItem item = GetSelectedItem();
+        if (item == null || item.dropPrefab == null) return;
+        if (item.itemType == ItemType.Droppable) return;  // those drop on left click already
+
+        GetEquippable(item)?.OnUnequip();
+        DropItem();
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -99,6 +113,19 @@ public class Hotbar : MonoBehaviour
     {
         items[selectedIndex] = null;
         hotbarUI?.Refresh(items, selectedIndex);
+    }
+
+    /// <summary>Selects a slot (what the number keys do): unequips the old item, equips the new one.</summary>
+    public void SelectSlot(int index)
+    {
+        if (index < 0 || index >= items.Length || index == selectedIndex) return;
+
+        GetEquippable(GetSelectedItem())?.OnUnequip();
+
+        selectedIndex = index;
+        hotbarUI?.UpdateSelection(selectedIndex);
+
+        GetEquippable(GetSelectedItem())?.OnEquip();
     }
 
     /// <summary>Re-pushes current state to hotbarUI — call after wiring it up post-spawn.</summary>
@@ -134,6 +161,7 @@ public class Hotbar : MonoBehaviour
         return System.Array.IndexOf(items, null) >= 0;
     }
 
+    /// <summary>Puts the item in the lowest-numbered empty slot. Returns false if the hotbar is full.</summary>
     public bool AddItem(InventoryItem item)
     {
         for (int i = 0; i < items.Length; i++)
@@ -142,9 +170,15 @@ public class Hotbar : MonoBehaviour
             {
                 items[i] = item;
                 hotbarUI?.Refresh(items, selectedIndex);
+
+                // Landed in the slot already in hand — equip it now, same as pressing its number key.
+                if (i == selectedIndex) GetEquippable(item)?.OnEquip();
                 return true;
             }
         }
         return false;
     }
+
+    /// <summary>Slot index holding this item, or -1.</summary>
+    public int IndexOf(InventoryItem item) => item == null ? -1 : System.Array.IndexOf(items, item);
 }
