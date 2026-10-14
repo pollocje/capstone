@@ -9,12 +9,12 @@ public class FireworkFlareLauncher : MonoBehaviour, IEquippable
 {
     [Header("Dependencies")]
     public GameObject flarePrefab;
-    public Transform throwOrigin;      // defaults to Camera.main if unset
+    public Transform throwOrigin; // defaults to Camera.main if unset
     public GameObject heldFlareVisual; // optional in-hand model shown while equipped
 
     [Header("Throw Settings")]
     public float throwForce = 18f;
-    public float upwardArc = 0.15f;    // 0-1, blends aim direction toward world up
+    public float upwardArc = 0.15f; // 0-1, blends aim direction toward world up
 
     private Hotbar _hotbar;
 
@@ -51,7 +51,8 @@ public class FireworkFlareLauncher : MonoBehaviour, IEquippable
 
     void Throw()
     {
-        if (flarePrefab == null || throwOrigin == null) return;
+        if (flarePrefab == null || throwOrigin == null)
+            return;
 
         Vector3 spawnPos = throwOrigin.position + throwOrigin.forward * 0.5f;
         Quaternion spawnRot = Quaternion.LookRotation(throwOrigin.forward, Vector3.up);

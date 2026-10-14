@@ -1,129 +1,324 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1056 816" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1632 1056" font-family="Segoe UI, Helvetica, Arial, sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
     </marker>
   </defs>
 
-  <rect x="0" y="0" width="1056" height="816" fill="#ffffff"/>
+  <rect x="0" y="0" width="1632" height="1056" fill="#ffffff"/>
+  <text x="20" y="16" font-size="11" fill="#777">Tabloid landscape (17in x 11in @96dpi) — scale to fit when printing</text>
 
-  <!-- ============ ROW 1 outer groups ============ -->
-  <rect x="40" y="40" width="308" height="200" rx="10" fill="#d6f5e9" stroke="#3fae87" stroke-width="1.5"/>
-  <text x="194" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#1f5c4a">Unity Cloud Services (external)</text>
+  <!-- ======================================================================= -->
+  <!-- TOP BAND: one-time bootstrap / networking spine                          -->
+  <!-- ======================================================================= -->
+  <rect x="20" y="20" width="500" height="210" rx="10" fill="#d6f5e9" stroke="#3fae87" stroke-width="1.5"/>
+  <text x="270" y="40" text-anchor="middle" font-size="15" font-weight="600" fill="#1f5c4a">Unity Cloud Services (external)</text>
 
-  <rect x="372" y="40" width="308" height="200" rx="10" fill="#ffe9d1" stroke="#e08a3c" stroke-width="1.5"/>
-  <text x="526" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#7a4413">Bootstrap</text>
+  <rect x="540" y="20" width="500" height="210" rx="10" fill="#ffe9d1" stroke="#e08a3c" stroke-width="1.5"/>
+  <text x="790" y="40" text-anchor="middle" font-size="15" font-weight="600" fill="#7a4413">Bootstrap</text>
 
-  <rect x="704" y="40" width="308" height="200" rx="10" fill="#d7f3fb" stroke="#3fa9c9" stroke-width="1.5"/>
-  <text x="858" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#155a70">Spawning</text>
+  <rect x="1060" y="20" width="552" height="210" rx="10" fill="#d7f3fb" stroke="#3fa9c9" stroke-width="1.5"/>
+  <text x="1336" y="40" text-anchor="middle" font-size="15" font-weight="600" fill="#155a70">Spawning</text>
 
-  <!-- Row1 inner boxes -->
-  <rect x="60" y="75" width="268" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="194" y="107" text-anchor="middle" font-size="14" fill="#1f2937">Unity Authentication</text>
+  <!-- Unity Cloud Services inner -->
+  <rect x="40" y="60" width="460" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="270" y="92" text-anchor="middle" font-size="14" fill="#1f2937">Unity Authentication</text>
 
-  <rect x="60" y="150" width="268" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="194" y="173" text-anchor="middle" font-size="14" fill="#1f2937">Multiplayer Services</text>
-  <text x="194" y="190" text-anchor="middle" font-size="14" fill="#1f2937">/ Relay</text>
+  <rect x="40" y="140" width="460" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="270" y="169" text-anchor="middle" font-size="14" fill="#1f2937">Multiplayer Services / Relay</text>
+  <text x="270" y="186" text-anchor="middle" font-size="11" fill="#555">session code + traffic relay</text>
 
-  <rect x="412" y="115" width="228" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="526" y="147" text-anchor="middle" font-size="14" fill="#1f2937">SessionManager</text>
+  <!-- Bootstrap inner -->
+  <rect x="580" y="55" width="420" height="65" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="790" y="82" text-anchor="middle" font-size="14" fill="#1f2937">SessionManager</text>
+  <text x="790" y="100" text-anchor="middle" font-size="10.5" fill="#555">singleton, DontDestroyOnLoad</text>
 
-  <rect x="724" y="70" width="268" height="50" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="858" y="100" text-anchor="middle" font-size="14" fill="#1f2937">PlayerSpawnManager</text>
+  <rect x="580" y="135" width="420" height="65" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="790" y="160" text-anchor="middle" font-size="14" fill="#1f2937">GameManager</text>
+  <text x="790" y="178" text-anchor="middle" font-size="10.5" fill="#555">offline: SpawnPlayer() · online: host spawns via below</text>
 
-  <rect x="724" y="150" width="268" height="50" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="858" y="180" text-anchor="middle" font-size="14" fill="#1f2937">SpawnPoint</text>
+  <!-- Spawning inner -->
+  <rect x="1090" y="55" width="300" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1240" y="87" text-anchor="middle" font-size="14" fill="#1f2937">PlayerSpawnManager</text>
 
-  <!-- uses: PlayerSpawnManager -> SpawnPoint -->
-  <path d="M858,120 L858,150" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-  <text x="880" y="139" font-size="11" fill="#444">uses</text>
+  <rect x="1090" y="140" width="300" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1240" y="172" text-anchor="middle" font-size="14" fill="#1f2937">SpawnPoint</text>
 
-  <!-- Row1 horizontal arrows -->
-  <path d="M348,140 L372,140" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-  <text x="360" y="130" text-anchor="middle" font-size="11" fill="#333">Auth + Relay</text>
+  <rect x="1420" y="90" width="172" height="70" rx="6" fill="#ffffff" stroke="#9ca3af" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1506" y="110" text-anchor="middle" font-size="10" fill="#555">IsNetworked ⇔</text>
+  <text x="1506" y="124" text-anchor="middle" font-size="10" fill="#555">NetworkManager.Singleton</text>
+  <text x="1506" y="138" text-anchor="middle" font-size="10" fill="#555">.IsListening</text>
 
-  <path d="M680,140 L704,140" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-  <text x="692" y="130" text-anchor="middle" font-size="11" fill="#333">session ready</text>
+  <path d="M1240,110 L1240,140" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="1262" y="129" font-size="11" fill="#444">uses</text>
 
-  <!-- ============ Cross-row connector: Spawning -> Player ============ -->
-  <path d="M858,240 L858,250 L194,250 L194,280" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
-  <rect x="386" y="240" width="240" height="18" fill="#ffffff" opacity="0.9"/>
-  <text x="506" y="253" text-anchor="middle" font-size="12" fill="#333">SpawnAsPlayerObject(clientId)</text>
+  <!-- Top band horizontal arrows -->
+  <path d="M500,175 L540,175" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="520" y="160" text-anchor="middle" font-size="11" fill="#333">Auth + Relay</text>
 
-  <!-- ============ ROW 2 outer groups ============ -->
-  <rect x="40" y="280" width="308" height="460" rx="10" fill="#e6e0fb" stroke="#8a73d1" stroke-width="1.5"/>
-  <text x="194" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#4a3a80">Player (per-client)</text>
+  <path d="M1000,87 L1060,87" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="1030" y="72" text-anchor="middle" font-size="11" fill="#333">session ready</text>
 
-  <rect x="372" y="280" width="308" height="460" rx="10" fill="#fbdada" stroke="#d1615e" stroke-width="1.5"/>
-  <text x="526" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#7a2b28">Inventory</text>
+  <!-- Cross-band connector: Spawning -> Player -->
+  <path d="M1240,230 L1240,245 L170,245 L170,260" fill="none" stroke="#333" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <rect x="580" y="236" width="260" height="18" fill="#ffffff" opacity="0.92"/>
+  <text x="710" y="249" text-anchor="middle" font-size="12" fill="#333">SpawnAsPlayerObject(clientId)</text>
 
-  <rect x="704" y="280" width="308" height="460" rx="10" fill="#fbf3ce" stroke="#cbb23f" stroke-width="1.5"/>
-  <text x="858" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#6b5b1a">Research (client-only)</text>
+  <!-- ======================================================================= -->
+  <!-- MIDDLE BAND: per-client gameplay systems (5 columns)                     -->
+  <!-- ======================================================================= -->
+  <rect x="20" y="260" width="300" height="420" rx="10" fill="#e6e0fb" stroke="#8a73d1" stroke-width="1.5"/>
+  <text x="170" y="280" text-anchor="middle" font-size="15" font-weight="600" fill="#4a3a80">Player (per-client)</text>
 
-  <!-- Player inner boxes -->
-  <rect x="60" y="310" width="268" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="194" y="341" text-anchor="middle" font-size="14" fill="#1f2937">PlayerNetworkSetup</text>
-  <text x="194" y="358" text-anchor="middle" font-size="11" fill="#555">NetworkBehaviour</text>
+  <rect x="336" y="260" width="300" height="420" rx="10" fill="#fbdada" stroke="#d1615e" stroke-width="1.5"/>
+  <text x="486" y="280" text-anchor="middle" font-size="15" font-weight="600" fill="#7a2b28">Inventory</text>
 
-  <rect x="60" y="410" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="194" y="445" text-anchor="middle" font-size="14" fill="#1f2937">ClientNetworkTransform</text>
+  <rect x="652" y="260" width="300" height="420" rx="10" fill="#d2f3ec" stroke="#2e9b82" stroke-width="1.5"/>
+  <text x="802" y="280" text-anchor="middle" font-size="15" font-weight="600" fill="#17604f">Interaction / Grab</text>
+  <rect x="707" y="286" width="190" height="18" rx="9" fill="#fff3c4" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="802" y="298" text-anchor="middle" font-size="10" font-weight="600" fill="#8a4b06">PLANNED: becomes networked</text>
 
-  <rect x="60" y="500" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="194" y="535" text-anchor="middle" font-size="14" fill="#1f2937">PlayerModelSwapper</text>
+  <rect x="968" y="260" width="300" height="420" rx="10" fill="#fbf3ce" stroke="#cbb23f" stroke-width="1.5"/>
+  <text x="1118" y="280" text-anchor="middle" font-size="15" font-weight="600" fill="#6b5b1a">Research</text>
+  <rect x="1023" y="286" width="190" height="18" rx="9" fill="#fff3c4" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1118" y="298" text-anchor="middle" font-size="10" font-weight="600" fill="#8a4b06">PLANNED: becomes networked</text>
 
-  <!-- Inventory inner boxes -->
-  <rect x="392" y="310" width="268" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="526" y="341" text-anchor="middle" font-size="14" fill="#1f2937">ItemDispenser</text>
-  <text x="526" y="358" text-anchor="middle" font-size="11" fill="#555">NetworkBehaviour</text>
+  <rect x="1284" y="260" width="328" height="420" rx="10" fill="#f5ded0" stroke="#c97a3d" stroke-width="1.5"/>
+  <text x="1448" y="280" text-anchor="middle" font-size="15" font-weight="600" fill="#7a471e">Vehicle</text>
+  <rect x="1353" y="286" width="190" height="18" rx="9" fill="#fff3c4" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1448" y="298" text-anchor="middle" font-size="10" font-weight="600" fill="#8a4b06">PLANNED: physics networked</text>
 
-  <rect x="392" y="440" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="526" y="475" text-anchor="middle" font-size="14" fill="#1f2937">Hotbar</text>
+  <!-- Player inner -->
+  <rect x="40" y="305" width="260" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="170" y="332" text-anchor="middle" font-size="14" fill="#1f2937">PlayerNetworkSetup</text>
+  <text x="170" y="350" text-anchor="middle" font-size="11" fill="#555">NetworkBehaviour</text>
 
-  <rect x="392" y="570" width="268" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="526" y="605" text-anchor="middle" font-size="14" fill="#1f2937">HotbarUI / SlotUI</text>
+  <rect x="40" y="380" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="170" y="412" text-anchor="middle" font-size="14" fill="#1f2937">ClientNetworkTransform</text>
 
-  <path d="M526,380 L526,440" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-  <rect x="446" y="400" width="160" height="16" fill="#ffffff" opacity="0.9"/>
-  <text x="526" y="412" text-anchor="middle" font-size="11" fill="#333">GiveItemRpc / DenyItemRpc</text>
+  <rect x="40" y="450" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="170" y="482" text-anchor="middle" font-size="14" fill="#1f2937">PlayerModelSwapper</text>
 
-  <path d="M526,500 L526,570" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <rect x="40" y="520" width="260" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="170" y="547" text-anchor="middle" font-size="12.5" fill="#1f2937">FirstPersonController /</text>
+  <text x="170" y="564" text-anchor="middle" font-size="12.5" fill="#1f2937">CharacterController</text>
 
-  <!-- Research inner boxes -->
-  <rect x="744" y="310" width="228" height="70" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="858" y="350" text-anchor="middle" font-size="14" fill="#1f2937">BinocularScanner</text>
+  <!-- Inventory inner -->
+  <rect x="356" y="305" width="260" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="486" y="332" text-anchor="middle" font-size="14" fill="#1f2937">ItemDispenser</text>
+  <text x="486" y="350" text-anchor="middle" font-size="10.5" fill="#555">NetworkBehaviour — server authoritative</text>
 
-  <rect x="724" y="440" width="120" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="784" y="475" text-anchor="middle" font-size="14" fill="#1f2937">Scannable</text>
+  <rect x="356" y="400" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="486" y="432" text-anchor="middle" font-size="14" fill="#1f2937">Hotbar</text>
 
-  <rect x="864" y="440" width="120" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
-  <text x="924" y="475" text-anchor="middle" font-size="11.5" fill="#1f2937">ResearchManager</text>
+  <rect x="356" y="490" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="486" y="522" text-anchor="middle" font-size="14" fill="#1f2937">HotbarUI / SlotUI</text>
 
-  <path d="M820,380 L820,410 L784,410 L784,440" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-  <path d="M896,380 L896,410 L924,410 L924,440" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <path d="M486,365 L486,400" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <rect x="396" y="373" width="180" height="16" fill="#ffffff" opacity="0.9"/>
+  <text x="486" y="385" text-anchor="middle" font-size="10.5" fill="#333">GiveItemRpc / ReturnItemRpc</text>
 
-  <!-- ============ Row2 cross-column arrows from PlayerNetworkSetup ============ -->
-  <!-- -> ItemDispenser: RequestItemRpc -->
-  <path d="M328,345 L392,345" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-  <text x="360" y="335" text-anchor="middle" font-size="10.5" fill="#333">RequestItemRpc</text>
+  <path d="M486,455 L486,490" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="486" y="474" text-anchor="middle" font-size="10.5" fill="#333">RefreshUI()</text>
 
-  <!-- -> Hotbar: HookUpHotbar() -->
-  <path d="M328,365 L352,365 L352,470 L392,470" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-  <text x="356" y="420" font-size="10.5" fill="#333" transform="rotate(90 356 420)">HookUpHotbar()</text>
+  <!-- Interaction/Grab inner -->
+  <rect x="672" y="305" width="260" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="802" y="332" text-anchor="middle" font-size="14" fill="#1f2937">PlayerGrabController</text>
+  <text x="802" y="350" text-anchor="middle" font-size="10.5" fill="#555">Interact (E) / hold Throw (RMB)</text>
 
-  <!-- -> BinocularScanner: uses (dotted, routed in the gap above row 2, below the row titles) -->
-  <path d="M194,280 L194,270 L858,270 L858,280" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-  <rect x="480" y="262" width="36" height="16" fill="#ffffff" opacity="0.95"/>
-  <text x="498" y="274" text-anchor="middle" font-size="11" fill="#333">uses</text>
+  <rect x="672" y="400" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="802" y="432" text-anchor="middle" font-size="14" fill="#1f2937">ItemPickup</text>
 
-  <!-- ============ Legend ============ -->
-  <g transform="translate(40,760)">
-    <line x1="0" y1="4" x2="26" y2="4" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
-    <text x="32" y="9" font-size="11" fill="#333">networked call (RPC / spawn)</text>
-    <line x1="260" y1="4" x2="286" y2="4" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-    <text x="292" y="9" font-size="11" fill="#333">local reference / dependency</text>
-    <rect x="560" y="-6" width="14" height="14" fill="#fbdada" stroke="#d1615e"/>
-    <text x="580" y="5" font-size="11" fill="#333">server-authoritative</text>
-    <rect x="760" y="-6" width="14" height="14" fill="#e6e0fb" stroke="#8a73d1"/>
-    <text x="780" y="5" font-size="11" fill="#333">client-local</text>
+  <rect x="672" y="490" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="802" y="522" text-anchor="middle" font-size="14" fill="#1f2937">Grabbable</text>
+
+  <path d="M802,365 L802,400" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="825" y="385" text-anchor="middle" font-size="10.5" fill="#333">TryPickup()</text>
+
+  <path d="M830,365 L870,365 L870,490 L830,490" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="878" y="430" font-size="10" fill="#333" transform="rotate(90 878 430)">raycast + ConfigurableJoint</text>
+
+  <!-- Research inner -->
+  <rect x="988" y="305" width="260" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1118" y="332" text-anchor="middle" font-size="14" fill="#1f2937">BinocularScanner</text>
+  <text x="1118" y="350" text-anchor="middle" font-size="10.5" fill="#555">reads Binoculars.IsUsing</text>
+
+  <rect x="988" y="400" width="120" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1048" y="432" text-anchor="middle" font-size="12.5" fill="#1f2937">Scannable</text>
+
+  <rect x="1128" y="400" width="120" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1188" y="430" text-anchor="middle" font-size="11" fill="#1f2937">ResearchManager</text>
+
+  <path d="M1080,365 L1080,382 L1048,382 L1048,400" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="1058" y="378" font-size="9.5" fill="#333">MarkScanned()</text>
+
+  <path d="M1156,365 L1156,382 L1188,382 L1188,400" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="1165" y="378" font-size="9.5" fill="#333">AddResearch()</text>
+
+  <rect x="988" y="490" width="260" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1118" y="513" text-anchor="middle" font-size="13" fill="#1f2937">Binoculars (existing)</text>
+  <text x="1118" y="530" text-anchor="middle" font-size="10.5" fill="#555">equipped via Hotbar (slot 2)</text>
+
+  <!-- Vehicle inner -->
+  <rect x="1304" y="305" width="288" height="65" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1448" y="330" text-anchor="middle" font-size="14" fill="#1f2937">VehicleEnterExit</text>
+  <text x="1448" y="348" text-anchor="middle" font-size="10" fill="#555">NetworkBehaviour · occupied: NetworkVariable&lt;bool&gt;</text>
+  <text x="1448" y="361" text-anchor="middle" font-size="10" fill="#555">host writes, all clients read</text>
+
+  <rect x="1304" y="410" width="288" height="80" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1448" y="438" text-anchor="middle" font-size="13" fill="#1f2937">PreconfiguredCarPhysics</text>
+  <text x="1448" y="456" text-anchor="middle" font-size="10.5" fill="#555">bridges to LuigiGameDev Car Controller</text>
+  <text x="1448" y="472" text-anchor="middle" font-size="10" fill="#555">(only driving implementation in use)</text>
+
+  <path d="M1448,370 L1448,410" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="1460" y="393" font-size="10" fill="#333">SetInputEnabled(bool)</text>
+
+  <rect x="1304" y="540" width="288" height="50" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1448" y="562" text-anchor="middle" font-size="12.5" fill="#1f2937">NetworkObject + NetworkTransform</text>
+  <text x="1448" y="578" text-anchor="middle" font-size="10" fill="#555">(vehicle itself — server authority mode)</text>
+
+  <!-- Vehicle -> Player: disables controls on enter -->
+  <path d="M1304,330 L1304,655 L170,655 L170,580" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <rect x="600" y="647" width="340" height="16" fill="#ffffff" opacity="0.92"/>
+  <text x="770" y="659" text-anchor="middle" font-size="10.5" fill="#333">caches &amp; disables FPC/CharacterController/input on enter (E)</text>
+
+  <!-- Player -> ItemDispenser / Hotbar -->
+  <path d="M300,340 L356,335" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="330" y="325" text-anchor="middle" font-size="10" fill="#333">RequestItemRpc</text>
+
+  <path d="M300,358 L320,358 L320,427 L356,427" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="326" y="400" font-size="10" fill="#333" transform="rotate(90 326 400)">HookUpHotbar()</text>
+
+  <!-- Player -> BinocularScanner: uses (dashed, routed above middle band, below the spawn connector) -->
+  <path d="M170,260 L170,256 L1118,256 L1118,260" fill="none" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <rect x="1020" y="243" width="40" height="15" fill="#ffffff" opacity="0.95"/>
+  <text x="1040" y="255" text-anchor="middle" font-size="11" fill="#333">uses</text>
+
+  <!-- ======================================================================= -->
+  <!-- BOTTOM BAND: scene-level / environment systems (mostly non-networked)    -->
+  <!-- ======================================================================= -->
+  <rect x="20" y="710" width="515" height="320" rx="10" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <text x="277" y="730" text-anchor="middle" font-size="15" font-weight="600" fill="#334155">Weather (DynamicWeatherSystem)</text>
+  <rect x="182" y="736" width="190" height="18" rx="9" fill="#fff3c4" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="277" y="748" text-anchor="middle" font-size="10" font-weight="600" fill="#8a4b06">PLANNED: becomes networked</text>
+
+  <rect x="555" y="710" width="515" height="320" rx="10" fill="#e3f3d9" stroke="#6da54a" stroke-width="1.5"/>
+  <text x="812" y="730" text-anchor="middle" font-size="15" font-weight="600" fill="#3c5c2a">Wind</text>
+  <rect x="717" y="736" width="190" height="18" rx="9" fill="#fff3c4" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="812" y="748" text-anchor="middle" font-size="10" font-weight="600" fill="#8a4b06">PLANNED: becomes networked</text>
+
+  <rect x="1090" y="710" width="522" height="320" rx="10" fill="#f0d9f5" stroke="#9b4fc9" stroke-width="1.5"/>
+  <text x="1351" y="730" text-anchor="middle" font-size="15" font-weight="600" fill="#6a2a87">Tornado + Firework Flare</text>
+  <rect x="1256" y="736" width="190" height="18" rx="9" fill="#fff3c4" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1351" y="748" text-anchor="middle" font-size="10" font-weight="600" fill="#8a4b06">PLANNED: becomes networked</text>
+
+  <!-- Weather inner -->
+  <rect x="40" y="755" width="220" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="150" y="787" text-anchor="middle" font-size="13" fill="#1f2937">WeatherZoneTrigger</text>
+
+  <rect x="295" y="755" width="220" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="405" y="787" text-anchor="middle" font-size="13" fill="#1f2937">WeatherManager</text>
+
+  <path d="M260,782 L295,782" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="277" y="770" text-anchor="middle" font-size="9.5" fill="#333">SetWeather(state, dur)</text>
+
+  <path d="M405,810 L405,825 L80,825 L80,840" fill="none" stroke="#333" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <path d="M175,825 L175,840" fill="none" stroke="#333" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <path d="M405,825 L405,840" fill="none" stroke="#333" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <path d="M405,825 L475,825 L475,840" fill="none" stroke="#333" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <path d="M405,825 L560,825" fill="none" stroke="#333" stroke-width="0" opacity="0"/>
+
+  <rect x="40" y="840" width="85" height="45" rx="5" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+  <text x="82" y="866" text-anchor="middle" font-size="10" fill="#1f2937">LightModule</text>
+
+  <rect x="133" y="840" width="85" height="45" rx="5" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+  <text x="175" y="866" text-anchor="middle" font-size="10" fill="#1f2937">FogModule</text>
+
+  <rect x="226" y="840" width="85" height="45" rx="5" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+  <text x="268" y="866" text-anchor="middle" font-size="10" fill="#1f2937">RainModule</text>
+
+  <rect x="319" y="840" width="85" height="45" rx="5" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+  <text x="361" y="866" text-anchor="middle" font-size="10" fill="#1f2937">SkyModule</text>
+
+  <rect x="432" y="840" width="85" height="45" rx="5" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+  <text x="474" y="866" text-anchor="middle" font-size="10" fill="#1f2937">AudioModule</text>
+
+  <text x="277" y="905" text-anchor="middle" font-size="10" fill="#555">Modules auto-discovered as children of WeatherManager at scene start</text>
+  <text x="277" y="922" text-anchor="middle" font-size="10" fill="#555">Not a NetworkBehaviour yet — each client runs its own local weather state for now</text>
+
+  <!-- Wind inner -->
+  <rect x="575" y="755" width="220" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="685" y="780" text-anchor="middle" font-size="13" fill="#1f2937">WindZone(s)</text>
+  <text x="685" y="797" text-anchor="middle" font-size="10" fill="#555">Unity built-in, placed in scene</text>
+
+  <rect x="830" y="755" width="220" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="940" y="780" text-anchor="middle" font-size="13" fill="#1f2937">WindSampler</text>
+  <text x="940" y="797" text-anchor="middle" font-size="10" fill="#555">static · TryGetWindAt(pos)</text>
+
+  <path d="M795,782 L830,782" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="812" y="770" text-anchor="middle" font-size="9.5" fill="#333">queried per-call</text>
+
+  <rect x="830" y="845" width="220" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="940" y="868" text-anchor="middle" font-size="13" fill="#1f2937">WindShaderReceiver</text>
+  <text x="940" y="885" text-anchor="middle" font-size="10" fill="#555">per-renderer, MaterialPropertyBlock</text>
+
+  <path d="M940,810 L940,845" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <rect x="575" y="845" width="220" height="55" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="685" y="868" text-anchor="middle" font-size="13" fill="#1f2937">Foliage / shader materials</text>
+  <text x="685" y="885" text-anchor="middle" font-size="9.5" fill="#555">_Wind_Speed / _Strength / _Direction</text>
+
+  <path d="M830,872 L795,872" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="812" y="862" text-anchor="middle" font-size="9.5" fill="#333">sets props</text>
+
+  <text x="812" y="922" text-anchor="middle" font-size="10" fill="#555">Ambient sway used when no WindZone affects a given plant</text>
+
+  <!-- Tornado + Firework inner -->
+  <rect x="1110" y="755" width="230" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1225" y="780" text-anchor="middle" font-size="13" fill="#1f2937">FireworkFlareLauncher</text>
+  <text x="1225" y="797" text-anchor="middle" font-size="9.5" fill="#555">IEquippable — lives in Hotbar</text>
+  <text x="1225" y="810" text-anchor="middle" font-size="9.5" fill="#555">(Inventory column)</text>
+
+  <rect x="1360" y="755" width="230" height="60" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1475" y="783" text-anchor="middle" font-size="13" fill="#1f2937">FireworkFlareProjectile</text>
+  <text x="1475" y="800" text-anchor="middle" font-size="9.5" fill="#555">Rigidbody, physics-only</text>
+
+  <path d="M1340,785 L1360,785" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="1350" y="772" text-anchor="middle" font-size="9.5" fill="#333">Throw()</text>
+
+  <rect x="1225" y="855" width="260" height="65" rx="6" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/>
+  <text x="1355" y="880" text-anchor="middle" font-size="13" fill="#1f2937">TornadoLift</text>
+  <text x="1355" y="897" text-anchor="middle" font-size="9.5" fill="#555">pulls/rotates/lifts Rigidbodies</text>
+  <text x="1355" y="911" text-anchor="middle" font-size="9.5" fill="#555">caught in its trigger; wanders scene</text>
+
+  <path d="M1475,815 L1475,837 L1355,837 L1355,855" fill="none" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="1410" y="833" text-anchor="middle" font-size="9.5" fill="#333">flies into funnel → OnTriggerStay</text>
+
+  <text x="1351" y="945" text-anchor="middle" font-size="10" fill="#555">Visual funnel: NadoShader.shadergraph — authored/tuned manually, not scripted</text>
+
+  <!-- ======================================================================= -->
+  <!-- Legend                                                                    -->
+  <!-- ======================================================================= -->
+  <g transform="translate(20,1040)">
+    <line x1="0" y1="0" x2="30" y2="0" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <text x="36" y="4" font-size="11" fill="#333">networked call (RPC / spawn / NetworkVariable)</text>
+
+    <line x1="330" y1="0" x2="360" y2="0" stroke="#333" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+    <text x="366" y="4" font-size="11" fill="#333">local reference / dependency</text>
+
+    <rect x="610" y="-10" width="14" height="14" fill="#fbdada" stroke="#d1615e"/>
+    <text x="630" y="2" font-size="11" fill="#333">server-authoritative</text>
+
+    <rect x="790" y="-10" width="14" height="14" fill="#e6e0fb" stroke="#8a73d1"/>
+    <text x="810" y="2" font-size="11" fill="#333">client-local</text>
+
+    <rect x="930" y="-10" width="14" height="14" fill="#f5ded0" stroke="#c97a3d"/>
+    <text x="950" y="2" font-size="11" fill="#333">scene NetworkObject</text>
+
+    <rect x="1140" y="-10" width="14" height="14" fill="#e2e8f0" stroke="#64748b"/>
+    <text x="1160" y="2" font-size="11" fill="#333">scene-level, currently local</text>
+
+    <rect x="1420" y="-10" width="14" height="14" fill="#fff3c4" stroke="#b45309" stroke-dasharray="3 2"/>
+    <text x="1440" y="2" font-size="11" fill="#333">planned — not yet networked</text>
   </g>
 </svg>
