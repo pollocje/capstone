@@ -300118,7 +300118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8046238418533512306, guid: 5bf700290db544d48b2d33b735a2cfce, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.000011284359
+      value: 0.053
       objectReference: {fileID: 0}
     - target: {fileID: 8046238418533512306, guid: 5bf700290db544d48b2d33b735a2cfce, type: 3}
       propertyPath: m_LocalPosition.z
@@ -408155,16 +408155,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
   hotbarRoot: {fileID: 0}
   slotPrefab: {fileID: 0}
-  normalColor:
-    r: 0.1
-    g: 0.1
-    b: 0.1
-    a: 0.75
-  selectedColor:
-    r: 0.9
-    g: 0.7
-    b: 0.1
-    a: 0.9
+  normalColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
+  selectedColor: {r: 0.9, g: 0.7, b: 0.1, a: 0.9}
 --- !u!114 &1844350604
 MonoBehaviour:
   m_ObjectHideFlags: 0

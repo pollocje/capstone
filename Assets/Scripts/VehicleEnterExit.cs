@@ -4,16 +4,18 @@ using System.Collections;
 using UnityEngine.InputSystem;
 #endif
 using StarterAssets;
-using Unity.Netcode; 
+using Unity.Netcode;
 
 public class VehicleEnterExit : NetworkBehaviour
 {
     [Header("Truck")]
-    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck, the raycast experiment, or the LuigiGameDev Car Controller - and leave the others empty. All three expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck, the raycast experiment, or PreconfiguredCarPhysics (the LuigiGameDev Car Controller bridge) - and leave the others empty. All three expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
     [SerializeField] private TruckWheelDrive wheelColliderTruck;
     [SerializeField] private TruckNewTEST raycastTruck;
-    [SerializeField] private LuigiCarDriveBridge luigiCarTruck;
+    [SerializeField] private PreconfiguredCarPhysics preconfiguredCarTruck;
     [SerializeField] private GameObject followCameraObject;
+    [SerializeField] private GameObject firstPersonCameraObject;
+    [SerializeField] private KeyCode toggleViewKey = KeyCode.C;
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
 
@@ -22,6 +24,7 @@ public class VehicleEnterExit : NetworkBehaviour
 
     private bool playerInRange;
     private bool inVehicle;
+    private bool firstPersonActive;
     private GameObject playerRoot;
 
     // Cached player components frozen while in the vehicle
@@ -32,6 +35,7 @@ public class VehicleEnterExit : NetworkBehaviour
     private Camera _playerCamera;
     private AudioListener _playerAudioListener;
     private Renderer[] _playerRenderers;
+    private Collider[] _playerColliders;
 
     // Online: True while someone is driving. Only the host changes it; everyone can read it.
     private readonly NetworkVariable<bool> occupied = new NetworkVariable<bool>(false);
@@ -54,7 +58,7 @@ public class VehicleEnterExit : NetworkBehaviour
     {
         if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
         if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
-        if (luigiCarTruck != null) luigiCarTruck.SetInputEnabled(enabled);
+        if (preconfiguredCarTruck != null) preconfiguredCarTruck.SetInputEnabled(enabled);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -86,12 +90,25 @@ public class VehicleEnterExit : NetworkBehaviour
         if (inVehicle && _cc != null)
             _cc.transform.SetPositionAndRotation(driverSeat.position, driverSeat.rotation);
 
+        if (inVehicle && Input.GetKeyDown(toggleViewKey))
+            ToggleCameraView();
+
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
         if (!inVehicle && playerInRange)
             EnterVehicle();
         else if (inVehicle)
             ExitVehicle();
+    }
+
+    private void ToggleCameraView()
+    {
+        // Nothing to switch to if this truck doesn't have a first-person camera assigned.
+        if (firstPersonCameraObject == null) return;
+
+        firstPersonActive = !firstPersonActive;
+        followCameraObject.SetActive(!firstPersonActive);
+        firstPersonCameraObject.SetActive(firstPersonActive);
     }
 
     private void EnterVehicle()
@@ -114,6 +131,7 @@ public class VehicleEnterExit : NetworkBehaviour
         _playerCamera = playerRoot.GetComponentInChildren<Camera>(true);
         _playerAudioListener = playerRoot.GetComponentInChildren<AudioListener>(true);
         _playerRenderers = playerRoot.GetComponentsInChildren<Renderer>(true);
+        _playerColliders = playerRoot.GetComponentsInChildren<Collider>(true);
 
         // Disable FPC first so its Update can't call Move() on a CC we're about to deactivate.
         if (_fpc != null) _fpc.enabled = false;
@@ -138,12 +156,28 @@ public class VehicleEnterExit : NetworkBehaviour
                 if (renderer != null) renderer.enabled = false;
         }
 
+        // The CharacterController above isn't the only collider on the player - PlayerCapsule
+        // has a separate solid CapsuleCollider (distinct from the CC) on its "Capsule" child.
+        // Leaving it enabled while the capsule gets teleported into the driver seat every frame
+        // means it keeps physically overlapping the truck's own chassis collider, and since a
+        // Rigidbody can't push a collider that's reset back every frame, the truck gets shoved
+        // instead - straight into the ground.
+        if (_playerColliders != null)
+        {
+            foreach (var col in _playerColliders)
+                if (col != null) col.enabled = false;
+        }
+
         // Online:Move the capsule (the part that actually moves/syncs), not the root.
         if (_cc != null) _cc.transform.position = driverSeat.position;
         else playerRoot.transform.position = driverSeat.position;
 
         SetTruckInputEnabled(true);
-        followCameraObject.SetActive(true);
+
+        // E puts you straight in the driver's seat view; C can still flip to the chase cam.
+        firstPersonActive = firstPersonCameraObject != null;
+        followCameraObject.SetActive(!firstPersonActive);
+        if (firstPersonCameraObject != null) firstPersonCameraObject.SetActive(true);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
@@ -158,6 +192,7 @@ public class VehicleEnterExit : NetworkBehaviour
     {
         SetTruckInputEnabled(false);
         followCameraObject.SetActive(false);
+        if (firstPersonCameraObject != null) firstPersonCameraObject.SetActive(false);
 
         // [Online: Free the truck for other players.
         if (IsSpawned) ReleaseDriveRpc();
@@ -182,6 +217,11 @@ public class VehicleEnterExit : NetworkBehaviour
         {
             foreach (var renderer in _playerRenderers)
                 if (renderer != null) renderer.enabled = true;
+        }
+        if (_playerColliders != null)
+        {
+            foreach (var col in _playerColliders)
+                if (col != null) col.enabled = true;
         }
 
         inVehicle = false;

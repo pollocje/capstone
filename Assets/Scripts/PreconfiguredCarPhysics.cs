@@ -4,14 +4,15 @@ using LuigiGameDev.CarController.View;
 
 /// <summary>
 /// Connects this project's input/enter-exit conventions (see VehicleEnterExit) to the
-/// LuigiGameDev Car Controller asset, which otherwise expects its own InputActionAsset-driven
-/// PlayerController and ViewStateLinker bootstrap. Exposes the same SetInputEnabled(bool) the
-/// other truck scripts use, and registers this car with ViewStateLinker so CarWheelsVisual's
-/// wheel spin/suspension animation actually receives data.
+/// LuigiGameDev Car Controller asset (our one preconfigured, ready-tuned car physics rig),
+/// which otherwise expects its own InputActionAsset-driven PlayerController and
+/// ViewStateLinker bootstrap. Exposes the same SetInputEnabled(bool) VehicleEnterExit calls,
+/// and registers this car with ViewStateLinker so CarWheelsVisual's wheel spin/suspension
+/// animation actually receives data.
 /// </summary>
 [RequireComponent(typeof(CarInput))]
 [RequireComponent(typeof(ViewStateLinker))]
-public class LuigiCarDriveBridge : MonoBehaviour
+public class PreconfiguredCarPhysics : MonoBehaviour
 {
     private CarInput carInput;
     private ViewStateLinker viewStateLinker;
