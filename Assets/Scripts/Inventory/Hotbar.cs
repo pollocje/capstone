@@ -85,11 +85,9 @@ public class Hotbar : MonoBehaviour
         if (!Input.GetKeyDown(dropKey)) return;
 
         InventoryItem item = GetSelectedItem();
-        if (item == null || item.dropPrefab == null) return;
-        if (item.itemType == ItemType.Droppable) return;  // those drop on left click already
+        if (item == null || item.itemType == ItemType.Droppable) return;  // those drop on left click already
 
-        GetEquippable(item)?.OnUnequip();
-        DropItem();
+        DropSelected();
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -106,6 +104,17 @@ public class Hotbar : MonoBehaviour
         Instantiate(item.dropPrefab, spawnPos, playerTransform.rotation);
 
         ConsumeSelected();
+    }
+
+    /// <summary>Unequips the selected item and puts its dropPrefab down in front of the player. False if there's nothing to drop.</summary>
+    public bool DropSelected()
+    {
+        InventoryItem item = GetSelectedItem();
+        if (item == null || item.dropPrefab == null) return false;
+
+        GetEquippable(item)?.OnUnequip();
+        DropItem();
+        return true;
     }
 
     /// <summary>Clears the currently selected slot (used by one-shot/consumable items).</summary>

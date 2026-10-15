@@ -68,8 +68,16 @@ public class InteractPrompt : MonoBehaviour
         // Remote players have PlayerInput disabled — only the local player gets prompts.
         if (_playerInput != null && !_playerInput.enabled) return "";
 
+        // Same priority as PlayerGrabController.TryInteract: aimed pickup, then putting the map down.
+        ItemPickup aimed = _grab != null ? _grab.FindAimedPickup() : null;
+        if (aimed != null && aimed.Item != null && aimed.IsArmed)
+            return $"Press <b>E</b> to pick up {aimed.Item.itemName}";
+
         if (_map != null && _map.IsEquipped)
-            return _map.IsUsing ? "Press <b>Tab</b> to close the map" : "Press <b>Tab</b> to open the map";
+        {
+            string tab = _map.IsUsing ? "Press <b>Tab</b> to close the map" : "Press <b>Tab</b> to open the map";
+            return _grab != null && _grab.IsHoldingMap ? tab + "   ·   <b>E</b> to put it down" : tab;
+        }
 
         ItemPickup pickup = _grab != null ? _grab.FindPickupTarget() : null;
         if (pickup != null && pickup.Item != null && pickup.IsArmed)

@@ -60,7 +60,12 @@ public class MapItem : MonoBehaviour, IEquippable
         if (Input.GetKeyDown(toggleKey)) ToggleView();
     }
 
-    public void ToggleView() => SetOpen(!_isUsing);
+    public void ToggleView()
+    {
+        // The view only exists while the map is in hand (OnUnequip closes it).
+        if (!_equipped) return;
+        SetOpen(!_isUsing);
+    }
 
     private void SetOpen(bool open)
     {

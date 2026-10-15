@@ -14,8 +14,161 @@ public static class GrabSystemTools
     const string PlayerPrefabPath = "Assets/Prefabs/MainPlayer Variant.prefab";
     const string MapTexturePath = "Assets/Prefabs/Items/RT_Map.renderTexture";
     const string MapPrefabPath = "Assets/Prefabs/Items/Item_Map.prefab";
+    const string MapAssetPath = "Assets/Items/Map.asset";
+    const string MapIconPath = "Assets/Images/Icon_Map.png";
+    const string MapIconMaterialPath = "Assets/Prefabs/Items/Mat_MapIcon.mat";
+
+    // Size of the map card on the floor (m), and the part of the 256px icon the parchment covers.
+    const float CardSize = 0.6f;
+    static readonly Vector2 ParchmentFraction = new Vector2(220f / 256f, 150f / 256f);
 
     // ── Setup ────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// One-click fix for the map item: icon sprite + hotbar icon, the floor model (a flat card
+    /// showing Icon_Map), and the player components (E pickup, prompt, MapItem + MapOverlay).
+    /// Safe to run again — everything is created only if missing.
+    /// </summary>
+    [MenuItem("Tools/Grab System/Setup Map Item (Full)")]
+    public static void SetupMapItemFull()
+    {
+        var sprite = ImportIconSprite();
+        var material = CreateIconMaterial(sprite != null ? sprite.texture : null);
+
+        var mapAsset = AssetDatabase.LoadAssetAtPath<InventoryItem>(MapAssetPath);
+        if (mapAsset != null && sprite != null)
+        {
+            mapAsset.icon = sprite;
+            EditorUtility.SetDirty(mapAsset);
+            AssetDatabase.SaveAssetIfDirty(mapAsset);
+        }
+
+        RebuildWorldMapPrefab(material);
+        SetupPlayerMapView();
+        RevertSceneMapOverrides();
+        Debug.Log($"[GrabSetup] Map item set up (icon: {(sprite != null ? "ok" : "MISSING")}, Map.asset: {(mapAsset != null ? "ok" : "MISSING")}).");
+    }
+
+    static Sprite ImportIconSprite()
+    {
+        var importer = AssetImporter.GetAtPath(MapIconPath) as TextureImporter;
+        if (importer == null)
+        {
+            Debug.LogError($"[GrabSetup] {MapIconPath} not found.");
+            return null;
+        }
+        if (importer.textureType != TextureImporterType.Sprite || !importer.alphaIsTransparency)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = true;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.mipmapEnabled = true;
+            importer.SaveAndReimport();
+        }
+        return AssetDatabase.LoadAssetAtPath<Sprite>(MapIconPath);
+    }
+
+    static Material CreateIconMaterial(Texture texture)
+    {
+        var mat = AssetDatabase.LoadAssetAtPath<Material>(MapIconMaterialPath);
+        if (mat == null)
+        {
+            mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            AssetDatabase.CreateAsset(mat, MapIconMaterialPath);
+        }
+
+        // Alpha-clipped so only the parchment shows, and double-sided so it reads from any angle.
+        mat.SetTexture("_BaseMap", texture);
+        mat.SetColor("_BaseColor", Color.white);
+        mat.SetFloat("_AlphaClip", 1f);
+        mat.SetFloat("_Cutoff", 0.5f);
+        mat.EnableKeyword("_ALPHATEST_ON");
+        mat.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+        mat.SetFloat("_Smoothness", 0.1f);
+        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+        EditorUtility.SetDirty(mat);
+        AssetDatabase.SaveAssetIfDirty(mat);
+        return mat;
+    }
+
+    /// <summary>Item_Map becomes an unscaled root (colliders, Rigidbody, ItemPickup) with a flat Icon_Map card on top.</summary>
+    static void RebuildWorldMapPrefab(Material material)
+    {
+        var root = PrefabUtility.LoadPrefabContents(MapPrefabPath);
+        try
+        {
+            root.transform.localScale = Vector3.one;
+
+            // The old grey cube body is replaced by the card.
+            var oldRenderer = root.GetComponent<MeshRenderer>();
+            if (oldRenderer != null) Object.DestroyImmediate(oldRenderer);
+            var oldFilter = root.GetComponent<MeshFilter>();
+            if (oldFilter != null) Object.DestroyImmediate(oldFilter);
+
+            Vector3 solidSize = new Vector3(CardSize * ParchmentFraction.x, 0.03f, CardSize * ParchmentFraction.y);
+            BoxCollider solid = null, trigger = null;
+            foreach (var box in root.GetComponents<BoxCollider>())
+            {
+                if (box.isTrigger) trigger = box; else solid = box;
+            }
+            if (solid == null) solid = root.AddComponent<BoxCollider>();
+            if (trigger == null) { trigger = root.AddComponent<BoxCollider>(); trigger.isTrigger = true; }
+            solid.size = solidSize;
+            solid.center = Vector3.zero;
+            // Generous trigger so "standing near it" (PlayerGrabController.pickupRadius) finds it.
+            trigger.size = new Vector3(1.2f, 0.6f, 1.2f);
+            trigger.center = Vector3.zero;
+
+            var display = root.transform.Find("Map_Display");
+            if (display == null)
+            {
+                var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                Object.DestroyImmediate(quad.GetComponent<Collider>());
+                quad.name = "Map_Display";
+                display = quad.transform;
+                display.SetParent(root.transform, false);
+            }
+            display.localPosition = new Vector3(0f, solidSize.y * 0.5f + 0.002f, 0f);
+            display.localRotation = Quaternion.Euler(90f, 0f, 0f);   // lying flat, face up
+            display.localScale = new Vector3(CardSize, CardSize, 1f);
+            var renderer = display.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   // a flat card only casts a blocky rectangle
+            renderer.receiveShadows = true;
+
+            PrefabUtility.SaveAsPrefabAsset(root, MapPrefabPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
+    /// <summary>Clears old scale/collider/material overrides on Item_Map instances in the open scenes, keeping their placement.</summary>
+    static void RevertSceneMapOverrides()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MapPrefabPath);
+        foreach (var pickup in Object.FindObjectsByType<ItemPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            var instanceRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(pickup.gameObject);
+            if (instanceRoot == null || PrefabUtility.GetCorrespondingObjectFromSource(instanceRoot) != prefab) continue;
+
+            var t = instanceRoot.transform;
+            Vector3 pos = t.localPosition;
+            Quaternion rot = t.localRotation;
+            string name = instanceRoot.name;
+
+            PrefabUtility.RevertPrefabInstance(instanceRoot, InteractionMode.AutomatedAction);
+
+            t.localPosition = pos;
+            t.localRotation = rot;
+            instanceRoot.name = name;
+            EditorUtility.SetDirty(instanceRoot);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(instanceRoot.scene);
+            Debug.Log($"[GrabSetup] Reverted overrides on scene map '{name}' at {pos}.");
+        }
+    }
 
     [MenuItem("Tools/Grab System/Setup Player Map View")]
     public static void SetupPlayerMapView()
@@ -31,8 +184,11 @@ public static class GrabSystemTools
                 return;
             }
 
+            // E to pick up + the on-screen "Press E" / "Press Tab" hint live next to the map.
+            if (capsule.GetComponent<PlayerGrabController>() == null) capsule.gameObject.AddComponent<PlayerGrabController>();
             var mapItem = capsule.GetComponent<MapItem>();
             if (mapItem == null) mapItem = capsule.gameObject.AddComponent<MapItem>();
+            if (capsule.GetComponent<InteractPrompt>() == null) capsule.gameObject.AddComponent<InteractPrompt>();
 
             // Dimmed full-screen backdrop with the live map picture centred, kept square.
             var overlay = canvas.Find("MapOverlay");
@@ -118,14 +274,20 @@ public static class GrabSystemTools
         _steps.Clear();
         _clock = EditorApplication.timeSinceStartup;
 
-        // 1. Put the map in front of the camera and press E (same code path as the Interact action).
-        Then(1.2, () =>
+        // 1. Put the map just in front of the player's feet, wait out ItemPickup's arm delay,
+        //    then press E (same code path as the Interact action).
+        Then(0.1, () =>
         {
-            var cam = Camera.main != null ? Camera.main.transform : _grab.transform;
+            var player = _grab.transform;
             var rb = _worldMap.GetComponent<Rigidbody>();
-            if (rb != null) { rb.isKinematic = true; rb.position = cam.position + cam.forward * 1.2f; }
-            _worldMap.transform.position = cam.position + cam.forward * 1.2f;
+            Vector3 pos = player.position + player.forward * 0.8f + Vector3.up * 0.1f;
+            if (rb != null) { rb.isKinematic = true; rb.position = pos; }
+            _worldMap.transform.position = pos;
             Physics.SyncTransforms();
+        });
+        Then(1.3, () =>
+        {
+            if (!_worldMap.IsArmed) Log("note — map not armed yet (game time is behind; keep the Game view focused).");
             Invoke(_grab, "TryInteract");
         });
 
