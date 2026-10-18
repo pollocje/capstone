@@ -18,6 +18,7 @@
     "com.unity.multiplayer.playmode": "2.0.2",
     "com.unity.netcode.gameobjects": "2.11.0",
     "com.unity.pipeline": "0.6.0-exp.1",
+    "com.unity.postprocessing": "3.5.1",
     "com.unity.render-pipelines.high-definition": "17.3.0",
     "com.unity.render-pipelines.universal": "17.3.0",
     "com.unity.render-pipelines.universal-config": "17.0.3",
