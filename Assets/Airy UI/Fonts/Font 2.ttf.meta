@@ -1,0 +1,28 @@
+fileFormatVersion: 2
+guid: 4506bf6ca285b494ab0993e12703d5e6
+timeCreated: 1506421581
+licenseType: Store
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Fredoka One
+  fontNames:
+  - Fredoka One
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 135898
+  packageName: Airy UI 2 - Easy UI Animation
+  packageVersion: 2.0.2
+  assetPath: Assets/Airy UI/Fonts/Font 2.ttf
+  uploadId: 760159
