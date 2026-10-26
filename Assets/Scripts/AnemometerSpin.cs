@@ -24,6 +24,11 @@ public class AnemometerSpin : MonoBehaviour
 
         currentSpinSpeed = Mathf.Lerp(currentSpinSpeed, targetSpinSpeed, smoothing * Time.deltaTime);
 
-        transform.Rotate(Vector3.up, currentSpinSpeed * Time.deltaTime, Space.Self);
+        // The rotor mesh's own "up" is skewed sideways by a baked FBX import rotation, and world-up
+        // isn't right either once this is the held copy (which tilts with the camera). The parent
+        // (the pole, in-world or the held-item root) is always upright in its own frame, so spin
+        // around its current up direction instead of a fixed axis.
+        Vector3 axis = transform.parent != null ? transform.parent.up : Vector3.up;
+        transform.Rotate(axis, currentSpinSpeed * Time.deltaTime, Space.World);
     }
 }
