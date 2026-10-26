@@ -10,6 +10,7 @@ using TMPro;
 public class AnemometerItem : MonoBehaviour, IEquippable
 {
     [Header("Dependencies")]
+    [Tooltip("Optional floating HUD readout. Leave unassigned if you only want the on-model label below.")]
     [SerializeField] private TextMeshProUGUI windSpeedText;
     [Tooltip("Model shown in hand. Only its meshes are copied, so the world prefab (Anemeter) can be used directly.")]
     [SerializeField] private GameObject heldModel;
@@ -22,8 +23,24 @@ public class AnemometerItem : MonoBehaviour, IEquippable
     [Tooltip("Multiplier on the held model's own scale.")]
     [SerializeField] private float holdScale = 0.5f;
 
+    [Header("On-model readout (curves around the held model's pole)")]
+    [Tooltip("Font for the curved label. Leave empty to use TextMeshPro's project default.")]
+    [SerializeField] private TMP_FontAsset modelLabelFont;
+    [Tooltip("Local position of the label relative to the held model's root — slide this up/down " +
+             "the pole and move it to sit right at the surface.")]
+    [SerializeField] private Vector3 modelLabelLocalPosition = new Vector3(0f, 0.3f, 0f);
+    [Tooltip("Local rotation (euler) of the label relative to the held model's root.")]
+    [SerializeField] private Vector3 modelLabelLocalEuler = Vector3.zero;
+    [Tooltip("RectTransform width/height — affects wrapping and the pivot the curve/rotation is " +
+             "applied around, not just visual size.")]
+    [SerializeField] private Vector2 modelLabelSize = new Vector2(16.5f, 6.7f);
+    [SerializeField] private float modelLabelFontSize = 0.15f;
+    [Tooltip("Curve radius — match it to the pole's visual radius at the label's height so the text hugs it.")]
+    [SerializeField] private float modelLabelRadius = 0.3f;
+
     private bool _equipped;
     private GameObject _heldVisual;
+    private TMP_Text _modelLabel;
 
     void Awake()
     {
@@ -42,10 +59,12 @@ public class AnemometerItem : MonoBehaviour, IEquippable
     void Update()
     {
         if (!_equipped) return;
-        if (windSpeedText == null) return;
 
         WindSampler.TryGetWindAt(transform.position, out float speed, out _);
-        windSpeedText.text = $"Wind Speed: {speed:F1} m/s";
+        string reading = $"Wind Speed: {speed:F1} m/s";
+
+        if (windSpeedText != null) windSpeedText.text = reading;
+        if (_modelLabel != null) _modelLabel.text = reading;
     }
 
     // ── Held model ───────────────────────────────────────────────────────────
@@ -81,7 +100,33 @@ public class AnemometerItem : MonoBehaviour, IEquippable
             }
         }
 
+        BuildModelLabel(t);
+
         _heldVisual.SetActive(false);
+    }
+
+    // Curved 3D label mounted on the held root (not a child of Cylinder/Rotor — those carry a
+    // baked FBX axis-correction rotation, same one that caused the rotor spin bug, so their own
+    // local "up" isn't actually vertical. The root's frame is clean.
+    void BuildModelLabel(Transform heldRoot)
+    {
+        var go = new GameObject("WindSpeedLabel");
+        go.transform.SetParent(heldRoot, false);
+        go.transform.localPosition = modelLabelLocalPosition;
+        go.transform.localRotation = Quaternion.Euler(modelLabelLocalEuler);
+
+        _modelLabel = go.AddComponent<TextMeshPro>();
+
+        var rect = _modelLabel.rectTransform;
+        rect.sizeDelta = modelLabelSize;
+        _modelLabel.text = "Wind Speed: -- m/s";
+        _modelLabel.fontSize = modelLabelFontSize;
+        _modelLabel.alignment = TextAlignmentOptions.Center;
+        _modelLabel.color = Color.white;
+        if (modelLabelFont != null) _modelLabel.font = modelLabelFont;
+
+        var curve = go.AddComponent<CurvedTMPText>();
+        curve.radius = modelLabelRadius;
     }
 
     static Transform FindChildByName(Transform root, string name)

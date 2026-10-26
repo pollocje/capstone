@@ -55,7 +55,7 @@ PrefabInstance:
     - target: {fileID: -8144127274952838258, guid: eba4040a484fb4c4f930165d519aca13, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: a51715d512f984e48910c4ca983e05d9, type: 2}
+      objectReference: {fileID: 2100000, guid: dd96b7d2af372f6418d75eec0b340175, type: 2}
     - target: {fileID: 919132149155446097, guid: eba4040a484fb4c4f930165d519aca13, type: 3}
       propertyPath: m_Name
       value: Anemeter
@@ -63,7 +63,7 @@ PrefabInstance:
     - target: {fileID: 7202271454713460447, guid: eba4040a484fb4c4f930165d519aca13, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: a51715d512f984e48910c4ca983e05d9, type: 2}
+      objectReference: {fileID: 2100000, guid: dd96b7d2af372f6418d75eec0b340175, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 65702495048144492, guid: eba4040a484fb4c4f930165d519aca13, type: 3}
