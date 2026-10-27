@@ -55638,6 +55638,77 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4371144052285426531, guid: c0c32672766a81647b04690fc9ed3595, type: 3}
   m_PrefabInstance: {fileID: 270256250}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &272107277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 272107279}
+  - component: {fileID: 272107278}
+  - component: {fileID: 272107280}
+  m_Layer: 0
+  m_Name: ScannableCloud2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &272107278
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272107277}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 4.520073}
+  m_Center: {x: 0, y: 0, z: 1.7600365}
+--- !u!4 &272107279
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272107277}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2002, y: 311, z: -926}
+  m_LocalScale: {x: 507.4267, y: 194.91713, z: 55.25959}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &272107280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272107277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4052458bbf5611b43bad6f3f124fa28a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Scannable
+  researchValue: 10
+  scanDuration: 3
+  onScanned:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &272295560
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -300595,7 +300666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4081136511058153756, guid: 5bf700290db544d48b2d33b735a2cfce, type: 3}
       propertyPath: m_Name
-      value: NewPickup
+      value: Truck
       objectReference: {fileID: 0}
     - target: {fileID: 4320382476359606698, guid: 5bf700290db544d48b2d33b735a2cfce, type: 3}
       propertyPath: m_LocalPosition.x
@@ -343540,6 +343611,77 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4094916363087742, guid: 47555e4f5572b0d4c94e95b1b8d25596, type: 3}
   m_PrefabInstance: {fileID: 1505023621}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1505224352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1505224354}
+  - component: {fileID: 1505224353}
+  - component: {fileID: 1505224355}
+  m_Layer: 0
+  m_Name: ScannableCloud1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1505224353
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505224352}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5067596, y: 1, z: 1}
+  m_Center: {x: 0.25337982, y: 0, z: 0}
+--- !u!4 &1505224354
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505224352}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -156, y: 318, z: -175}
+  m_LocalScale: {x: 120.62412, y: 120.62412, z: 120.62412}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1505224355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505224352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4052458bbf5611b43bad6f3f124fa28a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Scannable
+  researchValue: 10
+  scanDuration: 3
+  onScanned:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1505295385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -408880,10 +409022,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e51e65a1c7030ad48ad33092bd618b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
-  hotbarRoot: {fileID: 0}
-  slotPrefab: {fileID: 0}
-  normalColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
-  selectedColor: {r: 0.9, g: 0.7, b: 0.1, a: 0.9}
 --- !u!114 &1844350604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -476967,3 +477105,5 @@ SceneRoots:
   - {fileID: 936603704}
   - {fileID: 316013295}
   - {fileID: 405597756}
+  - {fileID: 1505224354}
+  - {fileID: 272107279}

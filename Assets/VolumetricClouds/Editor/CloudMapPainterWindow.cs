@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+
 /// <summary>
 /// Paints the regional Cloud Map texture (R: coverage, G: storm intensity) directly in the Scene view,
 /// so storms can be placed at specific world locations instead of covering the whole sky uniformly.

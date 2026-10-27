@@ -104,6 +104,10 @@ PrefabInstance:
       propertyPath: field of view
       value: 59.99995
       objectReference: {fileID: 0}
+    - target: {fileID: 3075243504966116299, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      propertyPath: scanRange
+      value: 10000
+      objectReference: {fileID: 0}
     - target: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       propertyPath: m_Name
       value: MainPlayer Variant
@@ -183,11 +187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &2690698679047533655 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5330924631748380218, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
-  m_PrefabInstance: {fileID: 7830765261270790765}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3653676379582566691 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}

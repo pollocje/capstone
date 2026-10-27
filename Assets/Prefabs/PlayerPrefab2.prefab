@@ -300,6 +300,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResearchManager
   researchBar: {fileID: 4128005903034795244}
   maxResearch: 100
+  onResearchComplete:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &5676997079014319342
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -594,6 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96550f4c972cd444b02367c19833dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hotbar
+  dropKey: 103
   slotCount: 5
   dropDistance: 2
   playerTransform: {fileID: 6148487059883620852}
@@ -619,6 +623,8 @@ MonoBehaviour:
   zoomFov: 15
   normalFov: 60
   zoomSpeed: 5
+  binocularSource: {fileID: 0}
+  binocularSound: {fileID: 0}
 --- !u!114 &3075243504966116299
 MonoBehaviour:
   m_ObjectHideFlags: 0
