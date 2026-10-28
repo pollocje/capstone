@@ -154,6 +154,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 455558045225461785}
+    - targetCorrespondingSourceObject: {fileID: 4190531906401539766, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8033307795613232484}
     - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 471203614894031976}
@@ -754,3 +757,23 @@ MonoBehaviour:
   groundedOffset: -0.14
   groundedRadius: 0.3
   speedDampTime: 0.1
+--- !u!114 &8033307795613232484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236277211100521691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd43aa0efd2e43baa88b4a8e835ee7cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEmote
+  ShowTopMostFoldoutHeaderGroup: 1
+  emotes:
+  - {fileID: -203655887218126122, guid: 45344ce14556da14db5957974cf59eb1, type: 3}
+  - {fileID: -203655887218126122, guid: e50ca4de1e52a1f43956ab9b1e6baf82, type: 3}
+  - {fileID: -203655887218126122, guid: f236ad02c99bec342a564bccaa541c6b, type: 3}
+  - {fileID: -203655887218126122, guid: d92f4c82b6e4cf545aeeb3f0082b3a38, type: 3}
+  emotePlaceholder: {fileID: -203655887218126122, guid: 45344ce14556da14db5957974cf59eb1, type: 3}
+  emoteKey: 98
