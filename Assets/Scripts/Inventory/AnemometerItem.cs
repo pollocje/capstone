@@ -42,6 +42,8 @@ public class AnemometerItem : MonoBehaviour, IEquippable
     private GameObject _heldVisual;
     private TMP_Text _modelLabel;
 
+    public bool IsEquipped => _equipped;
+
     void Awake()
     {
         if (cameraTransform == null)
