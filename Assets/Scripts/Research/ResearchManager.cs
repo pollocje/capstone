@@ -15,6 +15,8 @@ public class ResearchManager : MonoBehaviour
 
     private bool _completed;
 
+    public bool IsComplete => _completed;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -39,11 +41,11 @@ public class ResearchManager : MonoBehaviour
 
     public void AddResearch(float amount)
     {
-        if (researchBar == null) return;
+        if (researchBar == null || _completed) return;
 
         researchBar.UpdateBar(researchBar.CurrentValue + amount, UpdateAnim.Heal);
 
-        if (!_completed && researchBar.CurrentValue >= researchBar.MaxValue)
+        if (researchBar.CurrentValue >= researchBar.MaxValue)
         {
             _completed = true;
             onResearchComplete?.Invoke();
