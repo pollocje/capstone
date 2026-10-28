@@ -18,8 +18,13 @@ public class TornadoDissolve : MonoBehaviour
 
     [SerializeField] private EndBehavior endBehavior = EndBehavior.Deactivate;
 
+    [Tooltip("Seconds for the reverse Appear() dissolve-in to go from fully clipped to fully visible.")]
+    [SerializeField] private float appearDuration = 4f;
+
     public UnityEvent onDissolveStarted;
     public UnityEvent onDissolveComplete;
+    public UnityEvent onAppearStarted;
+    public UnityEvent onAppearComplete;
 
     private Renderer[] _renderers;
     private ParticleSystem[] _particleSystems;
@@ -52,6 +57,38 @@ public class TornadoDissolve : MonoBehaviour
         SetClipThreshold(0f);
         foreach (var ps in _particleSystems)
             ps.Play(true);
+    }
+
+    /// <summary>Reverse of <see cref="Dissolve"/> — starts fully clipped (invisible) and ramps
+    /// down to fully visible, so the tornado materializes out of its own swirl texture. Call this
+    /// right after spawning the tornado, before anyone's had a frame to see it unclipped.</summary>
+    public void Appear()
+    {
+        if (_running != null) return;
+        gameObject.SetActive(true);
+        SetClipThreshold(1f);
+        _running = StartCoroutine(AppearRoutine());
+    }
+
+    private IEnumerator AppearRoutine()
+    {
+        onAppearStarted?.Invoke();
+
+        foreach (var ps in _particleSystems)
+            ps.Play(true);
+
+        float t = 0f;
+        while (t < appearDuration)
+        {
+            t += Time.deltaTime;
+            SetClipThreshold(1f - Mathf.Clamp01(t / appearDuration));
+            yield return null;
+        }
+
+        SetClipThreshold(0f);
+        onAppearComplete?.Invoke();
+
+        _running = null;
     }
 
     private IEnumerator DissolveRoutine()
