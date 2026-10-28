@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 654d2a1c4cea54d4ba8baecf56582094
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Audio/LICENSES.txt
+  uploadId: 1010126

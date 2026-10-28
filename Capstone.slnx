@@ -3,5 +3,7 @@
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="VolumetricCloudsURP.Editor.csproj" />
   <Project Path="DynamicWeatherSystem.Editor.csproj" />
+  <Project Path="VolumetricCloudsURP.csproj" />
 </Solution>

@@ -17,6 +17,10 @@ public class Binoculars : MonoBehaviour, IEquippable
 
     public bool IsUsing => _isUsing;
 
+    //AUDIO VARIABLES
+    [SerializeField] AudioSource binocularSource;
+    [SerializeField] AudioClip binocularSound;
+
     void Start()
     {
         if (vcam == null)
@@ -34,6 +38,10 @@ public class Binoculars : MonoBehaviour, IEquippable
     /// <summary>Called by Hotbar when left click is pressed on binoculars slot.</summary>
     public void ToggleZoom()
     {
+
+        if (!_isUsing && binocularSource != null && binocularSound != null)
+            binocularSource.PlayOneShot(binocularSound);
+
         _isUsing = true;
         if (binocularUI != null) binocularUI.SetActive(true);
     }
@@ -46,7 +54,8 @@ public class Binoculars : MonoBehaviour, IEquippable
     }
 
     void Update()
-    {
+    { 
+
         float target = _isUsing ? zoomFov : normalFov;
 
         if (vcam != null)

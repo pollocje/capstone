@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1d6f6d93c63fcb247813ca166433398c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Concrete/WhiteConcreteMaterial.mat
+  uploadId: 1010126

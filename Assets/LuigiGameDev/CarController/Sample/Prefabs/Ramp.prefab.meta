@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 94d001b17ae24e54cb51ae30f72d7bcc
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/Ramp.prefab
+  uploadId: 1010126

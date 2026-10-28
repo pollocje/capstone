@@ -24,6 +24,7 @@ public class Hotbar : MonoBehaviour
         RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
         RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
         RegisterEquippable(ItemType.Map, GetComponent<MapItem>());
+        RegisterEquippable(ItemType.Anemometer, GetComponent<AnemometerItem>());
         _grab = GetComponent<PlayerGrabController>();
 
         // If not manually assigned, find the spawned player by tag

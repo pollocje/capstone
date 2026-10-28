@@ -4,15 +4,18 @@ using System.Collections;
 using UnityEngine.InputSystem;
 #endif
 using StarterAssets;
-using Unity.Netcode; 
+using Unity.Netcode;
 
 public class VehicleEnterExit : NetworkBehaviour
 {
     [Header("Truck")]
-    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck or the raycast experiment - and leave the other empty. Both expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck, the raycast experiment, or PreconfiguredCarPhysics (the LuigiGameDev Car Controller bridge) - and leave the others empty. All three expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
     [SerializeField] private TruckWheelDrive wheelColliderTruck;
     [SerializeField] private TruckNewTEST raycastTruck;
+    [SerializeField] private PreconfiguredCarPhysics preconfiguredCarTruck;
     [SerializeField] private GameObject followCameraObject;
+    [SerializeField] private GameObject firstPersonCameraObject;
+    [SerializeField] private KeyCode toggleViewKey = KeyCode.C;
     [SerializeField] private Transform driverSeat;
     [SerializeField] private Transform exitPoint;
 
@@ -21,6 +24,7 @@ public class VehicleEnterExit : NetworkBehaviour
 
     private bool playerInRange;
     private bool inVehicle;
+    private bool firstPersonActive;
     private GameObject playerRoot;
 
     // Cached player components frozen while in the vehicle
@@ -28,6 +32,10 @@ public class VehicleEnterExit : NetworkBehaviour
     private StarterAssets.FirstPersonController _fpc;
     private StarterAssetsInputs _inputs;
     private PlayerInput _playerInput;
+    private Camera _playerCamera;
+    private AudioListener _playerAudioListener;
+    private Renderer[] _playerRenderers;
+    private Collider[] _playerColliders;
 
     // Online: True while someone is driving. Only the host changes it; everyone can read it.
     private readonly NetworkVariable<bool> occupied = new NetworkVariable<bool>(false);
@@ -50,6 +58,7 @@ public class VehicleEnterExit : NetworkBehaviour
     {
         if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
         if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
+        if (preconfiguredCarTruck != null) preconfiguredCarTruck.SetInputEnabled(enabled);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -81,12 +90,25 @@ public class VehicleEnterExit : NetworkBehaviour
         if (inVehicle && _cc != null)
             _cc.transform.SetPositionAndRotation(driverSeat.position, driverSeat.rotation);
 
+        if (inVehicle && Input.GetKeyDown(toggleViewKey))
+            ToggleCameraView();
+
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
         if (!inVehicle && playerInRange)
             EnterVehicle();
         else if (inVehicle)
             ExitVehicle();
+    }
+
+    private void ToggleCameraView()
+    {
+        // Nothing to switch to if this truck doesn't have a first-person camera assigned.
+        if (firstPersonCameraObject == null) return;
+
+        firstPersonActive = !firstPersonActive;
+        followCameraObject.SetActive(!firstPersonActive);
+        firstPersonCameraObject.SetActive(firstPersonActive);
     }
 
     private void EnterVehicle()
@@ -106,6 +128,10 @@ public class VehicleEnterExit : NetworkBehaviour
         _fpc = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
         _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
         _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
+        _playerCamera = playerRoot.GetComponentInChildren<Camera>(true);
+        _playerAudioListener = playerRoot.GetComponentInChildren<AudioListener>(true);
+        _playerRenderers = playerRoot.GetComponentsInChildren<Renderer>(true);
+        _playerColliders = playerRoot.GetComponentsInChildren<Collider>(true);
 
         // Disable FPC first so its Update can't call Move() on a CC we're about to deactivate.
         if (_fpc != null) _fpc.enabled = false;
@@ -113,12 +139,45 @@ public class VehicleEnterExit : NetworkBehaviour
         if (_playerInput != null) _playerInput.enabled = false;
         if (_cc != null) _cc.enabled = false;
 
+        // The player's own camera must not stay live once the truck's follow camera takes
+        // over - otherwise both cameras (and both AudioListeners) are active at once, and the
+        // leftover player camera ends up jammed inside the cab mesh at the driver seat position.
+        if (_playerCamera != null) _playerCamera.enabled = false;
+        if (_playerAudioListener != null) _playerAudioListener.enabled = false;
+
+        // The capsule keeps getting repositioned to the driver seat every frame (below, for
+        // other players to see), but nothing stops its own mesh from rendering - without this
+        // the player's body rides along stuck to the truck like it's bolted on. Toggling
+        // Renderer.enabled (not the GameObjects) keeps Animator/scripts intact for when NGO
+        // observers need the pose, it just stops drawing it locally.
+        if (_playerRenderers != null)
+        {
+            foreach (var renderer in _playerRenderers)
+                if (renderer != null) renderer.enabled = false;
+        }
+
+        // The CharacterController above isn't the only collider on the player - PlayerCapsule
+        // has a separate solid CapsuleCollider (distinct from the CC) on its "Capsule" child.
+        // Leaving it enabled while the capsule gets teleported into the driver seat every frame
+        // means it keeps physically overlapping the truck's own chassis collider, and since a
+        // Rigidbody can't push a collider that's reset back every frame, the truck gets shoved
+        // instead - straight into the ground.
+        if (_playerColliders != null)
+        {
+            foreach (var col in _playerColliders)
+                if (col != null) col.enabled = false;
+        }
+
         // Online:Move the capsule (the part that actually moves/syncs), not the root.
         if (_cc != null) _cc.transform.position = driverSeat.position;
         else playerRoot.transform.position = driverSeat.position;
 
         SetTruckInputEnabled(true);
-        followCameraObject.SetActive(true);
+
+        // E puts you straight in the driver's seat view; C can still flip to the chase cam.
+        firstPersonActive = firstPersonCameraObject != null;
+        followCameraObject.SetActive(!firstPersonActive);
+        if (firstPersonCameraObject != null) firstPersonCameraObject.SetActive(true);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
@@ -133,6 +192,7 @@ public class VehicleEnterExit : NetworkBehaviour
     {
         SetTruckInputEnabled(false);
         followCameraObject.SetActive(false);
+        if (firstPersonCameraObject != null) firstPersonCameraObject.SetActive(false);
 
         // [Online: Free the truck for other players.
         if (IsSpawned) ReleaseDriveRpc();
@@ -151,6 +211,18 @@ public class VehicleEnterExit : NetworkBehaviour
         if (_fpc != null) _fpc.enabled = true;
         if (_inputs != null) _inputs.enabled = true;
         if (_playerInput != null) _playerInput.enabled = true;
+        if (_playerCamera != null) _playerCamera.enabled = true;
+        if (_playerAudioListener != null) _playerAudioListener.enabled = true;
+        if (_playerRenderers != null)
+        {
+            foreach (var renderer in _playerRenderers)
+                if (renderer != null) renderer.enabled = true;
+        }
+        if (_playerColliders != null)
+        {
+            foreach (var col in _playerColliders)
+                if (col != null) col.enabled = true;
+        }
 
         inVehicle = false;
         playerInRange = false;

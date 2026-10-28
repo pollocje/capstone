@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b5b0e2977bba76a489b280f9782e89f8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4300000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Stadium/Meshes/Outer
+    (0).asset
+  uploadId: 1010126

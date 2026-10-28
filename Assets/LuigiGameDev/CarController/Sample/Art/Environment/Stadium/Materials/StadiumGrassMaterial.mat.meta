@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a39d4872872f5524f9a8556ea3229d62
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Stadium/Materials/StadiumGrassMaterial.mat
+  uploadId: 1010126

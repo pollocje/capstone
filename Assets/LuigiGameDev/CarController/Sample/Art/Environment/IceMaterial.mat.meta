@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bcb5334c460a5ba4794ae312c5daff10
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/IceMaterial.mat
+  uploadId: 1010126

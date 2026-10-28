@@ -1,0 +1,13 @@
+WHAT TO SAY ABOUT THE SYSTEM ARCHITECTURE DIAGRAM
+
+This diagram shows how the game's systems fit together, from one-time login and
+spawning down to the actual gameplay systems (player, inventory, grab/interact,
+research, vehicle) and scene-level systems (weather, wind, tornado), and how much
+of that is actually networked versus just running locally on each client. A client
+authenticates and gets a Relay session through Unity Cloud Services, the host spawns
+their player object, and from there most systems - grabbing items, scanning with
+binoculars, weather, wind, the tornado, and driving physics - run independently on
+each machine with no syncing yet; the only two things that are genuinely networked
+right now are the item dispenser (request an item, server hands it back) and the
+vehicle's occupied/driving flag, and that request/reply pattern with the dispenser is
+basically the template for networking everything else later.

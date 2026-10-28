@@ -102,3 +102,6 @@ InitTestScene*.unity*
 
 # Claude Code local settings (machine-specific, not shared)
 /.claude/settings.local.json
+
+# Unity MCP plugin config (machine-specific local port/URL, not shared)
+/.mcp.json

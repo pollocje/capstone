@@ -1,20 +1,23 @@
 using UnityEngine;
-
+using Unity.Netcode;
 /// <summary>
 /// Equip-side component for the Firework flare item. Lives alongside Hotbar/Binoculars on
 /// the player. Spawns and throws a FireworkFlareProjectile on use, then consumes the slot —
 /// the flare is a single-use throwable, not a reusable launcher.
 /// </summary>
-public class FireworkFlareLauncher : MonoBehaviour, IEquippable
+public class FireworkFlareLauncher : NetworkBehaviour, IEquippable
 {
     [Header("Dependencies")]
     public GameObject flarePrefab;
-    public Transform throwOrigin;      // defaults to Camera.main if unset
+    public Transform throwOrigin; // defaults to Camera.main if unset
     public GameObject heldFlareVisual; // optional in-hand model shown while equipped
 
     [Header("Throw Settings")]
     public float throwForce = 18f;
-    public float upwardArc = 0.15f;    // 0-1, blends aim direction toward world up
+    public float upwardArc = 0.15f; // 0-1, blends aim direction toward world up
+
+    [SerializeField] AudioSource flareSource;
+    [SerializeField] AudioClip flareSound;
 
     private Hotbar _hotbar;
 
@@ -51,7 +54,11 @@ public class FireworkFlareLauncher : MonoBehaviour, IEquippable
 
     void Throw()
     {
-        if (flarePrefab == null || throwOrigin == null) return;
+        if (flarePrefab == null || throwOrigin == null)
+            return;
+
+        //AUDIO
+        PlayFlareSoundRpc();
 
         Vector3 spawnPos = throwOrigin.position + throwOrigin.forward * 0.5f;
         Quaternion spawnRot = Quaternion.LookRotation(throwOrigin.forward, Vector3.up);
@@ -69,5 +76,11 @@ public class FireworkFlareLauncher : MonoBehaviour, IEquippable
         Collider flareCollider = flare.GetComponent<Collider>();
         if (playerCollider != null && flareCollider != null)
             Physics.IgnoreCollision(flareCollider, playerCollider);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayFlareSoundRpc()
+    {
+        flareSource.PlayOneShot(flareSound);
     }
 }

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9f2e26323d9f3004bbd9940f798307cf
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/LoopRamp.prefab
+  uploadId: 1010126

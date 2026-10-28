@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ba87e82de5db7fe4a8aeabd1dc8ee18e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 13400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/GroundPhysicsMaterials/DefaultPhysicsMaterial.physicMaterial
+  uploadId: 1010126

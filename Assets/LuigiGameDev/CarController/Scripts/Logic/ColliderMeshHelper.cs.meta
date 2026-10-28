@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: e12efc90eab44178ba3c8fd8a49f4ffd
+timeCreated: 1746639023
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Scripts/Logic/ColliderMeshHelper.cs
+  uploadId: 1010126

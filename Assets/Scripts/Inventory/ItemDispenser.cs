@@ -25,6 +25,8 @@ public class ItemDispenser : NetworkBehaviour
     [Header("UI")]
     [SerializeField] private GameObject usePromptUI;
     [SerializeField] private GameObject emptyPromptUI;
+    [SerializeField] AudioSource coinSource;
+    [SerializeField] AudioClip coinSound;
 
     // Server-only: indices into `items` that haven't been handed out yet
     private readonly List<int> _remaining = new List<int>();
@@ -107,6 +109,10 @@ public class ItemDispenser : NetworkBehaviour
     [Rpc(SendTo.Server, RequireOwnership = false)]
     private void RequestItemRpc(RpcParams rpcParams = default)
     {
+        //AUDIO QUEUE - SEBASTION 
+        coinSource.PlayOneShot(coinSound);
+        //Plays every time vending machine is used 
+
         ulong sender = rpcParams.Receive.SenderClientId;
 
         if (_remaining.Count == 0)
