@@ -52593,6 +52593,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4518830211046193102, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518830211046193102, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.27
+      objectReference: {fileID: 0}
     - target: {fileID: 7251931797159497302, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_Name
       value: Item_Map
@@ -364508,7 +364516,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3676694806636695778, guid: 163099117d8b97a4bb83120a495b01f9, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 163099117d8b97a4bb83120a495b01f9, type: 3}
@@ -472094,16 +472103,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
   hotbarRoot: {fileID: 0}
   slotPrefab: {fileID: 0}
-  normalColor:
-    r: 0.1
-    g: 0.1
-    b: 0.1
-    a: 0.75
-  selectedColor:
-    r: 0.9
-    g: 0.7
-    b: 0.1
-    a: 0.9
+  normalColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
+  selectedColor: {r: 0.9, g: 0.7, b: 0.1, a: 0.9}
 --- !u!114 &1844350604
 MonoBehaviour:
   m_ObjectHideFlags: 0

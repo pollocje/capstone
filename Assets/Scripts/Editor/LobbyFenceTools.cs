@@ -40,7 +40,7 @@ public static class LobbyFenceTools
     // ---------------------------------------------------------------- rebuild
 
     const string FencePrefabPath = "Assets/Polytope Studio/Lowpoly_Demos/Environment_Free/Helpers/Fence.prefab";
-    const string GateName = "PT_Medieval_Village_Gate_01";
+    internal const string GateName = "PT_Medieval_Village_Gate_01";
     const float RoadClearance = 3f;     // metres between any fence part and the nearest road mesh
     const float KeepOutMargin = 2f;     // metres the fence must stay away from protected lobby objects
     const float ColliderThickness = 0.5f;
@@ -396,7 +396,7 @@ public static class LobbyFenceTools
         return pts;
     }
 
-    static (Vector2, Vector2) Ends(Transform t, Bounds mb)
+    internal static (Vector2, Vector2) Ends(Transform t, Bounds mb)
     {
         var (longAx, _, _) = Axes(t, mb);
         var ax = Unit(longAx) * mb.extents[longAx];
@@ -405,7 +405,7 @@ public static class LobbyFenceTools
     }
 
     // Local mesh axes by their world role: longest horizontal, the other horizontal, most vertical.
-    static (int longAx, int thinAx, int upAx) Axes(Transform t, Bounds mb)
+    internal static (int longAx, int thinAx, int upAx) Axes(Transform t, Bounds mb)
     {
         int up = Enumerable.Range(0, 3).OrderByDescending(i => Mathf.Abs((t.rotation * Unit(i)).y)).First();
         var hor = Enumerable.Range(0, 3).Where(i => i != up)
@@ -422,7 +422,7 @@ public static class LobbyFenceTools
     }
 
     // The two ends of the gate opening: extremes of the gate's poles mesh (or whole gate) along its long axis.
-    static Vector2[] GateEnds(Transform gate)
+    internal static Vector2[] GateEnds(Transform gate)
     {
         var poles = gate.GetComponentsInChildren<MeshFilter>(true).FirstOrDefault(m => m.name.Contains("poles"));
         if (poles && poles.sharedMesh)
@@ -437,7 +437,7 @@ public static class LobbyFenceTools
             : new[] { new Vector2(bb.center.x, bb.min.z), new Vector2(bb.center.x, bb.max.z) };
     }
 
-    static List<Vector2> Hull(List<Vector2> pts)
+    internal static List<Vector2> Hull(List<Vector2> pts)
     {
         var p = pts.Distinct().OrderBy(v => v.x).ThenBy(v => v.y).ToList();
         if (p.Count < 3) return p;
@@ -451,7 +451,7 @@ public static class LobbyFenceTools
     }
 
     // Drop hull vertices where the outline turns by less than minTurn degrees (keeps the real corners).
-    static List<Vector2> Simplify(List<Vector2> hull, float minTurn)
+    internal static List<Vector2> Simplify(List<Vector2> hull, float minTurn)
     {
         var pts = new List<Vector2>(hull);
         bool changed = true;
@@ -492,7 +492,7 @@ public static class LobbyFenceTools
         return result;
     }
 
-    static bool InsideWithMargin(List<Vector2> poly, Vector2 p, float margin)
+    internal static bool InsideWithMargin(List<Vector2> poly, Vector2 p, float margin)
     {
         bool inside = false;
         for (int i = 0, j = poly.Count - 1; i < poly.Count; j = i++)
@@ -504,14 +504,14 @@ public static class LobbyFenceTools
         return true;
     }
 
-    static float DistToSegment(Vector2 p, Vector2 a, Vector2 b)
+    internal static float DistToSegment(Vector2 p, Vector2 a, Vector2 b)
     {
         var ab = b - a;
         float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(1e-6f, ab.sqrMagnitude));
         return Vector2.Distance(p, a + ab * t);
     }
 
-    static float Ground(Terrain terrain, Vector3 p) =>
+    internal static float Ground(Terrain terrain, Vector3 p) =>
         terrain ? terrain.SampleHeight(p) + terrain.transform.position.y : 0f;
 
     static Vector3 ToV3(Vector2 v) => new Vector3(v.x, 0, v.y);
