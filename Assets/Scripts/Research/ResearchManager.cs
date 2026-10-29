@@ -15,6 +15,8 @@ public class ResearchManager : MonoBehaviour
 
     private bool _completed;
 
+    public bool IsComplete => _completed;
+
     /// <summary>How full the research bar is, 0 to 1.</summary>
     public float Progress => researchBar != null && researchBar.MaxValue > 0f ? Mathf.Clamp01(researchBar.CurrentValue / researchBar.MaxValue) : 0f;
 
@@ -42,11 +44,11 @@ public class ResearchManager : MonoBehaviour
 
     public void AddResearch(float amount)
     {
-        if (researchBar == null) return;
+        if (researchBar == null || _completed) return;
 
         researchBar.UpdateBar(researchBar.CurrentValue + amount, UpdateAnim.Heal);
 
-        if (!_completed && researchBar.CurrentValue >= researchBar.MaxValue)
+        if (researchBar.CurrentValue >= researchBar.MaxValue)
         {
             _completed = true;
             onResearchComplete?.Invoke();
