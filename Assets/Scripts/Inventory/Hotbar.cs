@@ -16,6 +16,10 @@ public class Hotbar : MonoBehaviour
     [HideInInspector] public InventoryItem[] items;
 
     private int selectedIndex = 0;
+
+    /// <summary>Fired when the player uses an item: left click on an equippable, or throwing/dropping a Droppable
+    /// with left click. Read by RoundManager for the end screen's "items used".</summary>
+    public static event System.Action<Hotbar, InventoryItem> ItemUsed;
     private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
     private PlayerGrabController _grab;
 
@@ -70,14 +74,21 @@ public class Hotbar : MonoBehaviour
         if (item.itemType == ItemType.Droppable)
         {
             if (Input.GetMouseButtonDown(0))
+            {
+                ItemUsed?.Invoke(this, item);
                 DropItem();
+            }
             return;
         }
 
         IEquippable equippable = GetEquippable(item);
         if (equippable == null) return;
 
-        if (Input.GetMouseButtonDown(0)) equippable.OnUseDown();
+        if (Input.GetMouseButtonDown(0))
+        {
+            ItemUsed?.Invoke(this, item);
+            equippable.OnUseDown();
+        }
         if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
     }
 

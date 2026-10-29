@@ -26,6 +26,7 @@ public class VehicleEnterExit : NetworkBehaviour
     private bool inVehicle;
     private bool firstPersonActive;
     private GameObject playerRoot;
+    private Vector3 _enterPosition; // where the player stood when getting in (exit fallback)
 
     // Cached player components frozen while in the vehicle
     private CharacterController _cc;
@@ -168,6 +169,8 @@ public class VehicleEnterExit : NetworkBehaviour
                 if (col != null) col.enabled = false;
         }
 
+        _enterPosition = _cc != null ? _cc.transform.position : playerRoot.transform.position;
+
         // Online:Move the capsule (the part that actually moves/syncs), not the root.
         if (_cc != null) _cc.transform.position = driverSeat.position;
         else playerRoot.transform.position = driverSeat.position;
@@ -197,14 +200,25 @@ public class VehicleEnterExit : NetworkBehaviour
         // [Online: Free the truck for other players.
         if (IsSpawned) ReleaseDriveRpc();
 
-        // Raycast down from above the exit point to place on actual terrain surface.
+        // Exit onto solid ground even if the truck is on its side or upside down: ExitPoint turns
+        // with the truck and can end up underground. Try spots around the truck, then where we got
+        // in, then the nearest spawn point; the old ExitPoint raycast is the last resort.
         Vector3 spawnPos = exitPoint.position;
-        if (Physics.Raycast(exitPoint.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 15f))
-            spawnPos = hit.point + Vector3.up * 0.1f;
+        float radius = _cc != null ? _cc.radius : 0.5f, height = _cc != null ? _cc.height : 1.8f;
+        if (!SafeGround.TryFindExit(transform, radius, height, out spawnPos) &&
+            !SafeGround.TryGroundAt(_enterPosition, _enterPosition.y, transform, radius, height, out spawnPos, 1.5f) &&
+            !SafeGround.TryNearestSpawn(_enterPosition, radius, height, out spawnPos))
+        {
+            spawnPos = exitPoint.position;
+            if (Physics.Raycast(exitPoint.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 15f))
+                spawnPos = hit.point + Vector3.up * 0.1f;
+        }
 
-        // Online: Move the capsule (the part that actually moves/syncs), not the root.
-        if (_cc != null) _cc.transform.position = spawnPos;
-        else playerRoot.transform.position = spawnPos;
+        // Stand the player upright, facing the truck's heading. While seated the capsule copies the
+        // seat's rotation, so after a flip it is upside down - and an upside-down CharacterController
+        // has its capsule below the feet, inside the ground, so the player sinks through the terrain.
+        var body = _cc != null ? _cc.transform : playerRoot.transform;
+        body.SetPositionAndRotation(spawnPos, SafeGround.Upright(transform));
         Physics.SyncTransforms();
 
         if (_cc != null) _cc.enabled = true;

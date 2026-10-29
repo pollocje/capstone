@@ -27,6 +27,9 @@ public class TornadoLift : MonoBehaviour
 
     private float growthTimer = 0f;
 
+    /// <summary>Fired just before a tornado is destroyed by the extinguisher (read by RoundManager: a win).</summary>
+    public static event System.Action<TornadoLift> Killed;
+
     void Start()
     {
         startingPosition = transform.position;
@@ -116,6 +119,7 @@ public class TornadoLift : MonoBehaviour
                 if (extinguishTimer >= 2f)
                 {
                     Debug.Log("Tornado destroyed!");
+                    Killed?.Invoke(this);
                     Destroy(gameObject);
                 }
             }

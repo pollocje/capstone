@@ -15,6 +15,9 @@ public class ResearchManager : MonoBehaviour
 
     private bool _completed;
 
+    /// <summary>How full the research bar is, 0 to 1.</summary>
+    public float Progress => researchBar != null && researchBar.MaxValue > 0f ? Mathf.Clamp01(researchBar.CurrentValue / researchBar.MaxValue) : 0f;
+
     void Awake()
     {
         if (Instance != null && Instance != this)

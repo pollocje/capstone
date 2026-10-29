@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 /// <summary>
@@ -29,7 +28,7 @@ public class MapItem : MonoBehaviour, IEquippable
     private bool _equipped;
     private bool _isUsing;
     private GameObject _heldVisual;
-    private PlayerInput _playerInput;
+    private PlayerNetworkSetup _netSetup;
 
     public bool IsEquipped => _equipped;
     public bool IsUsing => _isUsing;
@@ -43,8 +42,7 @@ public class MapItem : MonoBehaviour, IEquippable
             var cam = transform.root.GetComponentInChildren<Camera>(true);
             if (cam != null) cameraTransform = cam.transform;
         }
-        _playerInput = GetComponentInParent<PlayerInput>();
-        if (_playerInput == null) _playerInput = transform.root.GetComponentInChildren<PlayerInput>(true);
+        _netSetup = GetComponentInParent<PlayerNetworkSetup>();
 
         // Built in Awake so it exists before Hotbar.Start can equip the starting slot.
         BuildHeldVisual();
@@ -54,11 +52,16 @@ public class MapItem : MonoBehaviour, IEquippable
     void Update()
     {
         if (!_equipped) return;
-        // Remote players have PlayerInput disabled (PlayerNetworkSetup) — don't react to local keys there.
-        if (_playerInput != null && !_playerInput.enabled) return;
+        // Only the player this machine controls reacts to keys. Checked by ownership, not by
+        // PlayerInput.enabled: VehicleEnterExit disables PlayerInput while seated, which made Tab
+        // dead in the truck (an open map couldn't be put away).
+        if (!IsLocalPlayer()) return;
 
         if (Input.GetKeyDown(toggleKey)) ToggleView();
     }
+
+    bool IsLocalPlayer() =>
+        !PlayerSpawnManager.IsNetworked || (_netSetup != null && _netSetup.IsSpawned && _netSetup.IsOwner);
 
     public void ToggleView()
     {
