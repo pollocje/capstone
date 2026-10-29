@@ -11,8 +11,10 @@ public class AnemometerResearch : MonoBehaviour
     [Header("Detection")]
     [Tooltip("Wind speed (m/s) that must be sustained to register a reading.")]
     public float windThreshold = 15f;
-    [Tooltip("Seconds of continuous high wind needed to complete a reading.")]
+    [Tooltip("Seconds of continuous high wind needed to complete a reading, at exactly windThreshold speed.")]
     public float detectDuration = 3f;
+    [Tooltip("Caps how much faster a reading can fill in very high wind (e.g. 3 = never fills more than 3x the base rate).")]
+    public float maxSpeedMultiplier = 3f;
     [Tooltip("Research % added to the bar each time a reading completes.")]
     public float researchValue = 5f;
 
@@ -55,7 +57,8 @@ public class AnemometerResearch : MonoBehaviour
 
         ShowUI();
 
-        _progress += Time.deltaTime / detectDuration;
+        float speedMultiplier = Mathf.Clamp(speed / windThreshold, 1f, maxSpeedMultiplier);
+        _progress += Time.deltaTime * speedMultiplier / detectDuration;
 
         if (detectProgressBar != null)
             detectProgressBar.fillAmount = Mathf.Clamp01(_progress);
