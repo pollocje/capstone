@@ -67,8 +67,7 @@ public class BinocularScanner : MonoBehaviour
 
         if (_progress >= 1f)
         {
-            _currentTarget.MarkScanned();
-            ResearchManager.Instance?.AddResearch(_currentTarget.researchValue);
+            _currentTarget.ReportScanned();
             ClearTarget();
         }
     }
