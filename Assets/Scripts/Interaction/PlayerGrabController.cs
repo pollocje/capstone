@@ -220,7 +220,8 @@ public class PlayerGrabController : MonoBehaviour
         var grabbable = best?.collider.GetComponentInParent<Grabbable>();
         if (grabbable == null || grabbable.IsHeld)
         {
-            TryPickupNearby();
+            // Map in hand and nothing aimed at: E puts it down (E again picks it back up).
+            if (!TryPutDownMap()) TryPickupNearby();
             return;
         }
 
@@ -316,11 +317,36 @@ public class PlayerGrabController : MonoBehaviour
         return closest != null && closest.TryPickup(_hotbar);
     }
 
+    /// <summary>Drops the map if it's the selected hotbar item.</summary>
+    bool TryPutDownMap()
+    {
+        if (!IsHoldingMap) return false;
+        return _hotbar.DropSelected();
+    }
+
+    /// <summary>True while the map is the selected hotbar item, so E would put it down.</summary>
+    public bool IsHoldingMap
+    {
+        get
+        {
+            InventoryItem item = _hotbar != null ? _hotbar.GetSelectedItem() : null;
+            return item != null && item.itemType == ItemType.Map && item.dropPrefab != null;
+        }
+    }
+
     /// <summary>
     /// The hotbar item E would pick up right now (aimed at, else nearest in range), or null.
     /// Used by InteractPrompt to show "Press E".
     /// </summary>
     public ItemPickup FindPickupTarget()
+    {
+        if (cameraTransform == null || Held != null) return null;
+        var aimed = FindAimedPickup();
+        return aimed != null ? aimed : FindNearbyPickup();
+    }
+
+    /// <summary>The hotbar item under the crosshair within interactRange, or null.</summary>
+    public ItemPickup FindAimedPickup()
     {
         if (cameraTransform == null || Held != null) return null;
 
@@ -333,8 +359,7 @@ public class PlayerGrabController : MonoBehaviour
             if (best == null || _hits[i].distance < best.Value.distance) best = _hits[i];
         }
 
-        var aimed = best?.collider.GetComponentInParent<ItemPickup>();
-        return aimed != null ? aimed : FindNearbyPickup();
+        return best?.collider.GetComponentInParent<ItemPickup>();
     }
 
     ItemPickup FindNearbyPickup()

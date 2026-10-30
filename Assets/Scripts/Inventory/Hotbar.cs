@@ -16,6 +16,10 @@ public class Hotbar : MonoBehaviour
     [HideInInspector] public InventoryItem[] items;
 
     private int selectedIndex = 0;
+
+    /// <summary>Fired when the player uses an item: left click on an equippable, or throwing/dropping a Droppable
+    /// with left click. Read by RoundManager for the end screen's "items used".</summary>
+    public static event System.Action<Hotbar, InventoryItem> ItemUsed;
     private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
     private PlayerGrabController _grab;
 
@@ -24,6 +28,7 @@ public class Hotbar : MonoBehaviour
         RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
         RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
         RegisterEquippable(ItemType.Map, GetComponent<MapItem>());
+        RegisterEquippable(ItemType.Anemometer, GetComponent<AnemometerItem>());
         _grab = GetComponent<PlayerGrabController>();
 
         // If not manually assigned, find the spawned player by tag
@@ -69,14 +74,21 @@ public class Hotbar : MonoBehaviour
         if (item.itemType == ItemType.Droppable)
         {
             if (Input.GetMouseButtonDown(0))
+            {
+                ItemUsed?.Invoke(this, item);
                 DropItem();
+            }
             return;
         }
 
         IEquippable equippable = GetEquippable(item);
         if (equippable == null) return;
 
-        if (Input.GetMouseButtonDown(0)) equippable.OnUseDown();
+        if (Input.GetMouseButtonDown(0))
+        {
+            ItemUsed?.Invoke(this, item);
+            equippable.OnUseDown();
+        }
         if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
     }
 
@@ -85,11 +97,9 @@ public class Hotbar : MonoBehaviour
         if (!Input.GetKeyDown(dropKey)) return;
 
         InventoryItem item = GetSelectedItem();
-        if (item == null || item.dropPrefab == null) return;
-        if (item.itemType == ItemType.Droppable) return;  // those drop on left click already
+        if (item == null || item.itemType == ItemType.Droppable) return;  // those drop on left click already
 
-        GetEquippable(item)?.OnUnequip();
-        DropItem();
+        DropSelected();
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -106,6 +116,17 @@ public class Hotbar : MonoBehaviour
         Instantiate(item.dropPrefab, spawnPos, playerTransform.rotation);
 
         ConsumeSelected();
+    }
+
+    /// <summary>Unequips the selected item and puts its dropPrefab down in front of the player. False if there's nothing to drop.</summary>
+    public bool DropSelected()
+    {
+        InventoryItem item = GetSelectedItem();
+        if (item == null || item.dropPrefab == null) return false;
+
+        GetEquippable(item)?.OnUnequip();
+        DropItem();
+        return true;
     }
 
     /// <summary>Clears the currently selected slot (used by one-shot/consumable items).</summary>

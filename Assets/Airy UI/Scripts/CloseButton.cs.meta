@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 2858f6c67272dd14383549fcdd22c15a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 16954819a70521f49a68dbfc436a4076, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 135898
+  packageName: Airy UI 2 - Easy UI Animation
+  packageVersion: 2.0.2
+  assetPath: Assets/Airy UI/Scripts/CloseButton.cs
+  uploadId: 760159

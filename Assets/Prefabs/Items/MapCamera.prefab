@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8399862674963587512}
   - component: {fileID: 1940287140242488313}
   - component: {fileID: 6550780790156099375}
+  - component: {fileID: 5419836027465310021}
   m_Layer: 0
   m_Name: MapCamera
   m_TagString: Untagged
@@ -128,3 +129,15 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &5419836027465310021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7302881072125397753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba0457c0ee4642a68a3c71326f4e36f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

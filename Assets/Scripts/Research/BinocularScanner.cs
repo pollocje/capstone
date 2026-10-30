@@ -20,6 +20,7 @@ public class BinocularScanner : MonoBehaviour
     private Binoculars _binoculars;
     private Scannable _currentTarget;
     private float _progress;
+    private bool _uiShown;
 
     void Awake()
     {
@@ -37,7 +38,7 @@ public class BinocularScanner : MonoBehaviour
 
     void Update()
     {
-        if (!_binoculars.IsUsing)
+        if (!_binoculars.IsUsing || (ResearchManager.Instance != null && ResearchManager.Instance.IsComplete))
         {
             ClearTarget();
             return;
@@ -53,11 +54,11 @@ public class BinocularScanner : MonoBehaviour
 
         if (_currentTarget == null || _currentTarget.IsScanned)
         {
-            if (scanProgressUI != null) scanProgressUI.SetActive(false);
+            HideUI();
             return;
         }
 
-        if (scanProgressUI != null) scanProgressUI.SetActive(true);
+        ShowUI();
 
         _progress += Time.deltaTime / _currentTarget.scanDuration;
 
@@ -66,8 +67,7 @@ public class BinocularScanner : MonoBehaviour
 
         if (_progress >= 1f)
         {
-            _currentTarget.MarkScanned();
-            ResearchManager.Instance?.AddResearch(_currentTarget.researchValue);
+            _currentTarget.ReportScanned();
             ClearTarget();
         }
     }
@@ -86,6 +86,21 @@ public class BinocularScanner : MonoBehaviour
     {
         _currentTarget = null;
         _progress = 0f;
-        if (scanProgressUI != null) scanProgressUI.SetActive(false);
+        HideUI();
+    }
+
+    // scanProgressUI/scanProgressBar are shared with AnemometerResearch's UI, so only
+    // SetActive(false) when we're the one who turned it on - otherwise we'd hide the
+    // other tool's progress bar out from under it.
+    void ShowUI()
+    {
+        if (scanProgressUI != null) scanProgressUI.SetActive(true);
+        _uiShown = true;
+    }
+
+    void HideUI()
+    {
+        if (_uiShown && scanProgressUI != null) scanProgressUI.SetActive(false);
+        _uiShown = false;
     }
 }

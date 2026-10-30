@@ -48,9 +48,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.4620953
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5060371
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.174074
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.95108294
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.10311827
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.28952116
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.03139019
+      objectReference: {fileID: 0}
+    - target: {fileID: 65702495048144492, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_Name
+      value: RevealCam
+      objectReference: {fileID: 0}
+    - target: {fileID: 65702495048144492, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
       propertyPath: m_Name
-      value: Tornado2
+      value: Tornado
       objectReference: {fileID: 0}
     - target: {fileID: 7202271454713460447, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

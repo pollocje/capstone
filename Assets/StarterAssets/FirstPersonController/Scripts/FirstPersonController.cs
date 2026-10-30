@@ -125,9 +125,14 @@ namespace StarterAssets
 
 		private void GroundedCheck()
 		{
-			// set sphere position, with offset
-			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
-			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+			// Sweep down from inside the capsule's base so walls and terrain we're clipping into don't count as ground
+			float castRadius = Mathf.Min(GroundedRadius, _controller.radius * 0.9f);
+			Vector3 feet = transform.position + _controller.center + Vector3.down * (_controller.height * 0.5f);
+			Vector3 castOrigin = feet + Vector3.up * (castRadius + 0.05f);
+			float castDistance = 0.05f + Mathf.Abs(GroundedOffset) + _controller.skinWidth;
+
+			// Never grounded while rising, stops the jump re-triggering mid-air
+			Grounded = _verticalVelocity <= 0.0f && Physics.SphereCast(castOrigin, castRadius, Vector3.down, out _, castDistance, GroundLayers, QueryTriggerInteraction.Ignore);
 		}
 
 		private void CameraRotation()

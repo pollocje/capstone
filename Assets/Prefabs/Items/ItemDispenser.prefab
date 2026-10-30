@@ -100,6 +100,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a56514a068ddfc04ebd4fcde93a68355, type: 2}
   - {fileID: 11400000, guid: 9fd30d83e60a2c14ca95bdfa437fff74, type: 2}
   - {fileID: 11400000, guid: e6efafd45823c80448e2cb97abdf59ce, type: 2}
+  - {fileID: 11400000, guid: 71ed2495119f9e444930e0b9cc7dc28b, type: 2}
   usePromptUI: {fileID: 0}
   emptyPromptUI: {fileID: 0}
   coinSource: {fileID: -8568030112714434614}
