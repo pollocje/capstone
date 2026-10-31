@@ -63,8 +63,7 @@ public static class PlayerSafetyTools
         if (vee == null || local == null) return Report("Need the truck and a local player.");
         var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
         typeof(VehicleEnterExit).GetField("playerRoot", flags).SetValue(vee, local.transform.root.gameObject);
-        typeof(VehicleEnterExit).GetField("playerInRange", flags).SetValue(vee, true);
-        typeof(VehicleEnterExit).GetMethod("EnterVehicle", flags).Invoke(vee, null);
+        typeof(VehicleEnterExit).GetMethod("EnterVehicle", flags).Invoke(vee, new object[] { 0 }); // seat 0 = Driver
         var t = vee.transform;
         var pos = t.position + Vector3.up * 2.5f;
         var rot = Quaternion.AngleAxis(FlipRoll, t.forward) * t.rotation;

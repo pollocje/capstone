@@ -74,7 +74,9 @@
       "url": "https://package.openupm.com",
       "scopes": [
         "com.ivanmurzak.unity.mcp",
-        "extensions.unity.playerprefsex"
+        "extensions.unity.playerprefsex",
+        "com.ivanmurzak",
+        "extensions.unity"
       ]
     }
   ]
