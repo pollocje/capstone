@@ -1,21 +1,19 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-#if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
-#endif
-using StarterAssets;
 using Unity.Netcode;
 
 /// <summary>
-/// Spawns the tornado prefab at a random point inside a TornadoSpawnArea, then plays a short
-/// locked-input cutscene: swap to a camera that's a child of the tornado prefab itself (so you
-/// can position/angle it exactly in the prefab editor, it just rides along with wherever the
-/// tornado spawns) while the tornado sits there fully visible (fade-in via TornadoDissolve.Appear()
-/// is TODO). Subscribes
-/// itself to ResearchManager.onResearchComplete at runtime (see Start/WaitAndSubscribe) instead
-/// of being wired in the Inspector, since ResearchManager only exists on the player, which is
-/// spawned at runtime by the networked lobby flow and isn't present in the scene to drag a
+/// Decides WHEN the shared tornado appears (ResearchManager.onResearchComplete) and, online, WHO
+/// actually creates it: only the server Instantiates + NetworkObject.Spawn()s it, at a point
+/// picked by the server, so every connected machine ends up watching the exact same tornado
+/// instead of each independently faking its own at a different spot. The reveal cutscene itself
+/// (camera swap, input lock) lives on the prefab - see TornadoRevealCutscene - since that has to
+/// run per-machine the moment the networked tornado actually becomes visible there, which isn't
+/// necessarily the same moment as this one's SpawnTornado() call.
+/// Subscribes itself to ResearchManager.onResearchComplete at runtime (see Start/WaitAndSubscribe)
+/// instead of being wired in the Inspector, since ResearchManager only exists on the player, which
+/// is spawned at runtime by the networked lobby flow and isn't present in the scene to drag a
 /// reference from/to at edit time.
 /// </summary>
 public class TornadoSpawner : MonoBehaviour
@@ -23,11 +21,9 @@ public class TornadoSpawner : MonoBehaviour
     [SerializeField] private GameObject tornadoPrefab;
     [SerializeField] private TornadoSpawnArea spawnArea;
 
-    [Header("Appear Cutscene")]
-    [Tooltip("Total length of the locked-input cutscene, in seconds.")]
-    [SerializeField] private float cutsceneDuration = 5f;
-    [SerializeField] private string playerTag = "Player";
-
+    /// <summary>Fired by TornadoRevealCutscene on every machine, the moment the shared tornado
+    /// becomes visible there - not by this spawner itself, since only the server ever calls
+    /// SpawnTornado() with any effect once networked.</summary>
     public UnityEvent onTornadoSpawned;
 
     void Start()
@@ -51,134 +47,22 @@ public class TornadoSpawner : MonoBehaviour
             return;
         }
 
-        StartCoroutine(SpawnSequence());
-    }
+        // Online: research completing broadcasts to every machine, so each would otherwise try to
+        // spawn its own tornado independently - only the server actually creates the shared one;
+        // everyone else just reacts to it arriving via Netcode's own spawn replication.
+        bool networked = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
+        if (networked && !NetworkManager.Singleton.IsServer) return;
 
-    private IEnumerator SpawnSequence()
-    {
         Vector3 point = spawnArea.GetRandomPoint();
         GameObject tornado = Instantiate(tornadoPrefab, point, Quaternion.identity);
 
-        GameObject player = FindLocalPlayer();
-        var locked = LockPlayer(player);
-
-        // The tornado prefab carries its own reveal camera as a child (positioned/angled by hand
-        // in the prefab editor) — disabled by default, so it's just sitting there waiting.
-        Camera cutsceneCamera = tornado.GetComponentInChildren<Camera>(true);
-        AudioListener cutsceneListener = tornado.GetComponentInChildren<AudioListener>(true);
-
-        Camera playerCamera = null;
-        AudioListener playerListener = null;
-        bool playingCutscene = cutsceneCamera != null;
-        if (playingCutscene)
+        if (networked)
         {
-            if (player != null)
-            {
-                playerCamera = player.GetComponentInChildren<Camera>(true);
-                playerListener = player.GetComponentInChildren<AudioListener>(true);
-            }
-
-            if (playerCamera != null) playerCamera.enabled = false;
-            if (playerListener != null) playerListener.enabled = false;
-            cutsceneCamera.gameObject.SetActive(true);
-            cutsceneCamera.enabled = true;
-            if (cutsceneListener != null) cutsceneListener.enabled = true;
-        }
-
-        // TODO: fade the tornado in via TornadoDissolve.Appear() once that's tuned — for now it
-        // just spawns fully visible for the cutscene.
-
-        // Hold the tornado still for the cutscene — TornadoLift.Start() hasn't run yet (it's
-        // disabled before its first frame), so re-enabling it below fires Start() for the first
-        // time and it picks its wander target from wherever it's sitting at that point.
-        var lift = tornado.GetComponent<TornadoLift>();
-        if (lift != null) lift.enabled = false;
-
-        onTornadoSpawned?.Invoke();
-
-        yield return new WaitForSeconds(cutsceneDuration);
-
-        if (lift != null) lift.enabled = true;
-
-        if (playingCutscene)
-        {
-            cutsceneCamera.enabled = false;
-            cutsceneCamera.gameObject.SetActive(false);
-            if (cutsceneListener != null) cutsceneListener.enabled = false;
-            if (playerCamera != null) playerCamera.enabled = true;
-            if (playerListener != null) playerListener.enabled = true;
-        }
-
-        UnlockPlayer(locked);
-    }
-
-    // Online: every machine's own copy of this scene-placed (non-networked) spawner reacts to the
-    // same research-complete broadcast independently, so each has to find ITS OWN local player -
-    // GameObject.FindGameObjectWithTag(playerTag) alone just grabs whichever "Player"-tagged
-    // object happens to be first (your own root, another player's ghost, or even a root's own
-    // capsule child all carry the tag), which could lock/camera-swap the wrong player entirely.
-    private GameObject FindLocalPlayer()
-    {
-        foreach (GameObject candidate in GameObject.FindGameObjectsWithTag(playerTag))
-        {
-            var netObj = candidate.GetComponent<NetworkObject>();
+            var netObj = tornado.GetComponent<NetworkObject>();
             if (netObj != null)
-            {
-                if (netObj.IsSpawned && netObj.IsLocalPlayer) return candidate;
-                continue; // a networked player root that isn't this machine's - skip it
-            }
-
-            // Not a networked player root at all (e.g. a capsule child, or offline testing) -
-            // only acceptable as a match when there's no networking to disambiguate against.
-            if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening)
-                return candidate;
+                netObj.Spawn();
+            else
+                Debug.LogError("TornadoSpawner: tornadoPrefab has no NetworkObject - it won't be visible to other players.", this);
         }
-        return null;
-    }
-
-    // Caches exactly the components VehicleEnterExit disables when putting the player in a
-    // truck, plus Hotbar so number keys / mouse-use don't fire mid-cutscene.
-    private struct LockedPlayer
-    {
-        public FirstPersonController fpc;
-        public StarterAssetsInputs inputs;
-#if ENABLE_INPUT_SYSTEM
-        public PlayerInput playerInput;
-#endif
-        public Hotbar hotbar;
-        public PlayerGrabController grab;
-    }
-
-    private LockedPlayer LockPlayer(GameObject player)
-    {
-        var locked = new LockedPlayer();
-        if (player == null) return locked;
-
-        locked.fpc = player.GetComponentInChildren<FirstPersonController>(true);
-        locked.inputs = player.GetComponentInChildren<StarterAssetsInputs>(true);
-#if ENABLE_INPUT_SYSTEM
-        locked.playerInput = player.GetComponentInChildren<PlayerInput>(true);
-        if (locked.playerInput != null) locked.playerInput.enabled = false;
-#endif
-        locked.hotbar = player.GetComponentInChildren<Hotbar>(true);
-        locked.grab = player.GetComponentInChildren<PlayerGrabController>(true);
-
-        if (locked.fpc != null) locked.fpc.enabled = false;
-        if (locked.inputs != null) locked.inputs.enabled = false;
-        if (locked.hotbar != null) locked.hotbar.enabled = false;
-        if (locked.grab != null) locked.grab.enabled = false;
-
-        return locked;
-    }
-
-    private void UnlockPlayer(LockedPlayer locked)
-    {
-        if (locked.fpc != null) locked.fpc.enabled = true;
-        if (locked.inputs != null) locked.inputs.enabled = true;
-        if (locked.hotbar != null) locked.hotbar.enabled = true;
-        if (locked.grab != null) locked.grab.enabled = true;
-#if ENABLE_INPUT_SYSTEM
-        if (locked.playerInput != null) locked.playerInput.enabled = true;
-#endif
     }
 }
