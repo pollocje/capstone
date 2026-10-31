@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 #endif
 using StarterAssets;
+using Unity.Netcode;
 
 /// <summary>
 /// Spawns the tornado prefab at a random point inside a TornadoSpawnArea, then plays a short
@@ -58,7 +59,7 @@ public class TornadoSpawner : MonoBehaviour
         Vector3 point = spawnArea.GetRandomPoint();
         GameObject tornado = Instantiate(tornadoPrefab, point, Quaternion.identity);
 
-        GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+        GameObject player = FindLocalPlayer();
         var locked = LockPlayer(player);
 
         // The tornado prefab carries its own reveal camera as a child (positioned/angled by hand
@@ -109,6 +110,30 @@ public class TornadoSpawner : MonoBehaviour
         }
 
         UnlockPlayer(locked);
+    }
+
+    // Online: every machine's own copy of this scene-placed (non-networked) spawner reacts to the
+    // same research-complete broadcast independently, so each has to find ITS OWN local player -
+    // GameObject.FindGameObjectWithTag(playerTag) alone just grabs whichever "Player"-tagged
+    // object happens to be first (your own root, another player's ghost, or even a root's own
+    // capsule child all carry the tag), which could lock/camera-swap the wrong player entirely.
+    private GameObject FindLocalPlayer()
+    {
+        foreach (GameObject candidate in GameObject.FindGameObjectsWithTag(playerTag))
+        {
+            var netObj = candidate.GetComponent<NetworkObject>();
+            if (netObj != null)
+            {
+                if (netObj.IsSpawned && netObj.IsLocalPlayer) return candidate;
+                continue; // a networked player root that isn't this machine's - skip it
+            }
+
+            // Not a networked player root at all (e.g. a capsule child, or offline testing) -
+            // only acceptable as a match when there's no networking to disambiguate against.
+            if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening)
+                return candidate;
+        }
+        return null;
     }
 
     // Caches exactly the components VehicleEnterExit disables when putting the player in a
