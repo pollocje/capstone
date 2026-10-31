@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Hotbar : MonoBehaviour
+public class Hotbar : NetworkBehaviour
 {
     [Header("Settings")]
     public KeyCode dropKey = KeyCode.G;
@@ -112,10 +113,47 @@ public class Hotbar : MonoBehaviour
         Vector3 spawnPos = playerTransform.position
                          + playerTransform.forward * dropDistance
                          + Vector3.up * 0.5f;
+        Quaternion spawnRot = playerTransform.rotation;
 
-        Instantiate(item.dropPrefab, spawnPos, playerTransform.rotation);
+        // Singleplayer is never network-spawned (same convention as PlayerEmote/VehicleEnterExit/
+        // FireworkFlareLauncher). Online, only the server can create something every client sees,
+        // and a prefab asset reference can't itself travel over an RPC - so we send its name and
+        // have the server look it up in the registered NetworkPrefabs list (GlobalObjectIdHash
+        // would be the more precise key, but Netcode keeps that field internal to the package).
+        bool isNetworked = IsSpawned && item.dropPrefab.GetComponent<NetworkObject>() != null;
+        if (isNetworked)
+            DropRequestRpc(item.dropPrefab.name, spawnPos, spawnRot);
+        else
+            Instantiate(item.dropPrefab, spawnPos, spawnRot);
 
         ConsumeSelected();
+    }
+
+    [Rpc(SendTo.Server)]
+    void DropRequestRpc(string prefabName, Vector3 spawnPos, Quaternion spawnRot)
+    {
+        GameObject prefab = null;
+        foreach (NetworkPrefab candidate in NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs)
+        {
+            if (candidate.Prefab != null && candidate.Prefab.name == prefabName)
+            {
+                prefab = candidate.Prefab;
+                break;
+            }
+        }
+
+        if (prefab == null)
+        {
+            Debug.LogWarning($"Hotbar: no registered network prefab named '{prefabName}'.");
+            return;
+        }
+
+        GameObject dropped = Instantiate(prefab, spawnPos, spawnRot);
+
+        // No ongoing player input needed once something's dropped - just let the server's own
+        // physics settle it (NetworkTransform on these prefabs is Server-authoritative), so no
+        // ownership handoff like the thrown flare needs.
+        dropped.GetComponent<NetworkObject>().Spawn(destroyWithScene: true);
     }
 
     /// <summary>Unequips the selected item and puts its dropPrefab down in front of the player. False if there's nothing to drop.</summary>

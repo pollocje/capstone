@@ -52822,6 +52822,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4417481801722648386, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1656842717
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417481801722648386, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417481801722648386, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 1854088939
+      objectReference: {fileID: 0}
     - target: {fileID: 4518830211046193102, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.07
