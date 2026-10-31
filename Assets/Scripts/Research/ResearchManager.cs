@@ -10,7 +10,7 @@ using UnityEngine.Events;
 /// one pooled total and broadcasts the new value to everyone. Same NGO named-message pattern as
 /// RoundManager (not NetworkVariable/RPCs) since there's no NetworkObject to hang those off of -
 /// ResearchManager still lives on the player prefab, not a spawned network object.</summary>
-public class ResearchManager : MonoBehaviour
+public class ResearchManager : NetworkBehaviour
 {
     public static ResearchManager Instance { get; private set; }
 
@@ -49,19 +49,22 @@ public class ResearchManager : MonoBehaviour
     /// <summary>How full the research bar is, 0 to 1.</summary>
     public float Progress => researchBar != null && researchBar.MaxValue > 0f ? Mathf.Clamp01(researchBar.CurrentValue / researchBar.MaxValue) : 0f;
 
-    // The duplicate-singleton check below has to live in Start(), not Awake(): every spawned
-    // player copy (the local owner AND every remote ghost) carries this component, and
-    // PlayerNetworkSetup.OnNetworkSpawn() disables a ghost's whole HUD Canvas before Unity's
-    // Start pass reaches it - but that happens after Awake() already ran on everything. Doing
-    // the claim/destroy here means ghosts (already inactive by the time Start would fire) never
-    // enter the race at all, instead of it coming down to whichever copy's Awake() ran first.
-    void Start()
+    // Every spawned player copy (the local owner AND every remote ghost) carries this component,
+    // so this has to decide "is this actually mine?" somewhere ownership is guaranteed correct.
+    // Awake()/Start() both run too early for that - Unity's own Start dispatch can beat NGO's
+    // OnNetworkSpawn on the ghost's side depending on spawn order, which let a ghost's copy claim
+    // the singleton and destroy the real, locally-owned one before it ever initialized. NGO
+    // guarantees IsOwner is already correct by the time OnNetworkSpawn runs, same as
+    // PlayerNetworkSetup already relies on for the camera - so a non-owned copy just disables
+    // itself here, unconditionally, instead of racing for the claim at all.
+    public override void OnNetworkSpawn()
     {
-        if (Instance != null && Instance != this)
+        if (!IsOwner)
         {
-            Destroy(gameObject);
+            enabled = false;
             return;
         }
+
         Instance = this;
 
         if (researchBar == null)
