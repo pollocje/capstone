@@ -49,7 +49,13 @@ public class ResearchManager : MonoBehaviour
     /// <summary>How full the research bar is, 0 to 1.</summary>
     public float Progress => researchBar != null && researchBar.MaxValue > 0f ? Mathf.Clamp01(researchBar.CurrentValue / researchBar.MaxValue) : 0f;
 
-    void Awake()
+    // The duplicate-singleton check below has to live in Start(), not Awake(): every spawned
+    // player copy (the local owner AND every remote ghost) carries this component, and
+    // PlayerNetworkSetup.OnNetworkSpawn() disables a ghost's whole HUD Canvas before Unity's
+    // Start pass reaches it - but that happens after Awake() already ran on everything. Doing
+    // the claim/destroy here means ghosts (already inactive by the time Start would fire) never
+    // enter the race at all, instead of it coming down to whichever copy's Awake() ran first.
+    void Start()
     {
         if (Instance != null && Instance != this)
         {
@@ -57,10 +63,7 @@ public class ResearchManager : MonoBehaviour
             return;
         }
         Instance = this;
-    }
 
-    void Start()
-    {
         if (researchBar == null)
         {
             Debug.LogError("ResearchManager: researchBar is not assigned.", this);

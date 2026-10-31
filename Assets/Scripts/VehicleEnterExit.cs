@@ -78,6 +78,54 @@ public class VehicleEnterExit : NetworkBehaviour
     private void OnEnable() => _active.Add(this);
     private void OnDisable() => _active.Remove(this);
 
+    public override void OnNetworkSpawn()
+    {
+        _driverOccupant.OnValueChanged += ApplyOccupantVisual;
+        _passengerOccupant.OnValueChanged += ApplyOccupantVisual;
+        _bedLeftOccupant.OnValueChanged += ApplyOccupantVisual;
+        _bedRightOccupant.OnValueChanged += ApplyOccupantVisual;
+
+        // Late joiners don't get an OnValueChanged callback for seats that were already taken
+        // before they connected - apply the current occupants once so those riders start hidden.
+        ApplyOccupantVisual(0, _driverOccupant.Value);
+        ApplyOccupantVisual(0, _passengerOccupant.Value);
+        ApplyOccupantVisual(0, _bedLeftOccupant.Value);
+        ApplyOccupantVisual(0, _bedRightOccupant.Value);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _driverOccupant.OnValueChanged -= ApplyOccupantVisual;
+        _passengerOccupant.OnValueChanged -= ApplyOccupantVisual;
+        _bedLeftOccupant.OnValueChanged -= ApplyOccupantVisual;
+        _bedRightOccupant.OnValueChanged -= ApplyOccupantVisual;
+    }
+
+    // The renderer toggle in EnterVehicle/ExitVehicle only ever runs on the seated player's own
+    // machine (NotifySeatRange ignores colliders it doesn't own), so it only stops that player
+    // from seeing their own body - everyone else still saw the rider's capsule, which visibly
+    // lags behind a fast-moving vehicle since it's a manually-repositioned world-space
+    // NetworkTransform, not an actual child of the truck. Hiding the whole body for every
+    // machine via these already-synced occupant NetworkVariables sidesteps that lag entirely.
+    private void ApplyOccupantVisual(ulong previousOccupant, ulong currentOccupant)
+    {
+        if (previousOccupant != 0) SetRidingVisible(previousOccupant - 1, true);
+        if (currentOccupant != 0) SetRidingVisible(currentOccupant - 1, false);
+    }
+
+    private static void SetRidingVisible(ulong clientId, bool visible)
+    {
+        foreach (var playerGO in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            var netObj = playerGO.GetComponent<NetworkObject>();
+            if (netObj == null || netObj.OwnerClientId != clientId) continue;
+
+            foreach (var renderer in playerGO.GetComponentsInChildren<Renderer>(true))
+                renderer.enabled = visible;
+            break;
+        }
+    }
+
     private void Start()
     {
         SetTruckInputEnabled(false);

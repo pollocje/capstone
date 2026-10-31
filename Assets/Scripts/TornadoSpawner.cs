@@ -10,7 +10,8 @@ using StarterAssets;
 /// Spawns the tornado prefab at a random point inside a TornadoSpawnArea, then plays a short
 /// locked-input cutscene: swap to a camera that's a child of the tornado prefab itself (so you
 /// can position/angle it exactly in the prefab editor, it just rides along with wherever the
-/// tornado spawns) while the tornado dissolves into view (TornadoDissolve.Appear()). Subscribes
+/// tornado spawns) while the tornado sits there fully visible (fade-in via TornadoDissolve.Appear()
+/// is TODO). Subscribes
 /// itself to ResearchManager.onResearchComplete at runtime (see Start/WaitAndSubscribe) instead
 /// of being wired in the Inspector, since ResearchManager only exists on the player, which is
 /// spawned at runtime by the networked lobby flow and isn't present in the scene to drag a
@@ -83,8 +84,8 @@ public class TornadoSpawner : MonoBehaviour
             if (cutsceneListener != null) cutsceneListener.enabled = true;
         }
 
-        var dissolve = tornado.GetComponent<TornadoDissolve>();
-        if (dissolve != null) dissolve.Appear();
+        // TODO: fade the tornado in via TornadoDissolve.Appear() once that's tuned — for now it
+        // just spawns fully visible for the cutscene.
 
         // Hold the tornado still for the cutscene — TornadoLift.Start() hasn't run yet (it's
         // disabled before its first frame), so re-enabling it below fires Start() for the first
