@@ -298,6 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83f45e5a88772fc4c844e3ec28585733, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResearchManager
+  ShowTopMostFoldoutHeaderGroup: 1
   researchBar: {fileID: 4128005903034795244}
   maxResearch: 100
   onResearchComplete:
@@ -597,6 +598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96550f4c972cd444b02367c19833dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hotbar
+  ShowTopMostFoldoutHeaderGroup: 1
   dropKey: 103
   slotCount: 5
   dropDistance: 2
@@ -620,9 +622,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Binoculars
   vcam: {fileID: 9217027451401957735}
   binocularUI: {fileID: 8905607336699046845}
+  heldModel: {fileID: 919132149155446097, guid: 22747a3409b9e95478a15f2034faadac, type: 3}
+  cameraTransform: {fileID: 0}
   zoomFov: 15
   normalFov: 60
   zoomSpeed: 5
+  holdPosition: {x: 0.2, y: -0.22, z: 0.5}
+  holdEuler: {x: 0, y: 0, z: 0}
+  holdScale: 1.5
   binocularSource: {fileID: 0}
   binocularSound: {fileID: 0}
 --- !u!114 &3075243504966116299
