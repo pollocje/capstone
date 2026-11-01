@@ -79,7 +79,13 @@ public class LobbyMenu : MonoBehaviour
         {
             if (i < teammateTexts.Length)
             {
-                teammateTexts[i].text = player.Id.Substring(0, 5);
+                string name = (player.Properties != null &&
+                               player.Properties.TryGetValue("name", out var prop) &&
+                               !string.IsNullOrEmpty(prop.Value))
+                    ? prop.Value
+                    : player.Id.Substring(0, 5); // fallback if a player has no name set
+
+                teammateTexts[i].text = name;
                 i++;
             }
         }

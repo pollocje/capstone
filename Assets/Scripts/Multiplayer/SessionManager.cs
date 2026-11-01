@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -15,7 +16,8 @@ public class SessionManager : MonoBehaviour
     private bool isReady = false;
 
 
-    async void Start() {
+    async void Start()
+    {
 
         await UnityServices.InitializeAsync();
 
@@ -29,32 +31,38 @@ public class SessionManager : MonoBehaviour
 
     }
 
-    private async Task WaitUntilReady() {
+    private async Task WaitUntilReady()
+    {
 
-        while (!isReady) {
+        while (!isReady)
+        {
             await Task.Delay(100);
         }
-    
+
     }
-    void Awake() {
+    void Awake()
+    {
 
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else {
+        else
+        {
 
             Destroy(gameObject);
         }
-    
+
     }
 
-    public async Task<string> CreateSession(int maxPlayers = 4) { 
-    
-        await WaitUntilReady();
-        var options = new SessionOptions { MaxPlayers = maxPlayers }.WithRelayNetwork();
+    public async Task<string> CreateSession(int maxPlayers = 4)
+    {
 
+        await WaitUntilReady();
+        var options = new SessionOptions { MaxPlayers = maxPlayers, PlayerProperties = NameProperty() }.WithRelayNetwork();
+
+        // Host CREATES the session (with their nickname attached).
         currentSession = await MultiplayerService.Instance.CreateSessionAsync(options);
 
         Debug.Log("Session Code:" + currentSession.Code);
@@ -70,20 +78,30 @@ public class SessionManager : MonoBehaviour
         string cleanCode = new string(System.Linq.Enumerable.ToArray(
             System.Linq.Enumerable.Where(Code ?? "", char.IsLetterOrDigit))).ToUpperInvariant();
 
-        currentSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(cleanCode);
+        // Player JOINS by code (with their nickname attached).
+        currentSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(cleanCode,
+            new JoinSessionOptions { PlayerProperties = NameProperty() });
 
     }
 
-    public async void LeaveSession() {
+    public async void LeaveSession()
+    {
 
-        if (currentSession != null){
+        if (currentSession != null)
+        {
 
             await currentSession.LeaveAsync();
             currentSession = null;
-        
+
         }
-    
+
     }
+
+    // The nickname each player attaches to themselves in the session, so the lobby can show it.
+    static Dictionary<string, PlayerProperty> NameProperty() => new Dictionary<string, PlayerProperty>
+    {
+        { "name", new PlayerProperty(PlayerNameStore.Get(), VisibilityPropertyOptions.Member) }
+    };
     public ISession GetSession() => currentSession;
 
 }
