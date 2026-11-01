@@ -68,6 +68,13 @@ public class InteractPrompt : MonoBehaviour
         // Remote players have PlayerInput disabled — only the local player gets prompts.
         if (_playerInput != null && !_playerInput.enabled) return "";
 
+        // Proximity prompts (walk up and press E) take priority over aim-based ones below.
+        string vehicle = VehiclePrompt();
+        if (vehicle != "") return vehicle;
+
+        string dispenser = DispenserPrompt();
+        if (dispenser != "") return dispenser;
+
         // Same priority as PlayerGrabController.TryInteract: aimed pickup, then putting the map down.
         ItemPickup aimed = _grab != null ? _grab.FindAimedPickup() : null;
         if (aimed != null && aimed.Item != null && aimed.IsArmed)
@@ -83,6 +90,26 @@ public class InteractPrompt : MonoBehaviour
         if (pickup != null && pickup.Item != null && pickup.IsArmed)
             return $"Press <b>E</b> to pick up {pickup.Item.itemName}";
 
+        return "";
+    }
+
+    string DispenserPrompt()
+    {
+        foreach (var dispenser in ItemDispenser.Active)
+        {
+            if (dispenser == null || !dispenser.PlayerInRange) continue;
+            return dispenser.IsEmpty ? "Empty" : "Press <b>E</b> to get an item";
+        }
+        return "";
+    }
+
+    string VehiclePrompt()
+    {
+        foreach (var vehicle in VehicleEnterExit.Active)
+        {
+            if (vehicle != null && vehicle.TryGetSeatPrompt(transform.position, out string seatLabel))
+                return $"Press <b>E</b> to get into {seatLabel}";
+        }
         return "";
     }
 }

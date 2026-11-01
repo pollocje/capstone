@@ -57,30 +57,46 @@ public class FireworkFlareLauncher : NetworkBehaviour, IEquippable
         if (flarePrefab == null || throwOrigin == null)
             return;
 
-        //AUDIO
-        PlayFlareSoundRpc();
-
         Vector3 spawnPos = throwOrigin.position + throwOrigin.forward * 0.5f;
         Quaternion spawnRot = Quaternion.LookRotation(throwOrigin.forward, Vector3.up);
+        Vector3 throwDir = Vector3.Slerp(throwOrigin.forward, Vector3.up, upwardArc).normalized;
+        Vector3 velocity = throwDir * throwForce;
 
-        GameObject flare = Instantiate(flarePrefab, spawnPos, spawnRot);
-
-        Rigidbody flareRb = flare.GetComponent<Rigidbody>();
-        if (flareRb != null)
+        // Singleplayer is never network-spawned (same convention as PlayerEmote/VehicleEnterExit) -
+        // spawn and play locally instead of going through the server, which wouldn't be listening.
+        if (IsSpawned)
         {
-            Vector3 throwDir = Vector3.Slerp(throwOrigin.forward, Vector3.up, upwardArc).normalized;
-            flareRb.linearVelocity = throwDir * throwForce;
+            PlayFlareSoundRpc();
+            ThrowRequestRpc(spawnPos, spawnRot, velocity);
         }
+        else
+        {
+            PlayFlareSound();
+            GameObject flare = Instantiate(flarePrefab, spawnPos, spawnRot);
+            Collider playerCollider = GetComponentInParent<Collider>();
+            flare.GetComponent<FireworkFlareProjectile>().InitializeOffline(velocity, playerCollider);
+        }
+    }
 
-        Collider playerCollider = GetComponentInParent<Collider>();
-        Collider flareCollider = flare.GetComponent<Collider>();
-        if (playerCollider != null && flareCollider != null)
-            Physics.IgnoreCollision(flareCollider, playerCollider);
+    // The flare needs to exist for every client, so only the server can actually create it - same
+    // reasoning as PlayerSpawnManager spawning players. We just ask for it and let our own Rigidbody
+    // velocity (applied in FireworkFlareProjectile.OnNetworkSpawn once we're handed ownership) fly it.
+    [Rpc(SendTo.Server)]
+    void ThrowRequestRpc(Vector3 spawnPos, Quaternion spawnRot, Vector3 velocity, RpcParams rpcParams = default)
+    {
+        GameObject flare = Instantiate(flarePrefab, spawnPos, spawnRot);
+        NetworkObject flareNetObj = flare.GetComponent<NetworkObject>();
+        FireworkFlareProjectile projectile = flare.GetComponent<FireworkFlareProjectile>();
+
+        // Set before Spawn() so it's part of the initial state every client (including the new
+        // owner) receives, rather than a post-spawn write that would need its own permission check.
+        projectile.InitialVelocity.Value = velocity;
+
+        flareNetObj.SpawnWithOwnership(rpcParams.Receive.SenderClientId, destroyWithScene: true);
     }
 
     [Rpc(SendTo.Everyone)]
-    void PlayFlareSoundRpc()
-    {
-        flareSource.PlayOneShot(flareSound);
-    }
+    void PlayFlareSoundRpc() => PlayFlareSound();
+
+    void PlayFlareSound() => flareSource.PlayOneShot(flareSound);
 }

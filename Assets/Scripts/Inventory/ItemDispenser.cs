@@ -38,6 +38,16 @@ public class ItemDispenser : NetworkBehaviour
     private Hotbar playerHotbar;
     private bool requestPending;
 
+    // Lets InteractPrompt show "Press E to get an item" without the dispenser needing
+    // to know anything about the player's HUD.
+    private static readonly List<ItemDispenser> _active = new List<ItemDispenser>();
+    public static IReadOnlyList<ItemDispenser> Active => _active;
+    public bool PlayerInRange => playerInRange;
+    public bool IsEmpty => _remainingCount.Value <= 0;
+
+    private void OnEnable() => _active.Add(this);
+    private void OnDisable() => _active.Remove(this);
+
     public override void OnNetworkSpawn()
     {
         if (IsServer)
