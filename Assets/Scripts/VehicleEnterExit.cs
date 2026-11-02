@@ -40,6 +40,10 @@ public class VehicleEnterExit : NetworkBehaviour
     [Header("UI")]
     [SerializeField] private GameObject enterPromptUI;
 
+    [Header("Seated pose (driver + passenger)")]
+    [Tooltip("Where the seated model sits relative to the seat empty (seat-local). The seat empty is where the capsule's feet get pinned, so Y usually needs to drop a bit for the hips to land on the cushion. Tune in Play mode - it's read every frame.")]
+    [SerializeField] private Vector3 seatedModelOffset = new Vector3(0f, -0.5f, 0f);
+
     [Tooltip("Radius of the small trigger sphere spawned at each seat empty at Start - this is what makes 'press E' enter the seat you're actually standing next to, instead of whichever seat is nearest across one shared trigger spanning the whole vehicle.")]
     [SerializeField] private float seatEntryRadius = 1.2f;
 
@@ -78,51 +82,166 @@ public class VehicleEnterExit : NetworkBehaviour
     private void OnEnable() => _active.Add(this);
     private void OnDisable() => _active.Remove(this);
 
+    // Seated-pose riders, per seat, on this machine. Their model root gets pinned to the seat in
+    // LateUpdate and the Animator's Seated bool is held on; null = nobody posed in that seat here.
+    private static readonly int SeatedHash = Animator.StringToHash("Seated");
+    private readonly PlayerModelSwapper[] _posedRider = new PlayerModelSwapper[4];
+    private readonly Vector3[] _posedModelLocalPos = new Vector3[4];
+    private readonly Quaternion[] _posedModelLocalRot = new Quaternion[4];
+
+    // Only the cab seats get a sitting pose; truck-bed riders are still hidden entirely.
+    private static bool ShowsSeatedPose(int seatIndex) => seatIndex == DriverSeatIndex || seatIndex == 1;
+
     public override void OnNetworkSpawn()
     {
-        _driverOccupant.OnValueChanged += ApplyOccupantVisual;
-        _passengerOccupant.OnValueChanged += ApplyOccupantVisual;
-        _bedLeftOccupant.OnValueChanged += ApplyOccupantVisual;
-        _bedRightOccupant.OnValueChanged += ApplyOccupantVisual;
+        _driverOccupant.OnValueChanged += OnDriverChanged;
+        _passengerOccupant.OnValueChanged += OnPassengerChanged;
+        _bedLeftOccupant.OnValueChanged += OnBedLeftChanged;
+        _bedRightOccupant.OnValueChanged += OnBedRightChanged;
 
         // Late joiners don't get an OnValueChanged callback for seats that were already taken
-        // before they connected - apply the current occupants once so those riders start hidden.
-        ApplyOccupantVisual(0, _driverOccupant.Value);
-        ApplyOccupantVisual(0, _passengerOccupant.Value);
-        ApplyOccupantVisual(0, _bedLeftOccupant.Value);
-        ApplyOccupantVisual(0, _bedRightOccupant.Value);
+        // before they connected - apply the current occupants once so those riders start seated/hidden.
+        for (int i = 0; i < SeatLabels.Length; i++)
+            ApplyOccupantVisual(i, 0, OccupantVar(i).Value);
     }
 
     public override void OnNetworkDespawn()
     {
-        _driverOccupant.OnValueChanged -= ApplyOccupantVisual;
-        _passengerOccupant.OnValueChanged -= ApplyOccupantVisual;
-        _bedLeftOccupant.OnValueChanged -= ApplyOccupantVisual;
-        _bedRightOccupant.OnValueChanged -= ApplyOccupantVisual;
+        _driverOccupant.OnValueChanged -= OnDriverChanged;
+        _passengerOccupant.OnValueChanged -= OnPassengerChanged;
+        _bedLeftOccupant.OnValueChanged -= OnBedLeftChanged;
+        _bedRightOccupant.OnValueChanged -= OnBedRightChanged;
+
+        for (int i = 0; i < SeatLabels.Length; i++)
+            StandRider(i);
     }
+
+    private void OnDriverChanged(ulong previous, ulong current) => ApplyOccupantVisual(0, previous, current);
+    private void OnPassengerChanged(ulong previous, ulong current) => ApplyOccupantVisual(1, previous, current);
+    private void OnBedLeftChanged(ulong previous, ulong current) => ApplyOccupantVisual(2, previous, current);
+    private void OnBedRightChanged(ulong previous, ulong current) => ApplyOccupantVisual(3, previous, current);
 
     // The renderer toggle in EnterVehicle/ExitVehicle only ever runs on the seated player's own
     // machine (NotifySeatRange ignores colliders it doesn't own), so it only stops that player
     // from seeing their own body - everyone else still saw the rider's capsule, which visibly
     // lags behind a fast-moving vehicle since it's a manually-repositioned world-space
-    // NetworkTransform, not an actual child of the truck. Hiding the whole body for every
-    // machine via these already-synced occupant NetworkVariables sidesteps that lag entirely.
-    private void ApplyOccupantVisual(ulong previousOccupant, ulong currentOccupant)
+    // NetworkTransform, not an actual child of the truck. These already-synced occupant
+    // NetworkVariables drive the rider's look on every machine instead: cab riders get their
+    // model pinned to the seat (LateUpdate, so no lag) in a sitting pose; bed riders stay hidden.
+    private void ApplyOccupantVisual(int seatIndex, ulong previousOccupant, ulong currentOccupant)
     {
-        if (previousOccupant != 0) SetRidingVisible(previousOccupant - 1, true);
-        if (currentOccupant != 0) SetRidingVisible(currentOccupant - 1, false);
+        if (previousOccupant != 0)
+        {
+            StandRider(seatIndex);
+            SetRidingVisible(previousOccupant - 1, true);
+        }
+
+        if (currentOccupant != 0)
+        {
+            if (ShowsSeatedPose(seatIndex)) SitRider(seatIndex, currentOccupant - 1);
+            else SetRidingVisible(currentOccupant - 1, false);
+        }
     }
 
-    private static void SetRidingVisible(ulong clientId, bool visible)
+    private static GameObject FindPlayer(ulong clientId)
     {
         foreach (var playerGO in GameObject.FindGameObjectsWithTag("Player"))
         {
             var netObj = playerGO.GetComponent<NetworkObject>();
-            if (netObj == null || netObj.OwnerClientId != clientId) continue;
+            if (netObj != null && netObj.OwnerClientId == clientId) return playerGO;
+        }
+        return null;
+    }
 
-            foreach (var renderer in playerGO.GetComponentsInChildren<Renderer>(true))
-                renderer.enabled = visible;
-            break;
+    private static void SetRidingVisible(ulong clientId, bool visible)
+    {
+        GameObject playerGO = FindPlayer(clientId);
+        if (playerGO == null) return;
+
+        foreach (var renderer in playerGO.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = visible;
+    }
+
+    // Hide everything on the player, then bring back just the body. Held items etc. hang off the
+    // lagging capsule/camera rather than the model, so they'd float behind the truck otherwise.
+    // The owner's own body is already ShadowsOnly (PlayerModelSelector), so on their machine
+    // this just leaves a seated shadow - it never draws into their seat camera.
+    private static void ShowOnlyBody(GameObject playerGO, PlayerModelSwapper swapper)
+    {
+        foreach (var renderer in playerGO.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = false;
+
+        if (swapper != null && swapper.modelRoot != null)
+            foreach (var renderer in swapper.modelRoot.GetComponentsInChildren<Renderer>(true))
+                renderer.enabled = true;
+    }
+
+    private void SitRider(int seatIndex, ulong clientId)
+    {
+        GameObject playerGO = FindPlayer(clientId);
+        if (playerGO == null) return; // late joiner: player not spawned yet, LateUpdate retries
+
+        var swapper = playerGO.GetComponentInChildren<PlayerModelSwapper>(true);
+        if (swapper == null || swapper.modelRoot == null)
+        {
+            SetRidingVisible(clientId, false); // can't pose it, fall back to the old hide
+            return;
+        }
+
+        ShowOnlyBody(playerGO, swapper);
+
+        if (_posedRider[seatIndex] == swapper) return;
+        _posedRider[seatIndex] = swapper;
+        _posedModelLocalPos[seatIndex] = swapper.modelRoot.localPosition;
+        _posedModelLocalRot[seatIndex] = swapper.modelRoot.localRotation;
+    }
+
+    // Safe to call more than once (local exit + the occupant callback both do).
+    private void StandRider(int seatIndex)
+    {
+        PlayerModelSwapper swapper = _posedRider[seatIndex];
+        _posedRider[seatIndex] = null;
+        if (swapper == null || swapper.modelRoot == null) return;
+
+        swapper.modelRoot.SetLocalPositionAndRotation(_posedModelLocalPos[seatIndex], _posedModelLocalRot[seatIndex]);
+        SetSeatedParam(swapper, false);
+    }
+
+    private static void SetSeatedParam(PlayerModelSwapper swapper, bool seated)
+    {
+        // PlayerModelSwapper replaces the model (and its Animator) at runtime, so look it up each time.
+        var animator = swapper.modelRoot.GetComponentInChildren<Animator>();
+        if (animator != null && animator.isActiveAndEnabled)
+            animator.SetBool(SeatedHash, seated);
+    }
+
+    // LateUpdate so the truck has already moved this frame: the model lands exactly in the seat
+    // on every machine instead of trailing the capsule's NetworkTransform interpolation.
+    private void LateUpdate()
+    {
+        if (!IsSpawned) return;
+
+        for (int i = 0; i < SeatLabels.Length; i++)
+        {
+            if (!ShowsSeatedPose(i)) continue;
+
+            ulong occupant = OccupantVar(i).Value;
+            if (occupant == 0) continue;
+
+            // We just got out locally and the server hasn't cleared the seat yet - don't re-sit ourselves.
+            if (occupant - 1 == NetworkManager.LocalClientId && _mySeatIndex != i) continue;
+
+            if (_posedRider[i] == null) SitRider(i, occupant - 1); // late joiner / rider spawned after the truck
+
+            PlayerModelSwapper swapper = _posedRider[i];
+            Transform seat = SeatPoint(i);
+            if (swapper == null || swapper.modelRoot == null || seat == null) continue;
+
+            // Same pose the model would have if the capsule were sitting exactly on the seat, plus the offset.
+            swapper.modelRoot.SetPositionAndRotation(
+                seat.TransformPoint(_posedModelLocalPos[i] + seatedModelOffset),
+                seat.rotation * _posedModelLocalRot[i]);
+            SetSeatedParam(swapper, true);
         }
     }
 
@@ -352,6 +471,12 @@ public class VehicleEnterExit : NetworkBehaviour
                 if (renderer != null) renderer.enabled = false;
         }
 
+        // On the host the occupant callback already ran inside RequestSeatRpc above (and posed us),
+        // so the blanket hide just now undid its "body stays on" - put that back. On a client the
+        // callback simply arrives a moment later and does the same thing.
+        if (_posedRider[seatIndex] != null)
+            ShowOnlyBody(playerRoot, _posedRider[seatIndex]);
+
         if (_playerColliders != null)
         {
             foreach (var col in _playerColliders)
@@ -400,6 +525,10 @@ public class VehicleEnterExit : NetworkBehaviour
 
         GameObject seatCamera = SeatCamera(seatIndex);
         if (seatCamera != null) seatCamera.SetActive(false);
+
+        // Stand our own model up right away rather than waiting a round trip for the occupant
+        // callback - otherwise it stays pinned in the seat while we've already been put outside.
+        StandRider(seatIndex);
 
         // Online: Free the seat for other players.
         if (IsSpawned) ReleaseSeatRpc(seatIndex);
