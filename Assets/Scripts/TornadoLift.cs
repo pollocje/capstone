@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class TornadoLift : MonoBehaviour
+public class TornadoLift : NetworkBehaviour
 {
     [Header("Tornado Settings")]
     public float pullStrength = 15f;
@@ -38,6 +39,14 @@ public class TornadoLift : MonoBehaviour
 
     void Update()
     {
+        // Online: the tornado is now a networked, server-authoritative NetworkTransform (every
+        // machine watches the same spawned instance) - only the server should be deciding where
+        // it wanders to; clients just receive and interpolate whatever the server puts here.
+        // (Falls through to moving locally if there's no networking at all, e.g. opening this
+        // prefab outside of a hosted session.)
+        bool networked = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
+        if (networked && !IsServer) return;
+
         transform.position = Vector3.MoveTowards(
             transform.position,
             targetPosition,
@@ -77,6 +86,13 @@ public class TornadoLift : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
+        // Online: this is the shared, server-authoritative tornado now - applying force here (or
+        // destroying it on extinguish) from a non-authoritative client would either be silently
+        // wasted (synced Rigidbodies just snap back) or desync the object entirely. The server's
+        // own physics already sees this same collision against the authoritative items/players.
+        bool networked = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
+        if (networked && !IsServer) return;
+
         Rigidbody rb = other.GetComponent<Rigidbody>();
 
         if (rb != null)

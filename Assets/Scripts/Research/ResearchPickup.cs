@@ -1,7 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
-/// <summary>Walk-over pickup (coin/note style) that adds to the research bar and removes itself.
-/// Needs a trigger collider on this object (or a child) and the player to have the "Player" tag.</summary>
+/// <summary>Walk-over pickup (coin/note style) that adds to the shared research bar and removes
+/// itself. Needs a trigger collider on this object (or a child) and the player to have the
+/// "Player" tag. Collection is shared across every player: the first client to trigger it reports
+/// to the host, and every client - including whoever didn't trigger it - removes the object once
+/// the host confirms, so it can't be picked up twice.</summary>
 public class ResearchPickup : MonoBehaviour
 {
     [Tooltip("Research % added to ResearchManager's bar when picked up.")]
@@ -16,8 +20,38 @@ public class ResearchPickup : MonoBehaviour
     [SerializeField] private float spinSpeed = 90f;
 
     private Vector3 _startLocalPos;
+    private int _index;
+    private bool _collected;
 
-    void Start() => _startLocalPos = transform.localPosition;
+    void Awake() => _index = SceneIndex.Of(this);
+
+    void Start()
+    {
+        _startLocalPos = transform.localPosition;
+        StartCoroutine(WaitAndSubscribe());
+    }
+
+    // ResearchManager lives on the player prefab, spawned at runtime by the networked lobby
+    // flow, so it may not exist yet when this scene object wakes up.
+    IEnumerator WaitAndSubscribe()
+    {
+        while (ResearchManager.Instance == null)
+            yield return null;
+
+        var rm = ResearchManager.Instance;
+        rm.onSourceConsumed += OnSourceConsumed;
+
+        // Catch up immediately in case the host's "already collected" credit (for a late join)
+        // arrived before this object finished waking up and missed the event above.
+        if (rm.IsConsumed(ResearchManager.Source.Pickup, _index))
+            OnSourceConsumed(ResearchManager.Source.Pickup, _index);
+    }
+
+    void OnDestroy()
+    {
+        if (ResearchManager.Instance != null)
+            ResearchManager.Instance.onSourceConsumed -= OnSourceConsumed;
+    }
 
     void Update()
     {
@@ -30,9 +64,15 @@ public class ResearchPickup : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
+        if (_collected || !other.CompareTag("Player")) return;
 
-        ResearchManager.Instance?.AddResearch(researchValue);
+        ResearchManager.Instance?.AddResearch(researchValue, ResearchManager.Source.Pickup, _index);
+    }
+
+    void OnSourceConsumed(ResearchManager.Source source, int index)
+    {
+        if (source != ResearchManager.Source.Pickup || index != _index || _collected) return;
+        _collected = true;
         Destroy(gameObject);
     }
 }

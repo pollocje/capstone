@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 using TMPro;
 
 /// <summary>
@@ -79,7 +78,7 @@ public class AnemometerItem : MonoBehaviour, IEquippable
             return;
         }
 
-        _heldVisual = CopyMeshes(heldModel.transform, cameraTransform);
+        _heldVisual = HeldModelUtility.CopyMeshes(heldModel.transform, cameraTransform);
         _heldVisual.name = "HeldAnemometer";
 
         Transform t = _heldVisual.transform;
@@ -140,32 +139,6 @@ public class AnemometerItem : MonoBehaviour, IEquippable
             if (found != null) return found;
         }
         return null;
-    }
-
-    // Copies only MeshFilter/MeshRenderer, so the copy has no colliders, Rigidbody or pickup scripts.
-    static GameObject CopyMeshes(Transform source, Transform parent)
-    {
-        var go = new GameObject(source.name);
-        go.layer = source.gameObject.layer;
-        go.transform.SetParent(parent, false);
-        go.transform.localPosition = source.localPosition;
-        go.transform.localRotation = source.localRotation;
-        go.transform.localScale = source.localScale;
-
-        var filter = source.GetComponent<MeshFilter>();
-        var renderer = source.GetComponent<MeshRenderer>();
-        if (filter != null && renderer != null)
-        {
-            go.AddComponent<MeshFilter>().sharedMesh = filter.sharedMesh;
-            var copy = go.AddComponent<MeshRenderer>();
-            copy.sharedMaterials = renderer.sharedMaterials;
-            copy.shadowCastingMode = ShadowCastingMode.Off;
-        }
-
-        foreach (Transform child in source)
-            CopyMeshes(child, go.transform);
-
-        return go;
     }
 
     // ── IEquippable ──────────────────────────────────────────────────────────
