@@ -1291,3 +1291,9 @@ MonoBehaviour:
   - {fileID: -203655887218126122, guid: d92f4c82b6e4cf545aeeb3f0082b3a38, type: 3}
   emotePlaceholder: {fileID: -203655887218126122, guid: 45344ce14556da14db5957974cf59eb1, type: 3}
   emoteKey: 98
+  sitClips:
+  - {fileID: -203655887218126122, guid: ade23d58a827b004f965fc8d1c1404eb, type: 3}
+  - {fileID: -203655887218126122, guid: fd57415617bd3b24fa5ff88e9f0cf18c, type: 3}
+  - {fileID: -203655887218126122, guid: 2442aee3ae25de744a333ac47c92557a, type: 3}
+  - {fileID: -203655887218126122, guid: ae631d06265e52a49b9001483b8115f9, type: 3}
+  sitPlaceholder: {fileID: -203655887218126122, guid: ade23d58a827b004f965fc8d1c1404eb, type: 3}

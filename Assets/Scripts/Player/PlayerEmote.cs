@@ -15,6 +15,13 @@ public class PlayerEmote : NetworkBehaviour
 
     public KeyCode emoteKey = KeyCode.B;
 
+    [Header("Sitting (truck seats)")]
+    [Tooltip("One sitting loop per player slot, swapped into PlayerAnimator's Seated state the same way as the emotes. VehicleEnterExit sets the Seated bool.")]
+    public AnimationClip[] sitClips = new AnimationClip[4];
+
+    [Tooltip("The clip in PlayerAnimator's Seated state. It gets replaced by the slot's sitting clip.")]
+    public AnimationClip sitPlaceholder;
+
     static readonly int EmoteHash = Animator.StringToHash("Emote");
 
     private PlayerModelSelector _selector;
@@ -64,16 +71,26 @@ public class PlayerEmote : NetworkBehaviour
         if (_animator == null) return;
 
         _appliedSlot = slot;
-        ApplyEmoteClip(slot);
+        ApplySlotClips(slot);
     }
 
-    void ApplyEmoteClip(int slot)
+    // One override controller holds every per-slot clip (emote + sitting), so nothing else
+    // needs to build its own override and fight this one over runtimeAnimatorController.
+    void ApplySlotClips(int slot)
     {
-        if (emotePlaceholder == null || slot >= emotes.Length || emotes[slot] == null)
-        {
+        var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+
+        if (emotePlaceholder != null && slot < emotes.Length && emotes[slot] != null)
+            overrides.Add(new(emotePlaceholder, emotes[slot]));
+        else
             Debug.LogWarning($"PlayerEmote: No emote assigned for slot {slot}.", this);
-            return;
-        }
+
+        if (sitPlaceholder != null && slot < sitClips.Length && sitClips[slot] != null)
+            overrides.Add(new(sitPlaceholder, sitClips[slot]));
+        else
+            Debug.LogWarning($"PlayerEmote: No sitting clip assigned for slot {slot}.", this);
+
+        if (overrides.Count == 0) return;
 
         // Build on the base controller, not an override we already applied.
         var controller = _animator.runtimeAnimatorController;
@@ -81,10 +98,7 @@ public class PlayerEmote : NetworkBehaviour
             controller = existing.runtimeAnimatorController;
 
         var overrideController = new AnimatorOverrideController(controller);
-        overrideController.ApplyOverrides(new List<KeyValuePair<AnimationClip, AnimationClip>>
-        {
-            new(emotePlaceholder, emotes[slot])
-        });
+        overrideController.ApplyOverrides(overrides);
         _animator.runtimeAnimatorController = overrideController;
     }
 
