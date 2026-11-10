@@ -9,6 +9,9 @@ public class PlayerModelSelector : NetworkBehaviour
     [Tooltip("One model per player slot. Slot 0 = first player in, etc.")]
     public GameObject[] models = new GameObject[4];
 
+    [Tooltip("Material put on every renderer of the spawned model. The player FBXs carry their colors as vertex colors (painted in Blender) and import with no material, so this should use the Capstone/Player Vertex Color Lit shader - one material colors all four models.")]
+    public Material modelMaterial;
+
     private readonly NetworkVariable<int> _slot = new(-1);
     private PlayerModelSwapper _swapper;
 
@@ -79,6 +82,16 @@ public class PlayerModelSelector : NetworkBehaviour
         }
 
         var model = _swapper.SwapModel(models[slot]);
+
+        if (model != null && modelMaterial != null)
+        {
+            foreach (var r in model.GetComponentsInChildren<Renderer>())
+            {
+                var mats = new Material[Mathf.Max(1, r.sharedMaterials.Length)];
+                for (int i = 0; i < mats.Length; i++) mats[i] = modelMaterial;
+                r.sharedMaterials = mats;
+            }
+        }
 
         // First-person: hide your own body from your camera but keep its shadow.
         if (model != null && IsSpawned && IsOwner)
