@@ -60,6 +60,8 @@ public class SessionManager : MonoBehaviour
     {
 
         await WaitUntilReady();
+        await LeaveOldSession(); // clear any previous session first
+
         var options = new SessionOptions { MaxPlayers = maxPlayers, PlayerProperties = NameProperty() }.WithRelayNetwork();
 
         // Host CREATES the session (with their nickname attached).
@@ -73,6 +75,7 @@ public class SessionManager : MonoBehaviour
     {
 
         await WaitUntilReady();
+        await LeaveOldSession(); // clear any previous session first, so the lobby can't show its old code
 
         // Strip hidden characters/spaces and normalize case.
         string cleanCode = new string(System.Linq.Enumerable.ToArray(
@@ -87,14 +90,28 @@ public class SessionManager : MonoBehaviour
     public async void LeaveSession()
     {
 
-        if (currentSession != null)
+        await LeaveOldSession();
+
+    }
+
+    // Leaves the current session (if any) and clears it straight away, so nothing
+    // can read the old session while the leave request is still in progress.
+    private async Task LeaveOldSession()
+    {
+        if (currentSession == null) return;
+
+        ISession old = currentSession;
+        currentSession = null;
+
+        try
         {
-
-            await currentSession.LeaveAsync();
-            currentSession = null;
-
+            await old.LeaveAsync();
         }
-
+        catch (System.Exception e)
+        {
+            // Usually means the session already closed (e.g. the host left). Safe to ignore.
+            Debug.LogWarning("Leaving old session failed: " + e.Message);
+        }
     }
 
     // The nickname each player attaches to themselves in the session, so the lobby can show it.
