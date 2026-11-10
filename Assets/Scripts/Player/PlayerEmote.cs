@@ -22,6 +22,13 @@ public class PlayerEmote : NetworkBehaviour
     [Tooltip("The clip in PlayerAnimator's Seated state. It gets replaced by the slot's sitting clip.")]
     public AnimationClip sitPlaceholder;
 
+    [Header("Sitting (truck bed)")]
+    [Tooltip("One truck-bed sitting loop per player slot, swapped into PlayerAnimator's BedSeated state. VehicleEnterExit sets the BedSeated bool for the two truck-bed seats.")]
+    public AnimationClip[] trunkSitClips = new AnimationClip[4];
+
+    [Tooltip("The clip in PlayerAnimator's BedSeated state. It gets replaced by the slot's truck-bed clip.")]
+    public AnimationClip trunkSitPlaceholder;
+
     static readonly int EmoteHash = Animator.StringToHash("Emote");
 
     private PlayerModelSelector _selector;
@@ -89,6 +96,11 @@ public class PlayerEmote : NetworkBehaviour
             overrides.Add(new(sitPlaceholder, sitClips[slot]));
         else
             Debug.LogWarning($"PlayerEmote: No sitting clip assigned for slot {slot}.", this);
+
+        if (trunkSitPlaceholder != null && slot < trunkSitClips.Length && trunkSitClips[slot] != null)
+            overrides.Add(new(trunkSitPlaceholder, trunkSitClips[slot]));
+        else
+            Debug.LogWarning($"PlayerEmote: No truck-bed sitting clip assigned for slot {slot}.", this);
 
         if (overrides.Count == 0) return;
 

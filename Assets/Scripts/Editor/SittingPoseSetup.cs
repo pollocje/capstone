@@ -4,42 +4,68 @@ using UnityEditor.Animations;
 using UnityEngine;
 
 // Tools > Players > Set Up Sitting Pose
-// Wires the per-character Sitting clips (Assets/Animations/player1..4@Sitting.fbx) into the player:
-//  1. Imports each FBX as Humanoid with a looping, baked-in-place clip (it's a stationary pose).
-//  2. Adds a "Seated" bool + "Seated" state to PlayerAnimator (Any State -> Seated, Seated -> Locomotion),
-//     and stops the emote from firing while seated.
-//  3. Fills PlayerEmote.sitClips / sitPlaceholder on the player prefab so each slot gets its own clip.
-// VehicleEnterExit flips the Seated bool for driver/passenger riders. Safe to re-run.
+// Wires the per-character truck sitting clips into the player:
+//   Cab (driver/passenger):  Assets/Animations/player1..4@Sitting.fbx   -> "Seated" bool/state
+//   Truck bed (both seats):  Assets/Animations/player1..4@TrunkSeat.fbx -> "BedSeated" bool/state
+//  1. Imports each FBX as Humanoid with a looping, baked-in-place clip (they're stationary poses).
+//  2. Adds the bool + state to PlayerAnimator (Any State -> pose, pose -> Locomotion),
+//     and stops the emote from firing while in either pose.
+//  3. Fills PlayerEmote.sitClips / trunkSitClips (+ placeholders) on the player prefab so each slot gets its own clip.
+// VehicleEnterExit flips Seated for cab riders and BedSeated for truck-bed riders. Safe to re-run.
 public static class SittingPoseSetup
 {
     const string AnimDir = "Assets/Animations";
     const string ControllerPath = "Assets/Animations/PlayerAnimator.controller";
     const string PlayerPrefabPath = "Assets/Prefabs/MainPlayer Variant.prefab";
-    const string SeatedParam = "Seated";
-    const string SeatedStateName = "Seated";
     const int SlotCount = 4;
+
+    // (clip file suffix, animator bool, animator state, graph position)
+    static readonly (string clip, string param, string state, Vector3 pos)[] Poses =
+    {
+        ("Sitting",   "Seated",    "Seated",    new Vector3(350, 320, 0)),
+        ("TrunkSeat", "BedSeated", "BedSeated", new Vector3(350, 400, 0)),
+    };
 
     [MenuItem("Tools/Players/Set Up Sitting Pose")]
     public static void Run()
     {
+        var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+        if (controller == null)
+        {
+            Debug.LogError($"[SittingPoseSetup] {ControllerPath} not found.");
+            return;
+        }
+
+        var clipsPerPose = new AnimationClip[Poses.Length][];
+        for (int p = 0; p < Poses.Length; p++)
+        {
+            clipsPerPose[p] = LoadPoseClips(Poses[p].clip);
+            if (clipsPerPose[p] == null) return;
+            if (!ConfigureState(controller, clipsPerPose[p][0], Poses[p].param, Poses[p].state, Poses[p].pos)) return;
+        }
+        EditorUtility.SetDirty(controller);
+
+        WirePrefab(clipsPerPose[0], clipsPerPose[1]);
+
+        AssetDatabase.SaveAssets();
+        Debug.Log("[SittingPoseSetup] Done: Sitting + TrunkSeat clips imported, PlayerAnimator has Seated + BedSeated states, PlayerEmote wired.");
+    }
+
+    static AnimationClip[] LoadPoseClips(string suffix)
+    {
         var clips = new AnimationClip[SlotCount];
         for (int i = 0; i < SlotCount; i++)
         {
-            string path = $"{AnimDir}/player{i + 1}@Sitting.fbx";
-            if (!ConfigureImporter(path)) return;
+            string path = $"{AnimDir}/player{i + 1}@{suffix}.fbx";
+            if (!ConfigureImporter(path)) return null;
             clips[i] = LoadClip(path);
             if (clips[i] == null)
             {
                 Debug.LogError($"[SittingPoseSetup] No animation clip found in {path}.");
-                return;
+                return null;
             }
         }
-
-        if (!ConfigureController(clips[0])) return;
-        WirePrefab(clips);
-
-        AssetDatabase.SaveAssets();
-        Debug.Log("[SittingPoseSetup] Done: sitting clips imported, PlayerAnimator has a Seated state, PlayerEmote wired.");
+        return clips;
     }
 
     static bool ConfigureImporter(string path)
@@ -82,17 +108,10 @@ public static class SittingPoseSetup
             .OfType<AnimationClip>()
             .FirstOrDefault(c => !c.name.StartsWith("__preview__"));
 
-    static bool ConfigureController(AnimationClip placeholder)
+    static bool ConfigureState(AnimatorController controller, AnimationClip placeholder, string param, string stateName, Vector3 graphPos)
     {
-        var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
-        if (controller == null)
-        {
-            Debug.LogError($"[SittingPoseSetup] {ControllerPath} not found.");
-            return false;
-        }
-
-        if (!controller.parameters.Any(p => p.name == SeatedParam))
-            controller.AddParameter(SeatedParam, AnimatorControllerParameterType.Bool);
+        if (!controller.parameters.Any(p => p.name == param))
+            controller.AddParameter(param, AnimatorControllerParameterType.Bool);
 
         var sm = controller.layers[0].stateMachine;
         var locomotion = sm.states.Select(s => s.state).FirstOrDefault(s => s.name == "Locomotion");
@@ -102,38 +121,37 @@ public static class SittingPoseSetup
             return false;
         }
 
-        var seated = sm.states.Select(s => s.state).FirstOrDefault(s => s.name == SeatedStateName)
-                     ?? sm.AddState(SeatedStateName, new Vector3(350, 320, 0));
+        var seated = sm.states.Select(s => s.state).FirstOrDefault(s => s.name == stateName)
+                     ?? sm.AddState(stateName, graphPos);
         seated.motion = placeholder;
         seated.writeDefaultValues = true;
 
-        // Any State -> Seated (rebuilt each run so re-running doesn't stack duplicates).
+        // Any State -> pose (rebuilt each run so re-running doesn't stack duplicates).
         foreach (var t in sm.anyStateTransitions.Where(t => t.destinationState == seated).ToArray())
             sm.RemoveAnyStateTransition(t);
         var enter = sm.AddAnyStateTransition(seated);
-        enter.AddCondition(AnimatorConditionMode.If, 0, SeatedParam);
+        enter.AddCondition(AnimatorConditionMode.If, 0, param);
         enter.hasExitTime = false;
         enter.duration = 0.2f;
         enter.canTransitionToSelf = false; // otherwise it restarts the state every frame the bool is on
 
-        // Seated -> Locomotion once the bool drops.
+        // pose -> Locomotion once the bool drops.
         foreach (var t in seated.transitions.ToArray())
             seated.RemoveTransition(t);
         var exit = seated.AddTransition(locomotion);
-        exit.AddCondition(AnimatorConditionMode.IfNot, 0, SeatedParam);
+        exit.AddCondition(AnimatorConditionMode.IfNot, 0, param);
         exit.hasExitTime = false;
         exit.duration = 0.2f;
 
-        // No emoting from the truck seat: Any State -> Emote also requires not seated.
+        // No emoting from a truck seat: Any State -> Emote also requires not in this pose.
         foreach (var t in sm.anyStateTransitions.Where(t => t.destinationState != null && t.destinationState.name == "Emote"))
-            if (!t.conditions.Any(c => c.parameter == SeatedParam))
-                t.AddCondition(AnimatorConditionMode.IfNot, 0, SeatedParam);
+            if (!t.conditions.Any(c => c.parameter == param))
+                t.AddCondition(AnimatorConditionMode.IfNot, 0, param);
 
-        EditorUtility.SetDirty(controller);
         return true;
     }
 
-    static void WirePrefab(AnimationClip[] clips)
+    static void WirePrefab(AnimationClip[] sitClips, AnimationClip[] trunkClips)
     {
         var root = PrefabUtility.LoadPrefabContents(PlayerPrefabPath);
         try
@@ -141,12 +159,14 @@ public static class SittingPoseSetup
             var emote = root.GetComponentInChildren<PlayerEmote>(true);
             if (emote == null)
             {
-                Debug.LogWarning($"[SittingPoseSetup] No PlayerEmote in {PlayerPrefabPath}; assign sitClips by hand.");
+                Debug.LogWarning($"[SittingPoseSetup] No PlayerEmote in {PlayerPrefabPath}; assign sitClips / trunkSitClips by hand.");
                 return;
             }
 
-            emote.sitClips = clips;
-            emote.sitPlaceholder = clips[0];
+            emote.sitClips = sitClips;
+            emote.sitPlaceholder = sitClips[0];
+            emote.trunkSitClips = trunkClips;
+            emote.trunkSitPlaceholder = trunkClips[0];
             PrefabUtility.SaveAsPrefabAsset(root, PlayerPrefabPath);
         }
         finally
