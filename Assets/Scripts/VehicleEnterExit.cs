@@ -44,6 +44,14 @@ public class VehicleEnterExit : NetworkBehaviour
     [Tooltip("Where the seated model sits relative to the seat empty (seat-local). The seat empty is where the capsule's feet get pinned, so Y usually needs to drop a bit for the hips to land on the cushion. Tune in Play mode - it's read every frame.")]
     [SerializeField] private Vector3 seatedModelOffset = new Vector3(0f, -0.5f, 0f);
 
+    [Header("Seated pose (truck bed)")]
+    [Tooltip("Same as Seated Model Offset, but for the two truck-bed seats (TrunkSeat clips). Seat-local, read every frame - tune in Play mode.")]
+    [SerializeField] private Vector3 bedSeatedModelOffset = new Vector3(0f, -0.5f, 0f);
+
+    [Header("Steering wheel")]
+    [Tooltip("Driver's hands reach for this wheel while seated. Set by Tools > Vehicles > Set Up Steering Wheel.")]
+    [SerializeField] private SteeringWheel steeringWheel;
+
     [Tooltip("Radius of the small trigger sphere spawned at each seat empty at Start - this is what makes 'press E' enter the seat you're actually standing next to, instead of whichever seat is nearest across one shared trigger spanning the whole vehicle.")]
     [SerializeField] private float seatEntryRadius = 1.2f;
 
@@ -84,13 +92,15 @@ public class VehicleEnterExit : NetworkBehaviour
 
     // Seated-pose riders, per seat, on this machine. Their model root gets pinned to the seat in
     // LateUpdate and the Animator's Seated bool is held on; null = nobody posed in that seat here.
+    // Cab seats (driver/passenger) use the Seated bool; the truck bed uses BedSeated (TrunkSeat clips).
     private static readonly int SeatedHash = Animator.StringToHash("Seated");
+    private static readonly int BedSeatedHash = Animator.StringToHash("BedSeated");
     private readonly PlayerModelSwapper[] _posedRider = new PlayerModelSwapper[4];
     private readonly Vector3[] _posedModelLocalPos = new Vector3[4];
     private readonly Quaternion[] _posedModelLocalRot = new Quaternion[4];
 
-    // Only the cab seats get a sitting pose; truck-bed riders are still hidden entirely.
-    private static bool ShowsSeatedPose(int seatIndex) => seatIndex == DriverSeatIndex || seatIndex == 1;
+    private static bool IsBedSeat(int seatIndex) => seatIndex >= 2;
+    private Vector3 SeatedOffset(int seatIndex) => IsBedSeat(seatIndex) ? bedSeatedModelOffset : seatedModelOffset;
 
     public override void OnNetworkSpawn()
     {
@@ -127,7 +137,8 @@ public class VehicleEnterExit : NetworkBehaviour
     // lags behind a fast-moving vehicle since it's a manually-repositioned world-space
     // NetworkTransform, not an actual child of the truck. These already-synced occupant
     // NetworkVariables drive the rider's look on every machine instead: cab riders get their
-    // model pinned to the seat (LateUpdate, so no lag) in a sitting pose; bed riders stay hidden.
+    // model pinned to the seat (LateUpdate, so no lag) in a sitting pose; bed riders get the same
+    // treatment with the TrunkSeat pose.
     private void ApplyOccupantVisual(int seatIndex, ulong previousOccupant, ulong currentOccupant)
     {
         if (previousOccupant != 0)
@@ -137,10 +148,7 @@ public class VehicleEnterExit : NetworkBehaviour
         }
 
         if (currentOccupant != 0)
-        {
-            if (ShowsSeatedPose(seatIndex)) SitRider(seatIndex, currentOccupant - 1);
-            else SetRidingVisible(currentOccupant - 1, false);
-        }
+            SitRider(seatIndex, currentOccupant - 1);
     }
 
     private static GameObject FindPlayer(ulong clientId)
@@ -204,15 +212,33 @@ public class VehicleEnterExit : NetworkBehaviour
         if (swapper == null || swapper.modelRoot == null) return;
 
         swapper.modelRoot.SetLocalPositionAndRotation(_posedModelLocalPos[seatIndex], _posedModelLocalRot[seatIndex]);
-        SetSeatedParam(swapper, false);
+        SetSeatedParams(swapper, cab: false, bed: false);
+
+        var grip = swapper.modelRoot.GetComponentInChildren<SteeringWheelGrip>();
+        if (grip != null) grip.Release();
     }
 
-    private static void SetSeatedParam(PlayerModelSwapper swapper, bool seated)
+    // Driver only, puts their hands on the wheel. Runs every frame in case the model gets swapped
+    private void HoldWheel(PlayerModelSwapper swapper, Transform seat, int seatIndex)
+    {
+        if (steeringWheel == null) return;
+
+        var animator = swapper.modelRoot.GetComponentInChildren<Animator>();
+        if (animator == null || !animator.isActiveAndEnabled) return;
+
+        var grip = animator.GetComponent<SteeringWheelGrip>();
+        if (grip == null) grip = animator.gameObject.AddComponent<SteeringWheelGrip>();
+        grip.Hold(steeringWheel, swapper.modelRoot, seat,
+            _posedModelLocalPos[seatIndex] + SeatedOffset(seatIndex), _posedModelLocalRot[seatIndex]);
+    }
+
+    private static void SetSeatedParams(PlayerModelSwapper swapper, bool cab, bool bed)
     {
         // PlayerModelSwapper replaces the model (and its Animator) at runtime, so look it up each time.
         var animator = swapper.modelRoot.GetComponentInChildren<Animator>();
-        if (animator != null && animator.isActiveAndEnabled)
-            animator.SetBool(SeatedHash, seated);
+        if (animator == null || !animator.isActiveAndEnabled) return;
+        animator.SetBool(SeatedHash, cab);
+        animator.SetBool(BedSeatedHash, bed);
     }
 
     // LateUpdate so the truck has already moved this frame: the model lands exactly in the seat
@@ -223,8 +249,6 @@ public class VehicleEnterExit : NetworkBehaviour
 
         for (int i = 0; i < SeatLabels.Length; i++)
         {
-            if (!ShowsSeatedPose(i)) continue;
-
             ulong occupant = OccupantVar(i).Value;
             if (occupant == 0) continue;
 
@@ -239,9 +263,10 @@ public class VehicleEnterExit : NetworkBehaviour
 
             // Same pose the model would have if the capsule were sitting exactly on the seat, plus the offset.
             swapper.modelRoot.SetPositionAndRotation(
-                seat.TransformPoint(_posedModelLocalPos[i] + seatedModelOffset),
+                seat.TransformPoint(_posedModelLocalPos[i] + SeatedOffset(i)),
                 seat.rotation * _posedModelLocalRot[i]);
-            SetSeatedParam(swapper, true);
+            SetSeatedParams(swapper, cab: !IsBedSeat(i), bed: IsBedSeat(i));
+            if (i == DriverSeatIndex) HoldWheel(swapper, seat, i);
         }
     }
 

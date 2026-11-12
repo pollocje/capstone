@@ -1230,6 +1230,7 @@ MonoBehaviour:
   - {fileID: 919132149155446097, guid: cb1cc3fbf85aa9840b144deb424a21dd, type: 3}
   - {fileID: 919132149155446097, guid: 9af5fb8bdc5f02f40ba36b07731f64e6, type: 3}
   - {fileID: 919132149155446097, guid: 44f31f01537bb754a88a19339c25cc2a, type: 3}
+  modelMaterial: {fileID: 2100000, guid: 519872ab145352c43acd4acf2eb2b8ec, type: 2}
 --- !u!95 &3663048076923643673
 Animator:
   serializedVersion: 7
@@ -1297,3 +1298,9 @@ MonoBehaviour:
   - {fileID: -203655887218126122, guid: 2442aee3ae25de744a333ac47c92557a, type: 3}
   - {fileID: -203655887218126122, guid: ae631d06265e52a49b9001483b8115f9, type: 3}
   sitPlaceholder: {fileID: -203655887218126122, guid: ade23d58a827b004f965fc8d1c1404eb, type: 3}
+  trunkSitClips:
+  - {fileID: -203655887218126122, guid: 71c1ae0e09d63de44abbb539c2b8e8c3, type: 3}
+  - {fileID: -203655887218126122, guid: c10352b409c4b6c4d9f55fb310001525, type: 3}
+  - {fileID: -203655887218126122, guid: 3dfd25ac444dba346954425a26ac85bb, type: 3}
+  - {fileID: -203655887218126122, guid: 62adf7de7ded67547a96c846828f6b34, type: 3}
+  trunkSitPlaceholder: {fileID: -203655887218126122, guid: 71c1ae0e09d63de44abbb539c2b8e8c3, type: 3}

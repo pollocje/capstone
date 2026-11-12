@@ -540,6 +540,40 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3075238956575239852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4828414965262260005}
+  m_Layer: 0
+  m_Name: SteeringWheelPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4828414965262260005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3075238956575239852}
+  serializedVersion: 2
+  m_LocalRotation: {x: 2.8397454e-14, y: 1, z: -0.00000036646685, w: 0.00000007748983}
+  m_LocalPosition: {x: -0.6823616, y: 1.1615325, z: 0.7824512}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4686300063374164912}
+  - {fileID: 8822182282738309724}
+  - {fileID: 7776313725087382906}
+  m_Father: {fileID: 8046238418533512306}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3563970703308808277
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,12 +691,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3614555228737590277}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.6823614, y: 1.1562369, z: 0.84328115}
+  m_LocalRotation: {x: -2.8397454e-14, y: -1, z: 0.00000036646685, w: 0.00000007748983}
+  m_LocalPosition: {x: -0.000000009427403, y: -0.005295679, z: -0.06082993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8046238418533512306}
+  m_Father: {fileID: 4828414965262260005}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7334364019480910583
 MeshFilter:
@@ -836,6 +870,7 @@ GameObject:
   - component: {fileID: 3579055731513581684}
   - component: {fileID: 7169496426872894633}
   - component: {fileID: 6129748475456050644}
+  - component: {fileID: 4910114915016771494}
   m_Layer: 0
   m_Name: NewPickup
   m_TagString: Untagged
@@ -863,7 +898,6 @@ Transform:
   - {fileID: 6200324438398144365}
   - {fileID: 2915781410060369412}
   - {fileID: 2184929799998815946}
-  - {fileID: 4686300063374164912}
   - {fileID: 8823680034785345340}
   - {fileID: 3720600383986328606}
   - {fileID: 3515650977180194044}
@@ -871,6 +905,7 @@ Transform:
   - {fileID: 3720600383986328607}
   - {fileID: 3720600383986328608}
   - {fileID: 3720600383986328609}
+  - {fileID: 4828414965262260005}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6496852026597046615
@@ -1167,7 +1202,14 @@ MonoBehaviour:
   bedSeatLeft: {fileID: 3720600383986328608}
   bedSeatRight: {fileID: 3720600383986328609}
   exitPoint: {fileID: 3515650977180194044}
+  passengerCameraObject: {fileID: 0}
+  bedLeftCameraObject: {fileID: 0}
+  bedRightCameraObject: {fileID: 0}
   enterPromptUI: {fileID: 0}
+  seatedModelOffset: {x: 0, y: -0.5, z: 0}
+  bedSeatedModelOffset: {x: 0, y: -0.5, z: 0}
+  steeringWheel: {fileID: 4910114915016771494}
+  seatEntryRadius: 1.2
 --- !u!114 &3579055731513581684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1252,6 +1294,57 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.3, y: 2.5, z: 7.4}
   m_Center: {x: 0, y: 1, z: -0.17}
+--- !u!114 &4910114915016771494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4081136511058153756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3f605418da913499547cc3b3bfd4c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SteeringWheel
+  ShowTopMostFoldoutHeaderGroup: 1
+  pivot: {fileID: 4828414965262260005}
+  leftHandGrip: {fileID: 8822182282738309724}
+  rightHandGrip: {fileID: 7776313725087382906}
+  carInput: {fileID: 3230944454165197023}
+  maxWheelAngle: 120
+  turnSpeed: 360
+  invert: 0
+--- !u!1 &4303786029473205827
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7776313725087382906}
+  m_Layer: 0
+  m_Name: RightHandGrip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7776313725087382906
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4303786029473205827}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.1605006, y: 0.043006007, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4828414965262260005}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4508430369834392605
 GameObject:
   m_ObjectHideFlags: 0
@@ -1554,6 +1647,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8197406197321375835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8822182282738309724}
+  m_Layer: 0
+  m_Name: LeftHandGrip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8822182282738309724
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8197406197321375835}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.1605006, y: 0.043006007, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4828414965262260005}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8764605384978051047
 GameObject:
   m_ObjectHideFlags: 0
