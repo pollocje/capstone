@@ -9,8 +9,10 @@ using UnityEngine;
 public class NicknameSettings : MonoBehaviour
 {
     [SerializeField] TMP_InputField nameInput;
-    // Optional: shows "Saved!" after saving.
+    // Optional: shows a confirmation message after saving.
     [SerializeField] TextMeshProUGUI statusText;
+    // How long the confirmation stays on screen (seconds). 0 = stays until the menu closes.
+    [SerializeField] float messageDuration = 3f;
 
     void OnEnable()
     {
@@ -25,6 +27,20 @@ public class NicknameSettings : MonoBehaviour
         string saved = PlayerNameStore.Set(nameInput.text);
         nameInput.text = saved;
 
-        if (statusText != null) statusText.text = "Saved!";
+        if (statusText != null)
+        {
+            statusText.text = $"Nickname set to {saved}";
+
+            // Restart the timer if Save is pressed again.
+            StopAllCoroutines();
+            if (messageDuration > 0f) StartCoroutine(ClearMessageAfterDelay());
+        }
+    }
+
+    System.Collections.IEnumerator ClearMessageAfterDelay()
+    {
+        // Realtime so it still clears if the game is paused.
+        yield return new WaitForSecondsRealtime(messageDuration);
+        if (statusText != null) statusText.text = "";
     }
 }
