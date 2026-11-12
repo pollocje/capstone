@@ -48,6 +48,10 @@ public class VehicleEnterExit : NetworkBehaviour
     [Tooltip("Same as Seated Model Offset, but for the two truck-bed seats (TrunkSeat clips). Seat-local, read every frame - tune in Play mode.")]
     [SerializeField] private Vector3 bedSeatedModelOffset = new Vector3(0f, -0.5f, 0f);
 
+    [Header("Steering wheel")]
+    [Tooltip("Driver's hands reach for this wheel while seated. Set by Tools > Vehicles > Set Up Steering Wheel.")]
+    [SerializeField] private SteeringWheel steeringWheel;
+
     [Tooltip("Radius of the small trigger sphere spawned at each seat empty at Start - this is what makes 'press E' enter the seat you're actually standing next to, instead of whichever seat is nearest across one shared trigger spanning the whole vehicle.")]
     [SerializeField] private float seatEntryRadius = 1.2f;
 
@@ -209,6 +213,23 @@ public class VehicleEnterExit : NetworkBehaviour
 
         swapper.modelRoot.SetLocalPositionAndRotation(_posedModelLocalPos[seatIndex], _posedModelLocalRot[seatIndex]);
         SetSeatedParams(swapper, cab: false, bed: false);
+
+        var grip = swapper.modelRoot.GetComponentInChildren<SteeringWheelGrip>();
+        if (grip != null) grip.Release();
+    }
+
+    // Driver only, puts their hands on the wheel. Runs every frame in case the model gets swapped
+    private void HoldWheel(PlayerModelSwapper swapper, Transform seat, int seatIndex)
+    {
+        if (steeringWheel == null) return;
+
+        var animator = swapper.modelRoot.GetComponentInChildren<Animator>();
+        if (animator == null || !animator.isActiveAndEnabled) return;
+
+        var grip = animator.GetComponent<SteeringWheelGrip>();
+        if (grip == null) grip = animator.gameObject.AddComponent<SteeringWheelGrip>();
+        grip.Hold(steeringWheel, swapper.modelRoot, seat,
+            _posedModelLocalPos[seatIndex] + SeatedOffset(seatIndex), _posedModelLocalRot[seatIndex]);
     }
 
     private static void SetSeatedParams(PlayerModelSwapper swapper, bool cab, bool bed)
@@ -245,6 +266,7 @@ public class VehicleEnterExit : NetworkBehaviour
                 seat.TransformPoint(_posedModelLocalPos[i] + SeatedOffset(i)),
                 seat.rotation * _posedModelLocalRot[i]);
             SetSeatedParams(swapper, cab: !IsBedSeat(i), bed: IsBedSeat(i));
+            if (i == DriverSeatIndex) HoldWheel(swapper, seat, i);
         }
     }
 
