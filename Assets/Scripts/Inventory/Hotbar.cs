@@ -18,6 +18,14 @@ public class Hotbar : NetworkBehaviour
 
     private int selectedIndex = 0;
 
+    // Item type in hand (-1 = nothing). The owner writes it so other players can see the item
+    // (HeldItemThirdPerson reads it). The hotbar itself only lives on the owner's machine.
+    private readonly NetworkVariable<int> _heldType = new(-1,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private int _localHeldType = -1;
+
+    public int HeldType => IsSpawned ? _heldType.Value : _localHeldType;
+
     /// <summary>Fired when the player uses an item: left click on an equippable, or throwing/dropping a Droppable
     /// with left click. Read by RoundManager for the end screen's "items used".</summary>
     public static event System.Action<Hotbar, InventoryItem> ItemUsed;
@@ -44,10 +52,14 @@ public class Hotbar : NetworkBehaviour
 
         hotbarUI?.Refresh(items, selectedIndex);
         GetEquippable(GetSelectedItem())?.OnEquip();
+        SyncHeldType();
     }
 
     void Update()
     {
+        // Other players' copies shouldn't react to our keys
+        if (IsSpawned && !IsOwner) return;
+
         HandleNumberKeys();
         HandleUse();
         HandleDrop();
@@ -172,6 +184,7 @@ public class Hotbar : NetworkBehaviour
     {
         items[selectedIndex] = null;
         hotbarUI?.Refresh(items, selectedIndex);
+        SyncHeldType();
     }
 
     /// <summary>Selects a slot (what the number keys do): unequips the old item, equips the new one.</summary>
@@ -185,6 +198,7 @@ public class Hotbar : NetworkBehaviour
         hotbarUI?.UpdateSelection(selectedIndex);
 
         GetEquippable(GetSelectedItem())?.OnEquip();
+        SyncHeldType();
     }
 
     /// <summary>Re-pushes current state to hotbarUI — call after wiring it up post-spawn.</summary>
@@ -194,6 +208,15 @@ public class Hotbar : NetworkBehaviour
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    void SyncHeldType()
+    {
+        InventoryItem item = GetSelectedItem();
+        _localHeldType = item == null ? -1 : (int)item.itemType;
+
+        if (IsSpawned && IsOwner && _heldType.Value != _localHeldType)
+            _heldType.Value = _localHeldType;
+    }
 
     void RegisterEquippable(ItemType type, IEquippable equippable)
     {
@@ -232,6 +255,7 @@ public class Hotbar : NetworkBehaviour
 
                 // Landed in the slot already in hand — equip it now, same as pressing its number key.
                 if (i == selectedIndex) GetEquippable(item)?.OnEquip();
+                SyncHeldType();
                 return true;
             }
         }
