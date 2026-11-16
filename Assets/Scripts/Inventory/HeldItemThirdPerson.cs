@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // Shows the hotbar item a player has out in their model's right hand, so other players can see it.
-// Hotbar syncs which item type is out; this builds a copy of that item's model on every client.
+// Hotbar syncs which item type is out; this builds a copy of that item's model on every client,
+// and HeldItemHandIK raises the arm so the item is held out in front.
 // Set up by Tools > Items > Set Up Held Items.
 public class HeldItemThirdPerson : MonoBehaviour
 {
@@ -18,13 +19,19 @@ public class HeldItemThirdPerson : MonoBehaviour
         public Vector3 euler;
         [Tooltip("Multiplier on the model's own scale.")]
         public float scale = 1f;
+        [Tooltip("Where the hand holds this item, from the hips (x = right, y = up, z = forward). Leave at 0 to use Default Hand Offset.")]
+        public Vector3 handOffset;
     }
 
     public HeldItem[] items = new HeldItem[0];
 
+    [Tooltip("Where the hand holds an item, from the hips (x = right, y = up, z = forward).")]
+    public Vector3 defaultHandOffset = new Vector3(0.15f, 0.3f, 0.35f);
+
     private Hotbar _hotbar;
     private PlayerModelSwapper _swapper;
     private Transform _hand;
+    private HeldItemHandIK _ik;
     private GameObject _visual;
     private HeldItem _shown;
     private int _shownType = -1;
@@ -40,10 +47,20 @@ public class HeldItemThirdPerson : MonoBehaviour
     {
         int type = _hotbar != null ? _hotbar.HeldType : -1;
         if (type != _shownType) Show(type);
-        if (_visual == null) return;
 
         // The hand goes away when the model is swapped, so find it again
-        if (_hand == null) _hand = FindHand();
+        if (_hand == null) FindHand();
+
+        // Raise the arm while something is in hand
+        if (_ik != null)
+        {
+            if (_visual != null)
+                _ik.Hold(_swapper.modelRoot, _shown.handOffset != Vector3.zero ? _shown.handOffset : defaultHandOffset);
+            else
+                _ik.Release();
+        }
+
+        if (_visual == null) return;
         if (_hand == null)
         {
             _visual.SetActive(false);
@@ -86,13 +103,17 @@ public class HeldItemThirdPerson : MonoBehaviour
         _visual.SetActive(false);
     }
 
-    Transform FindHand()
+    void FindHand()
     {
-        if (_swapper == null || _swapper.modelRoot == null) return null;
+        _ik = null;
+        if (_swapper == null || _swapper.modelRoot == null) return;
 
         var animator = _swapper.modelRoot.GetComponentInChildren<Animator>();
-        if (animator == null || !animator.isHuman) return null;
-        return animator.GetBoneTransform(HumanBodyBones.RightHand);
+        if (animator == null || !animator.isHuman) return;
+        _hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+        _ik = animator.GetComponent<HeldItemHandIK>();
+        if (_ik == null) _ik = animator.gameObject.AddComponent<HeldItemHandIK>();
     }
 
     // PlayerModel turns with the player, so it's the body's facing direction
