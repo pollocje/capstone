@@ -563,6 +563,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8058391781968770375}
+    - targetCorrespondingSourceObject: {fileID: 6780170111904031566, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 42137220108506668}
   m_SourcePrefab: {fileID: 100100000, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
 --- !u!1 &595128642037148933 stripped
 GameObject:
@@ -1118,6 +1121,39 @@ MonoBehaviour:
   hideOwnTag: 1
   heightOffset: 2.2
   fontSize: 3
+--- !u!114 &42137220108506668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3653676379582566691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 708749da0b9683e49820b70159833ef3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeldItemThirdPerson
+  items:
+  - type: 1
+    model: {fileID: 919132149155446097, guid: 22747a3409b9e95478a15f2034faadac, type: 3}
+    offset: {x: 0, y: 0, z: 0.05}
+    euler: {x: 0, y: 0, z: 0}
+    scale: 1.5
+  - type: 3
+    model: {fileID: 7251931797159497302, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
+    offset: {x: 0, y: 0, z: 0.05}
+    euler: {x: -65, y: 0, z: 0}
+    scale: 0.5
+  - type: 4
+    model: {fileID: 7647350731946447780, guid: 716fb9cceba9e15469221f3b3df1268c, type: 3}
+    offset: {x: 0, y: 0, z: 0.05}
+    euler: {x: 0, y: 0, z: 0}
+    scale: 0.5
+  - type: 2
+    model: {fileID: 7779381782125563441, guid: c80a42f3af235fb4099a218ae6350f25, type: 3}
+    offset: {x: 0, y: 0, z: 0.05}
+    euler: {x: 0, y: 0, z: 0}
+    scale: 1
 --- !u!4 &4179243575641459609 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6148487059883620852, guid: 7cfcf0ac8e6d1a14d9286ad4fc3c7604, type: 3}
