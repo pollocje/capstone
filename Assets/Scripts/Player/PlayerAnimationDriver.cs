@@ -13,6 +13,8 @@ public class PlayerAnimationDriver : MonoBehaviour
     public float groundedOffset = -0.14f;
     public float groundedRadius = 0.3f;
     public float speedDampTime = 0.1f;
+    [Tooltip("How far behind the player the movement has to point to count as walking backwards (0 = any backwards movement, 1 = straight back only).")]
+    [Range(0f, 1f)] public float backwardsThreshold = 0.3f;
 
     static readonly int SpeedHash = Animator.StringToHash("Speed");
     static readonly int GroundedHash = Animator.StringToHash("Grounded");
@@ -59,6 +61,10 @@ public class PlayerAnimationDriver : MonoBehaviour
 
         delta.y = 0f;
         float speed = delta.magnitude / Time.deltaTime;
+
+        // Speed goes negative when moving backwards, so the blend tree plays Walking Backwards
+        if (Vector3.Dot(delta, movingRoot.forward) < -backwardsThreshold * delta.magnitude)
+            speed = -speed;
 
         Vector3 spherePos = new Vector3(position.x, position.y - groundedOffset, position.z);
         bool grounded = Physics.CheckSphere(spherePos, groundedRadius, groundLayers, QueryTriggerInteraction.Ignore);
