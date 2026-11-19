@@ -41,8 +41,19 @@ public class PlayerNetworkSetup : NetworkBehaviour
         // For the owning client, wait one frame before enabling so all non-owner
         // cameras/VCams are already disabled before ours comes online.
         SetPlayerControlsEnabled(true);
+        LoadSettings();
         HookUpHotbar();
         StartCoroutine(EnableCameraNextFrame());
+    }
+
+    void LoadSettings()
+    {
+        // Keybinds and mouse sensitivity from the settings menu
+        var playerInput = GetComponentInChildren<PlayerInput>();
+        if (playerInput != null) GameSettings.LoadKeybinds(playerInput.actions);
+
+        var fpc = GetComponentInChildren<StarterAssets.FirstPersonController>();
+        if (fpc != null) fpc.RotationSpeed *= GameSettings.MouseSensitivity;
     }
 
     void HookUpHotbar()
