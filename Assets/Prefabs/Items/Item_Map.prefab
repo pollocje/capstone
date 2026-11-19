@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 5736445154194690237}
   - component: {fileID: 4417481801722648386}
   - component: {fileID: 3959947036791366198}
+  - component: {fileID: 4834977351800860611}
   m_Layer: 0
   m_Name: Item_Map
   m_TagString: Untagged
@@ -188,6 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864b978ce60944890bff3d4df03a172f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  ShowTopMostFoldoutHeaderGroup: 1
   item: {fileID: 11400000, guid: 525458b25c154cb5b881f2cf82b5bf58, type: 2}
   armDelay: 1
   pickupOnTouch: 0
@@ -283,3 +285,23 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &4834977351800860611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7251931797159497302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285e154c4f12b4ce485338177410993b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItemRecovery
+  maxDepthBelowGround: 2
+  killY: -100
+  recoverOffMap: 1
+  maxRestHeightAboveGround: 4
+  stuckHighSeconds: 5
+  restSpeed: 0.3
+  checkInterval: 0.5
+  recoveryLift: 1

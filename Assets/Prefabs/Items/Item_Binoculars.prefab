@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5068677596053296166}
   - component: {fileID: 4604249609716942076}
   - component: {fileID: 6214469190543002056}
+  - component: {fileID: 2804391875622304953}
   m_Layer: 0
   m_Name: Item_Binoculars
   m_TagString: Untagged
@@ -194,6 +195,26 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &2804391875622304953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5035246571835873939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285e154c4f12b4ce485338177410993b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItemRecovery
+  maxDepthBelowGround: 2
+  killY: -100
+  recoverOffMap: 1
+  maxRestHeightAboveGround: 4
+  stuckHighSeconds: 5
+  restSpeed: 0.3
+  checkInterval: 0.5
+  recoveryLift: 1
 --- !u!1001 &4055377413757453050
 PrefabInstance:
   m_ObjectHideFlags: 0

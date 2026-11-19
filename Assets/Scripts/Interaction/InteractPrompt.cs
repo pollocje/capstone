@@ -86,6 +86,10 @@ public class InteractPrompt : MonoBehaviour
             return _grab != null && _grab.IsHoldingMap ? tab + "   ·   <b>E</b> to put it down" : tab;
         }
 
+        InventoryItem held = _grab != null ? _grab.PutDownTarget : null;
+        if (held != null)
+            return $"Press <b>E</b> to put down {held.itemName}";
+
         ItemPickup pickup = _grab != null ? _grab.FindPickupTarget() : null;
         if (pickup != null && pickup.Item != null && pickup.IsArmed)
             return $"Press <b>E</b> to pick up {pickup.Item.itemName}";

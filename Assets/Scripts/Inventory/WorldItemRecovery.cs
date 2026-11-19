@@ -74,13 +74,17 @@ public class WorldItemRecovery : MonoBehaviour
         bool resting = _rb.linearVelocity.magnitude < restSpeed;
         float aboveGround = onMap ? p.y - ground : 0f;
 
-        if (p.y < killY || (onMap && aboveGround < -maxDepthBelowGround) || (recoverOffMap && !onMap))
+        // Still at its own safe spot (e.g. an item placed in the scene on an indoor floor or a high
+        // shelf): that's where it's meant to be, so the depth/height rules don't apply there.
+        bool atSafeSpot = Vector3.Distance(p, _safePos) < 1.5f;
+
+        if (p.y < killY || (!atSafeSpot && onMap && aboveGround < -maxDepthBelowGround) || (recoverOffMap && !onMap))
         {
             Recover();
             return;
         }
 
-        bool high = maxRestHeightAboveGround > 0f && resting && aboveGround > maxRestHeightAboveGround;
+        bool high = !atSafeSpot && maxRestHeightAboveGround > 0f && resting && aboveGround > maxRestHeightAboveGround;
         if (high)
         {
             if (_highSince < 0f) _highSince = Time.time;
@@ -89,7 +93,7 @@ public class WorldItemRecovery : MonoBehaviour
         }
         _highSince = -1f;
 
-        if (resting && onMap && aboveGround >= -0.5f)
+        if (resting && onMap && aboveGround >= -maxDepthBelowGround)
         {
             _safePos = p;
             _safeRot = _rb.rotation;

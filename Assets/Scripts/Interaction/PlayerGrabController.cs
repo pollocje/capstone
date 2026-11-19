@@ -220,7 +220,11 @@ public class PlayerGrabController : MonoBehaviour
         var grabbable = best?.collider.GetComponentInParent<Grabbable>();
         if (grabbable == null || grabbable.IsHeld)
         {
-            // Map in hand and nothing aimed at: E puts it down (E again picks it back up).
+            // At the vending machine / a truck seat, this E press is theirs - don't also drop
+            // the held item into the machine or grab whatever happens to be nearby.
+            if (OtherInteractInRange()) return;
+
+            // Item in hand and nothing aimed at: E puts it down (E again picks it back up).
             if (!TryPutDownMap()) TryPickupNearby();
             return;
         }
@@ -317,11 +321,34 @@ public class PlayerGrabController : MonoBehaviour
         return closest != null && closest.TryPickup(_hotbar);
     }
 
-    /// <summary>Drops the map if it's the selected hotbar item.</summary>
+    /// <summary>Puts the selected hotbar item down if it has a world version (map, barrel, binoculars, firework...).</summary>
     bool TryPutDownMap()
     {
-        if (!IsHoldingMap) return false;
+        if (PutDownTarget == null || OtherInteractInRange()) return false;
         return _hotbar.DropSelected();
+    }
+
+    // The vending machine and truck seats also use E (they read the key themselves). Putting the
+    // held item down on that same press would drop it into the machine/truck and lose it, so
+    // they win - same priority InteractPrompt shows.
+    bool OtherInteractInRange()
+    {
+        foreach (var dispenser in ItemDispenser.Active)
+            if (dispenser != null && dispenser.PlayerInRange) return true;
+        foreach (var vehicle in VehicleEnterExit.Active)
+            if (vehicle != null && vehicle.TryGetSeatPrompt(transform.position, out _)) return true;
+        return false;
+    }
+
+    /// <summary>The selected hotbar item E would put down, or null. Items without a dropPrefab
+    /// (e.g. the anemometer) can't be put down, so they can't be lost.</summary>
+    public InventoryItem PutDownTarget
+    {
+        get
+        {
+            InventoryItem item = _hotbar != null ? _hotbar.GetSelectedItem() : null;
+            return item != null && item.dropPrefab != null ? item : null;
+        }
     }
 
     /// <summary>True while the map is the selected hotbar item, so E would put it down.</summary>
