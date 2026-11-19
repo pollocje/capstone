@@ -52784,15 +52784,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2017867548139234072, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 346.52567
+      value: 332.277
       objectReference: {fileID: 0}
     - target: {fileID: 2017867548139234072, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 2017867548139234072, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 603.9918
+      value: 607.394
       objectReference: {fileID: 0}
     - target: {fileID: 2017867548139234072, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -52836,11 +52836,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4518830211046193102, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.07
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 4518830211046193102, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.27
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7251931797159497302, guid: 00a66a2e595154c4f9c1deb18cda5cb9, type: 3}
       propertyPath: m_Name
@@ -166912,8 +166912,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TornadoSpawner
   tornadoPrefab: {fileID: 3788798762596903321, guid: 6bb1ebcb2e7116d46818d3d817ca05a2, type: 3}
   spawnArea: {fileID: 936603703}
-  cutsceneDuration: 5
-  playerTag: Player
   onTornadoSpawned:
     m_PersistentCalls:
       m_Calls: []
@@ -475917,16 +475915,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
   hotbarRoot: {fileID: 0}
   slotPrefab: {fileID: 0}
-  normalColor:
-    r: 0.1
-    g: 0.1
-    b: 0.1
-    a: 0.75
-  selectedColor:
-    r: 0.9
-    g: 0.7
-    b: 0.1
-    a: 0.9
+  normalColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
+  selectedColor: {r: 0.9, g: 0.7, b: 0.1, a: 0.9}
 --- !u!114 &1844350604
 MonoBehaviour:
   m_ObjectHideFlags: 0

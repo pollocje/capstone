@@ -36,18 +36,28 @@ public class ItemPickup : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         _claimedBy.OnValueChanged += OnClaimedChanged;
+        if (IsServer) NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
 
         // Late joiner: the claim already happened before we existed, so OnValueChanged above
         // won't fire for it - the NetworkVariable's initial sync already carries the value.
         if (_claimedBy.Value != 0) OnClaimedChanged(0, _claimedBy.Value);
     }
 
-    public override void OnNetworkDespawn() => _claimedBy.OnValueChanged -= OnClaimedChanged;
+    public override void OnNetworkDespawn()
+    {
+        _claimedBy.OnValueChanged -= OnClaimedChanged;
+        if (IsServer && NetworkManager != null) NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+    }
 
     void OnTriggerEnter(Collider other)
     {
         if (!pickupOnTouch) return;
         if (!other.CompareTag("Player")) return;
+
+        // This fires on every machine for every player, and the claim is sent as *this* machine -
+        // so only the player we control may claim, or the host would win items others walk into.
+        NetworkObject playerNet = other.GetComponentInParent<NetworkObject>();
+        if (playerNet != null && playerNet.IsSpawned && !playerNet.IsOwner) return;
 
         Hotbar hotbar = other.GetComponentInParent<Hotbar>();
         if (hotbar == null) hotbar = other.GetComponentInChildren<Hotbar>();
@@ -83,22 +93,45 @@ public class ItemPickup : NetworkBehaviour
         _claimedBy.Value = rpcParams.Receive.SenderClientId + 1;
     }
 
+    // The server must NOT despawn here: a NetworkVariable change is only sent at the end of the
+    // tick, and Netcode drops deltas for objects that are no longer spawned - so a remote winner
+    // never heard it won, and the item vanished without reaching its hotbar. Instead the item
+    // stays in the world (claimed, so nobody else can take it) until the winner reports back.
     void OnClaimedChanged(ulong previous, ulong current)
     {
         if (current == 0) return;
+        if (current - 1 != NetworkManager.Singleton.LocalClientId) return;
 
-        // Only the winning client actually receives the item - everyone else (whoever lost the
-        // race, plus every other spectator) just sees the world object disappear below.
-        if (current - 1 == NetworkManager.Singleton.LocalClientId)
-        {
-            NetworkObject localPlayer = NetworkManager.Singleton.LocalClient?.PlayerObject;
-            Hotbar hotbar = localPlayer != null ? localPlayer.GetComponentInChildren<Hotbar>() : null;
-            hotbar?.AddItem(item);
-        }
+        // Only the winning client adds it, then tells the server whether it fit.
+        NetworkObject localPlayer = NetworkManager.Singleton.LocalClient?.PlayerObject;
+        Hotbar hotbar = localPlayer != null ? localPlayer.GetComponentInChildren<Hotbar>(true) : null;
+        if (hotbar != null && hotbar.AddItem(item)) ConfirmPickupRpc();
+        else ReleaseClaimRpc();
+    }
+
+    [Rpc(SendTo.Server, RequireOwnership = false)]
+    void ConfirmPickupRpc(RpcParams rpcParams = default)
+    {
+        if (_claimedBy.Value != rpcParams.Receive.SenderClientId + 1) return;
 
         // Only the server despawns - clients can't Destroy() a spawned NetworkObject directly,
         // and the despawn message removes it everywhere once the server does.
-        if (IsServer && NetworkObject != null && NetworkObject.IsSpawned)
+        if (NetworkObject != null && NetworkObject.IsSpawned)
             NetworkObject.Despawn();
+    }
+
+    // The winner's hotbar was full by the time the claim landed - put the item back up for grabs.
+    [Rpc(SendTo.Server, RequireOwnership = false)]
+    void ReleaseClaimRpc(RpcParams rpcParams = default)
+    {
+        if (_claimedBy.Value == rpcParams.Receive.SenderClientId + 1)
+            _claimedBy.Value = 0;
+    }
+
+    // Winner left before confirming - don't leave the item stuck as claimed forever.
+    void OnClientDisconnected(ulong clientId)
+    {
+        if (IsServer && IsSpawned && _claimedBy.Value == clientId + 1)
+            _claimedBy.Value = 0;
     }
 }
