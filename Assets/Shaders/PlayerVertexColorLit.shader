@@ -11,6 +11,11 @@ Shader "Capstone/Player Vertex Color Lit"
         [MainColor] _BaseColor("Base Color (multiplied with vertex color)", Color) = (1, 1, 1, 1)
         _Smoothness("Smoothness", Range(0, 1)) = 0.2
         _Metallic("Metallic", Range(0, 1)) = 0
+        // The UsePass'd Lit passes below read Cull[_Cull]. Undeclared it defaults to 0 = Cull Off,
+        // so the inside of the first-person player's own head got written to the depth texture
+        // (invisible in color, which culls back faces) and the volumetric clouds treated that as
+        // an occluder - a clean hole in the sky above the player. 2 = Back, matching ForwardLit.
+        [HideInInspector] _Cull("__cull", Float) = 2.0
     }
 
     SubShader

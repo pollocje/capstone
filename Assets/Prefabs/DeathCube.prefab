@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 9019341944734820240}
   - component: {fileID: 3374899750660403905}
   - component: {fileID: 1609507256593666709}
+  - component: {fileID: 4180725163905127341}
+  - component: {fileID: 3659619233995677185}
   m_Layer: 0
   m_Name: DeathCube
   m_TagString: Extinguish
@@ -155,6 +157,42 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &4180725163905127341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86859274521398914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 864b978ce60944890bff3d4df03a172f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  ShowTopMostFoldoutHeaderGroup: 1
+  item: {fileID: 11400000, guid: a56514a068ddfc04ebd4fcde93a68355, type: 2}
+  armDelay: 1
+  pickupOnTouch: 0
+--- !u!114 &3659619233995677185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86859274521398914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285e154c4f12b4ce485338177410993b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItemRecovery
+  maxDepthBelowGround: 2
+  killY: -100
+  recoverOffMap: 1
+  maxRestHeightAboveGround: 4
+  stuckHighSeconds: 5
+  restSpeed: 0.3
+  checkInterval: 0.5
+  recoveryLift: 1
 --- !u!1001 &663432173871205449
 PrefabInstance:
   m_ObjectHideFlags: 0

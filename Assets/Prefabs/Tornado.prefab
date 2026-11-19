@@ -116,16 +116,19 @@ PrefabInstance:
       addedObject: {fileID: 3398536413388190689}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8935278598927917489}
+      addedObject: {fileID: 1019032587018559705}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1019032587018559705}
+      addedObject: {fileID: 8935278598927917489}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6780612256643112827}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 114785462760942890}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6284626742754006748}
   m_SourcePrefab: {fileID: 100100000, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
 --- !u!1 &3788798762596903321 stripped
 GameObject:
@@ -153,29 +156,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.5205429
   m_Center: {x: -0.18211031, y: 0.83843184, z: 0}
---- !u!114 &8935278598927917489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3788798762596903321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f901102e96ef441a1bbea338e1f3a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TornadoLift
-  pullStrength: 15
-  rotationStrength: 10
-  liftStrength: 8
-  maxVelocity: 10
-  moveSpeed: 3
-  wanderRange: 18
-  extinguisherTag: Extinguish
-  extinguishTimer: 0
-  tornadoParticles: {fileID: 0}
-  maxParticleSize: 10
-  growthDuration: 10
 --- !u!114 &1019032587018559705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,6 +181,30 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &8935278598927917489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3788798762596903321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6f901102e96ef441a1bbea338e1f3a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TornadoLift
+  ShowTopMostFoldoutHeaderGroup: 1
+  pullStrength: 15
+  rotationStrength: 10
+  liftStrength: 8
+  maxVelocity: 10
+  moveSpeed: 3
+  wanderRange: 18
+  extinguisherTag: Extinguish
+  extinguishTimer: 0
+  tornadoParticles: {fileID: 0}
+  maxParticleSize: 10
+  growthDuration: 10
 --- !u!114 &6780612256643112827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,10 +261,43 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24c5b888451e3e7a237090e7ecc73b48, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TornadoRevealCutscene
+  ShowTopMostFoldoutHeaderGroup: 1
   cutsceneDuration: 5
   playerTag: Player
+--- !u!114 &6284626742754006748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3788798762596903321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a17f0beb090240d0834ec114a91c11b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TornadoRandomizer
+  rerollSpawnNearPlayers: 1
+  minDistanceFromPlayers: 60
+  spawnRerollAttempts: 15
+  playerTag: Player
+  baseSpeedRange: {x: 2, y: 5}
+  wanderRangeRange: {x: 12, y: 30}
+  driftAmount: 0.3
+  driftFrequency: 0.15
+  eventIntervalRange: {x: 8, y: 20}
+  eventChance: 0.6
+  surgeVsLull: 0.5
+  surgeMultiplierRange: {x: 1.5, y: 2.5}
+  lullMultiplierRange: {x: 0.1, y: 0.5}
+  eventDurationRange: {x: 3, y: 7}
+  eventBlendTime: 1.5
+  speedClamp: {x: 0, y: 12}
+  rolledBaseSpeed: 0
+  rolledWanderRange: 0
+  currentSpeed: 0
+  currentEvent: none
 --- !u!4 &4602490570902303523 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2238e5f23e3cce54cb738359c22a44f7, type: 3}
