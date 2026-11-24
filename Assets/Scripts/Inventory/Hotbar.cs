@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Hotbar : MonoBehaviour
+public class Hotbar : NetworkBehaviour
 {
     [Header("Settings")]
+    public KeyCode dropKey = KeyCode.G;
     public int slotCount = 5;
     public float dropDistance = 2f;
     public Transform playerTransform;
@@ -10,15 +13,32 @@ public class Hotbar : MonoBehaviour
     [Header("UI")]
     public HotbarUI hotbarUI;
 
-    [Header("Items")]
-    public InventoryItem[] items;
+    // Always starts empty (see Start) — items are picked up in-game, e.g. from an ItemDispenser
+    [HideInInspector] public InventoryItem[] items;
 
     private int selectedIndex = 0;
-    private Binoculars _binoculars;
+
+    // Item type in hand (-1 = nothing). The owner writes it so other players can see the item
+    // (HeldItemThirdPerson reads it). The hotbar itself only lives on the owner's machine.
+    private readonly NetworkVariable<int> _heldType = new(-1,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private int _localHeldType = -1;
+
+    public int HeldType => IsSpawned ? _heldType.Value : _localHeldType;
+
+    /// <summary>Fired when the player uses an item: left click on an equippable, or throwing/dropping a Droppable
+    /// with left click. Read by RoundManager for the end screen's "items used".</summary>
+    public static event System.Action<Hotbar, InventoryItem> ItemUsed;
+    private readonly Dictionary<ItemType, IEquippable> _equippables = new Dictionary<ItemType, IEquippable>();
+    private PlayerGrabController _grab;
 
     void Start()
     {
-        _binoculars = GetComponent<Binoculars>();
+        RegisterEquippable(ItemType.Binoculars, GetComponent<Binoculars>());
+        RegisterEquippable(ItemType.Firework, GetComponent<FireworkFlareLauncher>());
+        RegisterEquippable(ItemType.Map, GetComponent<MapItem>());
+        RegisterEquippable(ItemType.Anemometer, GetComponent<AnemometerItem>());
+        _grab = GetComponent<PlayerGrabController>();
 
         // If not manually assigned, find the spawned player by tag
         if (playerTransform == null)
@@ -27,16 +47,22 @@ public class Hotbar : MonoBehaviour
             if (player != null) playerTransform = player.transform;
         }
 
-        if (items.Length > slotCount)
-            System.Array.Resize(ref items, slotCount);
+        // Every player spawns with an empty hotbar, one slot per slotCount
+        items = new InventoryItem[slotCount];
 
         hotbarUI?.Refresh(items, selectedIndex);
+        GetEquippable(GetSelectedItem())?.OnEquip();
+        SyncHeldType();
     }
 
     void Update()
     {
+        // Other players' copies shouldn't react to our keys
+        if (IsSpawned && !IsOwner) return;
+
         HandleNumberKeys();
         HandleUse();
+        HandleDrop();
     }
 
     // ── Input ────────────────────────────────────────────────────────────────
@@ -46,37 +72,47 @@ public class Hotbar : MonoBehaviour
         for (int i = 0; i < slotCount && i < 9; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-            {
-                // If switching away from binoculars, reset the view
-                if (GetSelectedItem()?.itemType == ItemType.Binoculars)
-                    _binoculars?.ResetView();
-
-                selectedIndex = i;
-                hotbarUI?.UpdateSelection(selectedIndex);
-            }
+                SelectSlot(i);
         }
     }
 
     void HandleUse()
     {
+        // While physically carrying something, left click belongs to the carried item.
+        if (_grab != null && _grab.Held != null) return;
+
         InventoryItem item = GetSelectedItem();
         if (item == null) return;
 
-        switch (item.itemType)
+        if (item.itemType == ItemType.Droppable)
         {
-            case ItemType.Droppable:
-                if (Input.GetMouseButtonDown(0))
-                    DropItem();
-                break;
-
-            case ItemType.Binoculars:
-                // Hold left click to zoom, release to unzoom
-                if (Input.GetMouseButtonDown(0))
-                    _binoculars?.ToggleZoom();
-                if (Input.GetMouseButtonUp(0))
-                    _binoculars?.ResetView();
-                break;
+            if (Input.GetMouseButtonDown(0))
+            {
+                ItemUsed?.Invoke(this, item);
+                DropItem();
+            }
+            return;
         }
+
+        IEquippable equippable = GetEquippable(item);
+        if (equippable == null) return;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            ItemUsed?.Invoke(this, item);
+            equippable.OnUseDown();
+        }
+        if (Input.GetMouseButtonUp(0)) equippable.OnUseUp();
+    }
+
+    void HandleDrop()
+    {
+        if (!Input.GetKeyDown(dropKey)) return;
+
+        InventoryItem item = GetSelectedItem();
+        if (item == null || item.itemType == ItemType.Droppable) return;  // those drop on left click already
+
+        DropSelected();
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -89,14 +125,111 @@ public class Hotbar : MonoBehaviour
         Vector3 spawnPos = playerTransform.position
                          + playerTransform.forward * dropDistance
                          + Vector3.up * 0.5f;
+        Quaternion spawnRot = playerTransform.rotation;
 
-        Instantiate(item.dropPrefab, spawnPos, playerTransform.rotation);
+        // Singleplayer is never network-spawned (same convention as PlayerEmote/VehicleEnterExit/
+        // FireworkFlareLauncher). Online, only the server can create something every client sees,
+        // and a prefab asset reference can't itself travel over an RPC - so we send its name and
+        // have the server look it up in the registered NetworkPrefabs list (GlobalObjectIdHash
+        // would be the more precise key, but Netcode keeps that field internal to the package).
+        bool isNetworked = IsSpawned && item.dropPrefab.GetComponent<NetworkObject>() != null;
+        if (isNetworked)
+            DropRequestRpc(item.dropPrefab.name, spawnPos, spawnRot);
+        else
+            Instantiate(item.dropPrefab, spawnPos, spawnRot);
 
+        ConsumeSelected();
+    }
+
+    [Rpc(SendTo.Server)]
+    void DropRequestRpc(string prefabName, Vector3 spawnPos, Quaternion spawnRot)
+    {
+        GameObject prefab = null;
+        foreach (NetworkPrefab candidate in NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs)
+        {
+            if (candidate.Prefab != null && candidate.Prefab.name == prefabName)
+            {
+                prefab = candidate.Prefab;
+                break;
+            }
+        }
+
+        if (prefab == null)
+        {
+            Debug.LogWarning($"Hotbar: no registered network prefab named '{prefabName}'.");
+            return;
+        }
+
+        GameObject dropped = Instantiate(prefab, spawnPos, spawnRot);
+
+        // No ongoing player input needed once something's dropped - just let the server's own
+        // physics settle it (NetworkTransform on these prefabs is Server-authoritative), so no
+        // ownership handoff like the thrown flare needs.
+        dropped.GetComponent<NetworkObject>().Spawn(destroyWithScene: true);
+    }
+
+    /// <summary>Unequips the selected item and puts its dropPrefab down in front of the player. False if there's nothing to drop.</summary>
+    public bool DropSelected()
+    {
+        InventoryItem item = GetSelectedItem();
+        if (item == null || item.dropPrefab == null) return false;
+
+        GetEquippable(item)?.OnUnequip();
+        DropItem();
+        return true;
+    }
+
+    /// <summary>Clears the currently selected slot (used by one-shot/consumable items).</summary>
+    public void ConsumeSelected()
+    {
         items[selectedIndex] = null;
+        hotbarUI?.Refresh(items, selectedIndex);
+        SyncHeldType();
+    }
+
+    /// <summary>Selects a slot (what the number keys do): unequips the old item, equips the new one.</summary>
+    public void SelectSlot(int index)
+    {
+        if (index < 0 || index >= items.Length || index == selectedIndex) return;
+
+        GetEquippable(GetSelectedItem())?.OnUnequip();
+
+        selectedIndex = index;
+        hotbarUI?.UpdateSelection(selectedIndex);
+
+        GetEquippable(GetSelectedItem())?.OnEquip();
+        SyncHeldType();
+    }
+
+    /// <summary>Re-pushes current state to hotbarUI — call after wiring it up post-spawn.</summary>
+    public void RefreshUI()
+    {
         hotbarUI?.Refresh(items, selectedIndex);
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    void SyncHeldType()
+    {
+        InventoryItem item = GetSelectedItem();
+        _localHeldType = item == null ? -1 : (int)item.itemType;
+
+        if (IsSpawned && IsOwner && _heldType.Value != _localHeldType)
+            _heldType.Value = _localHeldType;
+    }
+
+    void RegisterEquippable(ItemType type, IEquippable equippable)
+    {
+        if (equippable != null)
+            _equippables[type] = equippable;
+    }
+
+    IEquippable GetEquippable(InventoryItem item)
+    {
+        if (item == null) return null;
+        _equippables.TryGetValue(item.itemType, out var equippable);
+        return equippable;
+    }
 
     public InventoryItem GetSelectedItem()
     {
@@ -105,6 +238,12 @@ public class Hotbar : MonoBehaviour
         return items[selectedIndex];
     }
 
+    public bool HasFreeSlot()
+    {
+        return System.Array.IndexOf(items, null) >= 0;
+    }
+
+    /// <summary>Puts the item in the lowest-numbered empty slot. Returns false if the hotbar is full.</summary>
     public bool AddItem(InventoryItem item)
     {
         for (int i = 0; i < items.Length; i++)
@@ -113,9 +252,16 @@ public class Hotbar : MonoBehaviour
             {
                 items[i] = item;
                 hotbarUI?.Refresh(items, selectedIndex);
+
+                // Landed in the slot already in hand — equip it now, same as pressing its number key.
+                if (i == selectedIndex) GetEquippable(item)?.OnEquip();
+                SyncHeldType();
                 return true;
             }
         }
         return false;
     }
+
+    /// <summary>Slot index holding this item, or -1.</summary>
+    public int IndexOf(InventoryItem item) => item == null ? -1 : System.Array.IndexOf(items, item);
 }

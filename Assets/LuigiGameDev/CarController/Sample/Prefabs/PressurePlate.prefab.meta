@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6b91c14d4549e484c9b84abd61740146
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/PressurePlate.prefab
+  uploadId: 1010126

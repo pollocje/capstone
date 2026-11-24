@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 1e540f892d9f7f341b9425619478dc77
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Scripts/View/Sound/CarSkidSound.cs
+  uploadId: 1010126

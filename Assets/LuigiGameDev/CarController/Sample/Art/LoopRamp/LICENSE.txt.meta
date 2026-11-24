@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 38bd18b99b988834da99077fb292fd53
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/LoopRamp/LICENSE.txt
+  uploadId: 1010126

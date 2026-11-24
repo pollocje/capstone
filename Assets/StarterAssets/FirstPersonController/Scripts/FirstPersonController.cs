@@ -112,6 +112,7 @@ namespace StarterAssets
 
 		private void Update()
 		{
+			if (!_controller.enabled) return;
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
@@ -124,9 +125,14 @@ namespace StarterAssets
 
 		private void GroundedCheck()
 		{
-			// set sphere position, with offset
-			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
-			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+			// Sweep down from inside the capsule's base so walls and terrain we're clipping into don't count as ground
+			float castRadius = Mathf.Min(GroundedRadius, _controller.radius * 0.9f);
+			Vector3 feet = transform.position + _controller.center + Vector3.down * (_controller.height * 0.5f);
+			Vector3 castOrigin = feet + Vector3.up * (castRadius + 0.05f);
+			float castDistance = 0.05f + Mathf.Abs(GroundedOffset) + _controller.skinWidth;
+
+			// Never grounded while rising, stops the jump re-triggering mid-air
+			Grounded = _verticalVelocity <= 0.0f && Physics.SphereCast(castOrigin, castRadius, Vector3.down, out _, castDistance, GroundLayers, QueryTriggerInteraction.Ignore);
 		}
 
 		private void CameraRotation()
@@ -154,7 +160,8 @@ namespace StarterAssets
 		private void Move()
 		{
 			// set target speed based on move speed, sprint speed and if sprint is pressed
-			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+			// no sprinting backwards (there's no backwards run animation)
+			float targetSpeed = _input.sprint && _input.move.y >= 0f ? SprintSpeed : MoveSpeed;
 
 			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -195,7 +202,8 @@ namespace StarterAssets
 			}
 
 			// move the player
-			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			if (_controller.enabled)
+				_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
 
 		private void JumpAndGravity()

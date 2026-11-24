@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 29ac771940da28d4cbf0198211823f3a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Vehicles/Materials/VehicleRedLightsMaterial.mat
+  uploadId: 1010126

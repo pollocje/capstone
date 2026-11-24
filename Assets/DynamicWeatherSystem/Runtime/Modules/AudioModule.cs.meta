@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: c8c66cd08a639dd419b49e4687cc50e2
+AssetOrigin:
+  serializedVersion: 1
+  productId: 370650
+  packageName: URP Dynamic Weather System
+  packageVersion: 1.0
+  assetPath: Assets/DynamicWeatherSystem/Runtime/Modules/AudioModule.cs
+  uploadId: 891376

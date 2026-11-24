@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 72819a35b13befd4aabf3d73863f5931
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/Vehicles/SchoolBus.prefab
+  uploadId: 1010126

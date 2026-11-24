@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b717e7441c0d0fe4da7c9678f40b860d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/UI.prefab
+  uploadId: 1010126

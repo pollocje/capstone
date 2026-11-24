@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d1d87a84459cd95449184e08ba92e647
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/Cone/Cone.prefab
+  uploadId: 1010126

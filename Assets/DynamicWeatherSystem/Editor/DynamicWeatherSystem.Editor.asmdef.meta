@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c2632d4a03e2ca94fa10e38fe80396e3
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 370650
+  packageName: URP Dynamic Weather System
+  packageVersion: 1.0
+  assetPath: Assets/DynamicWeatherSystem/Editor/DynamicWeatherSystem.Editor.asmdef
+  uploadId: 891376

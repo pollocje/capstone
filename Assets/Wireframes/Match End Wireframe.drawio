@@ -1,0 +1,52 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="nHxDspY6jj1nbFGDsVFZ">
+    <mxGraphModel dx="2032" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=360;container=0;" value="Character Model" vertex="1">
+          <mxGeometry height="440" width="120" x="1280" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=360;container=0;" value="Player Name&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="120" x="1280" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=360;container=0;" value="Character Model" vertex="1">
+          <mxGeometry height="440" width="120" x="520" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=360;container=0;" value="Player Name&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="120" x="520" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=360;container=0;" value="Character Model" vertex="1">
+          <mxGeometry height="440" width="120" x="200" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;rotation=360;container=0;" value="Player Name&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="120" x="200" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Character Model" vertex="1">
+          <mxGeometry height="440" width="120" x="960" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Player Name&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="120" x="960" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Round Stats" vertex="1">
+          <mxGeometry height="440" width="160" x="720" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Player Milestones" vertex="1">
+          <mxGeometry height="80" width="120" x="200" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Player Milestones" vertex="1">
+          <mxGeometry height="80" width="120" x="520" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Player Milestones" vertex="1">
+          <mxGeometry height="80" width="120" x="960" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Player Milestones" vertex="1">
+          <mxGeometry height="80" width="120" x="1280" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="4rRzpiiaumgxkXoMoO_z-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="You Win/Failed" vertex="1">
+          <mxGeometry height="40" width="120" x="740" y="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

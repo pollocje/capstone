@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d032ca763c781e943b7d2b1f09368a5d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Bumper/BumperMaterial.mat
+  uploadId: 1010126

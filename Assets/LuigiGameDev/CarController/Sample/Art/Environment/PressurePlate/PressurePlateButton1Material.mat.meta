@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ea527761610f92544a8ecb855d84aa58
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/PressurePlate/PressurePlateButton1Material.mat
+  uploadId: 1010126

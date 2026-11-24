@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: b8892f96a1734c1aaad2ae5b5a743d0d
+timeCreated: 1742421180
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Scripts/Logic/CarSettings.cs
+  uploadId: 1010126

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 2adadeece67564a4aa4495e2857b2c53
+AssetOrigin:
+  serializedVersion: 1
+  productId: 370650
+  packageName: URP Dynamic Weather System
+  packageVersion: 1.0
+  assetPath: Assets/DynamicWeatherSystem/Runtime/Modules/FogModule.cs
+  uploadId: 891376

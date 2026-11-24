@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e6b08e4bcf7daff40a6c1dfab72af07d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Vehicles/Materials/VehicleWhiteLightsMaterial.mat
+  uploadId: 1010126

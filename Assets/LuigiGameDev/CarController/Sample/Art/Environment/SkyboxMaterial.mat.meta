@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f397df4864855234187ce9e4dfe73eeb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/SkyboxMaterial.mat
+  uploadId: 1010126

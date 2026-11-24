@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dc94cd8ff64ad3542a3f7eeba898ef7c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Environment/Stadium/Meshes/GoalMesh.asset
+  uploadId: 1010126

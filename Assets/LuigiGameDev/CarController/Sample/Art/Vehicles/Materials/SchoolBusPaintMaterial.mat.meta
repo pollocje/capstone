@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 84ac7d313e47f0148ba84d5471516f39
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Art/Vehicles/Materials/SchoolBusPaintMaterial.mat
+  uploadId: 1010126

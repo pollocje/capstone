@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 717ddedc7861f404f95ffb79abff2a24
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 370650
+  packageName: URP Dynamic Weather System
+  packageVersion: 1.0
+  assetPath: Assets/DynamicWeatherSystem/Presets/WS_Rain.asset
+  uploadId: 891376

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c2c4a26e6362d6849998e2c3a45b5871
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/Seesaw.prefab
+  uploadId: 1010126

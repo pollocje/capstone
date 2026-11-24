@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 2057bd040dbb83a45b41376ca5336bd5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: c6d7f5a7c4a1c364c81769ff255bc0d9, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 135898
+  packageName: Airy UI 2 - Easy UI Animation
+  packageVersion: 2.0.2
+  assetPath: Assets/Airy UI/Editor/AnimatedElementsGroup_Inspector.cs
+  uploadId: 760159

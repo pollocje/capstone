@@ -1,11 +1,14 @@
 using UnityEngine;
- 
+
 public enum ItemType
 {
     Droppable,      // e.g. Barrel — left click drops it
-    Binoculars      // left click hold to zoom
+    Binoculars,     // left click hold to zoom
+    Firework,       // left click throws a flare; consumed on use
+    Map,            // left click hold to view the map
+    Anemometer      // passive — shows wind speed readout while held
 }
- 
+
 [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
 public class InventoryItem : ScriptableObject
 {
@@ -14,4 +17,3 @@ public class InventoryItem : ScriptableObject
     public ItemType itemType = ItemType.Droppable;
     public GameObject dropPrefab;   // Only needed for Droppable items
 }
- 

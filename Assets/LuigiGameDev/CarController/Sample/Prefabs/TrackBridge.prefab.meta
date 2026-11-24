@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: db0f4441697ca964ba31e563e59b495a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/TrackBridge.prefab
+  uploadId: 1010126

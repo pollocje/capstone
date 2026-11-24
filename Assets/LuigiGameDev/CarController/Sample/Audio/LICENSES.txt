@@ -1,0 +1,8 @@
+BallHit.wav by cupido-1 -- https://freesound.org/s/456319/ -- License: Creative Commons 0
+BallHitStrong.wav by cupido-1 -- https://freesound.org/s/456319/ -- License: Creative Commons 0
+BusEngine.wav by yurkobb -- https://freesound.org/s/181900/ -- License: Creative Commons 0
+CarEngine.wav by CogFireStudios -- https://freesound.org/s/421001/ -- License: Creative Commons 0
+CarHit.wav by DWOBoyle -- https://freesound.org/s/144263/ -- License: Attribution 4.0
+TireHit.wav by Troutpack -- https://freesound.org/s/590111/ -- License: Attribution 4.0
+TireSkidDefault.wav by Sound Library -- https://www.youtube.com/@SoundLibrary1 -- License: Creative Commons 0
+TireSkidTurf.wav by Juaner_ -- https://freesound.org/s/471460/ -- License: Creative Commons 0

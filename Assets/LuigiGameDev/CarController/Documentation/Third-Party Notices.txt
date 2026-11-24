@@ -1,0 +1,6 @@
+This asset includes third-party mesh files. The licenses are available at:
+- LuigiGameDev/CarController/Sample/Art/LoopRamp/LICENSE.txt
+- LuigiGameDev/CarController/Sample/Art/Vehicles/LICENSE.txt
+
+This asset includes third-party audio files. The licenses are available at: 
+- LuigiGameDev/CarController/Sample/Audio/LICENSES.txt

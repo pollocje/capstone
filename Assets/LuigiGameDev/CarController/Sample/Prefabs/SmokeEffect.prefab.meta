@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 74cf6f9cdc33e23429d461a8f7d7f12e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/SmokeEffect.prefab
+  uploadId: 1010126

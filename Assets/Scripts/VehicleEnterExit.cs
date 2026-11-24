@@ -1,122 +1,628 @@
+using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 using StarterAssets;
+using Unity.Netcode;
 
-public class VehicleEnterExit : MonoBehaviour
+public class VehicleEnterExit : NetworkBehaviour
 {
+    private const int DriverSeatIndex = 0;
+    private static readonly string[] SeatLabels = { "Driver Seat", "Passenger Seat", "Truck Bed (Left)", "Truck Bed (Right)" };
+
     [Header("Truck")]
-    [SerializeField] private TruckWheelDrive truckController;
+    [Tooltip("Assign whichever truck controller this vehicle actually uses - the WheelCollider truck, the raycast experiment, or PreconfiguredCarPhysics (the LuigiGameDev Car Controller bridge) - and leave the others empty. All three expose the same SetInputEnabled(bool), so this just calls whichever one is set instead of forcing them onto a shared interface (they're deliberately kept as separate, independent experiments).")]
+    [SerializeField] private TruckWheelDrive wheelColliderTruck;
+    [SerializeField] private TruckNewTEST raycastTruck;
+    [SerializeField] private PreconfiguredCarPhysics preconfiguredCarTruck;
     [SerializeField] private GameObject followCameraObject;
+    [SerializeField] private GameObject firstPersonCameraObject;
+    [SerializeField] private KeyCode toggleViewKey = KeyCode.C;
+
+    [Header("Seats — index 0 (Driver) is the only one that takes driving control")]
     [SerializeField] private Transform driverSeat;
+    [SerializeField] private Transform passengerSeat;
+    [SerializeField] private Transform bedSeatLeft;
+    [SerializeField] private Transform bedSeatRight;
     [SerializeField] private Transform exitPoint;
+
+    // Every seat gets its own correctly-seated-eye-height camera (same recipe as firstPersonCameraObject
+    // above: a child of the seat with Camera + AudioListener + TruckFirstPersonLook). Without this, the
+    // player's own standing-height camera pokes up through the roof when just the capsule is pinned to
+    // a seated Y - that was the "ends up on the roof" bug.
+    [Header("Seat cameras")]
+    [SerializeField] private GameObject passengerCameraObject;
+    [SerializeField] private GameObject bedLeftCameraObject;
+    [SerializeField] private GameObject bedRightCameraObject;
 
     [Header("UI")]
     [SerializeField] private GameObject enterPromptUI;
 
-    private bool playerInRange;
-    private bool inVehicle;
+    [Header("Seated pose (driver + passenger)")]
+    [Tooltip("Where the seated model sits relative to the seat empty (seat-local). The seat empty is where the capsule's feet get pinned, so Y usually needs to drop a bit for the hips to land on the cushion. Tune in Play mode - it's read every frame.")]
+    [SerializeField] private Vector3 seatedModelOffset = new Vector3(0f, -0.5f, 0f);
+
+    [Header("Seated pose (truck bed)")]
+    [Tooltip("Same as Seated Model Offset, but for the two truck-bed seats (TrunkSeat clips). Seat-local, read every frame - tune in Play mode.")]
+    [SerializeField] private Vector3 bedSeatedModelOffset = new Vector3(0f, -0.5f, 0f);
+
+    [Header("Steering wheel")]
+    [Tooltip("Driver's hands reach for this wheel while seated. Set by Tools > Vehicles > Set Up Steering Wheel.")]
+    [SerializeField] private SteeringWheel steeringWheel;
+
+    [Tooltip("Radius of the small trigger sphere spawned at each seat empty at Start - this is what makes 'press E' enter the seat you're actually standing next to, instead of whichever seat is nearest across one shared trigger spanning the whole vehicle.")]
+    [SerializeField] private float seatEntryRadius = 1.2f;
+
+    // Per-seat "is a player standing next to this seat right now" - set by the small SeatEntryTrigger
+    // spheres SetupSeatTriggers() spawns at each seat empty. Replaces the old single shared trigger +
+    // nearest-seat-by-distance approach, which always resolved to the bed because that one big trigger
+    // covered the whole vehicle and the bed seats sat closest to its middle.
+    private readonly bool[] _seatInRange = new bool[4];
+    private int _mySeatIndex = -1; // -1 = this client's local player isn't seated
+    private bool firstPersonActive;
     private GameObject playerRoot;
+    private Vector3 _enterPosition; // where the player stood when getting in (exit fallback)
 
     // Cached player components frozen while in the vehicle
     private CharacterController _cc;
-    private FirstPersonController _fpc;
+    private StarterAssets.FirstPersonController _fpc;
     private StarterAssetsInputs _inputs;
     private PlayerInput _playerInput;
+    private Camera _playerCamera;
+    private AudioListener _playerAudioListener;
+    private Renderer[] _playerRenderers;
+    private Collider[] _playerColliders;
+
+    // Online: per-seat occupant, server-authoritative. 0 = empty, otherwise (clientId + 1) so
+    // client 0 (the host) is still distinguishable from "empty". Only the driver seat also
+    // transfers NetworkObject ownership (it's the only seat that drives).
+    private readonly NetworkVariable<ulong> _driverOccupant = new NetworkVariable<ulong>(0);
+    private readonly NetworkVariable<ulong> _passengerOccupant = new NetworkVariable<ulong>(0);
+    private readonly NetworkVariable<ulong> _bedLeftOccupant = new NetworkVariable<ulong>(0);
+    private readonly NetworkVariable<ulong> _bedRightOccupant = new NetworkVariable<ulong>(0);
+
+    // Lets InteractPrompt find nearby seats without the truck needing to know about the HUD.
+    private static readonly List<VehicleEnterExit> _active = new List<VehicleEnterExit>();
+    public static IReadOnlyList<VehicleEnterExit> Active => _active;
+
+    private void OnEnable() => _active.Add(this);
+    private void OnDisable() => _active.Remove(this);
+
+    // Seated-pose riders, per seat, on this machine. Their model root gets pinned to the seat in
+    // LateUpdate and the Animator's Seated bool is held on; null = nobody posed in that seat here.
+    // Cab seats (driver/passenger) use the Seated bool; the truck bed uses BedSeated (TrunkSeat clips).
+    private static readonly int SeatedHash = Animator.StringToHash("Seated");
+    private static readonly int BedSeatedHash = Animator.StringToHash("BedSeated");
+    private readonly PlayerModelSwapper[] _posedRider = new PlayerModelSwapper[4];
+    private readonly Vector3[] _posedModelLocalPos = new Vector3[4];
+    private readonly Quaternion[] _posedModelLocalRot = new Quaternion[4];
+
+    private static bool IsBedSeat(int seatIndex) => seatIndex >= 2;
+    private Vector3 SeatedOffset(int seatIndex) => IsBedSeat(seatIndex) ? bedSeatedModelOffset : seatedModelOffset;
+
+    public override void OnNetworkSpawn()
+    {
+        _driverOccupant.OnValueChanged += OnDriverChanged;
+        _passengerOccupant.OnValueChanged += OnPassengerChanged;
+        _bedLeftOccupant.OnValueChanged += OnBedLeftChanged;
+        _bedRightOccupant.OnValueChanged += OnBedRightChanged;
+
+        // Late joiners don't get an OnValueChanged callback for seats that were already taken
+        // before they connected - apply the current occupants once so those riders start seated/hidden.
+        for (int i = 0; i < SeatLabels.Length; i++)
+            ApplyOccupantVisual(i, 0, OccupantVar(i).Value);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _driverOccupant.OnValueChanged -= OnDriverChanged;
+        _passengerOccupant.OnValueChanged -= OnPassengerChanged;
+        _bedLeftOccupant.OnValueChanged -= OnBedLeftChanged;
+        _bedRightOccupant.OnValueChanged -= OnBedRightChanged;
+
+        for (int i = 0; i < SeatLabels.Length; i++)
+            StandRider(i);
+    }
+
+    private void OnDriverChanged(ulong previous, ulong current) => ApplyOccupantVisual(0, previous, current);
+    private void OnPassengerChanged(ulong previous, ulong current) => ApplyOccupantVisual(1, previous, current);
+    private void OnBedLeftChanged(ulong previous, ulong current) => ApplyOccupantVisual(2, previous, current);
+    private void OnBedRightChanged(ulong previous, ulong current) => ApplyOccupantVisual(3, previous, current);
+
+    // The renderer toggle in EnterVehicle/ExitVehicle only ever runs on the seated player's own
+    // machine (NotifySeatRange ignores colliders it doesn't own), so it only stops that player
+    // from seeing their own body - everyone else still saw the rider's capsule, which visibly
+    // lags behind a fast-moving vehicle since it's a manually-repositioned world-space
+    // NetworkTransform, not an actual child of the truck. These already-synced occupant
+    // NetworkVariables drive the rider's look on every machine instead: cab riders get their
+    // model pinned to the seat (LateUpdate, so no lag) in a sitting pose; bed riders get the same
+    // treatment with the TrunkSeat pose.
+    private void ApplyOccupantVisual(int seatIndex, ulong previousOccupant, ulong currentOccupant)
+    {
+        if (previousOccupant != 0)
+        {
+            StandRider(seatIndex);
+            SetRidingVisible(previousOccupant - 1, true);
+        }
+
+        if (currentOccupant != 0)
+            SitRider(seatIndex, currentOccupant - 1);
+    }
+
+    private static GameObject FindPlayer(ulong clientId)
+    {
+        foreach (var playerGO in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            var netObj = playerGO.GetComponent<NetworkObject>();
+            if (netObj != null && netObj.OwnerClientId == clientId) return playerGO;
+        }
+        return null;
+    }
+
+    private static void SetRidingVisible(ulong clientId, bool visible)
+    {
+        GameObject playerGO = FindPlayer(clientId);
+        if (playerGO == null) return;
+
+        foreach (var renderer in playerGO.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = visible;
+    }
+
+    // Hide everything on the player, then bring back just the body. Held items etc. hang off the
+    // lagging capsule/camera rather than the model, so they'd float behind the truck otherwise.
+    // The owner's own body is already ShadowsOnly (PlayerModelSelector), so on their machine
+    // this just leaves a seated shadow - it never draws into their seat camera.
+    private static void ShowOnlyBody(GameObject playerGO, PlayerModelSwapper swapper)
+    {
+        foreach (var renderer in playerGO.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = false;
+
+        if (swapper != null && swapper.modelRoot != null)
+            foreach (var renderer in swapper.modelRoot.GetComponentsInChildren<Renderer>(true))
+                renderer.enabled = true;
+    }
+
+    private void SitRider(int seatIndex, ulong clientId)
+    {
+        GameObject playerGO = FindPlayer(clientId);
+        if (playerGO == null) return; // late joiner: player not spawned yet, LateUpdate retries
+
+        var swapper = playerGO.GetComponentInChildren<PlayerModelSwapper>(true);
+        if (swapper == null || swapper.modelRoot == null)
+        {
+            SetRidingVisible(clientId, false); // can't pose it, fall back to the old hide
+            return;
+        }
+
+        ShowOnlyBody(playerGO, swapper);
+
+        if (_posedRider[seatIndex] == swapper) return;
+        _posedRider[seatIndex] = swapper;
+        _posedModelLocalPos[seatIndex] = swapper.modelRoot.localPosition;
+        _posedModelLocalRot[seatIndex] = swapper.modelRoot.localRotation;
+    }
+
+    // Safe to call more than once (local exit + the occupant callback both do).
+    private void StandRider(int seatIndex)
+    {
+        PlayerModelSwapper swapper = _posedRider[seatIndex];
+        _posedRider[seatIndex] = null;
+        if (swapper == null || swapper.modelRoot == null) return;
+
+        swapper.modelRoot.SetLocalPositionAndRotation(_posedModelLocalPos[seatIndex], _posedModelLocalRot[seatIndex]);
+        SetSeatedParams(swapper, cab: false, bed: false);
+
+        var grip = swapper.modelRoot.GetComponentInChildren<SteeringWheelGrip>();
+        if (grip != null) grip.Release();
+    }
+
+    // Driver only, puts their hands on the wheel. Runs every frame in case the model gets swapped
+    private void HoldWheel(PlayerModelSwapper swapper, Transform seat, int seatIndex)
+    {
+        if (steeringWheel == null) return;
+
+        var animator = swapper.modelRoot.GetComponentInChildren<Animator>();
+        if (animator == null || !animator.isActiveAndEnabled) return;
+
+        var grip = animator.GetComponent<SteeringWheelGrip>();
+        if (grip == null) grip = animator.gameObject.AddComponent<SteeringWheelGrip>();
+        grip.Hold(steeringWheel, swapper.modelRoot, seat,
+            _posedModelLocalPos[seatIndex] + SeatedOffset(seatIndex), _posedModelLocalRot[seatIndex]);
+    }
+
+    private static void SetSeatedParams(PlayerModelSwapper swapper, bool cab, bool bed)
+    {
+        // PlayerModelSwapper replaces the model (and its Animator) at runtime, so look it up each time.
+        var animator = swapper.modelRoot.GetComponentInChildren<Animator>();
+        if (animator == null || !animator.isActiveAndEnabled) return;
+        animator.SetBool(SeatedHash, cab);
+        animator.SetBool(BedSeatedHash, bed);
+    }
+
+    // LateUpdate so the truck has already moved this frame: the model lands exactly in the seat
+    // on every machine instead of trailing the capsule's NetworkTransform interpolation.
+    private void LateUpdate()
+    {
+        if (!IsSpawned) return;
+
+        for (int i = 0; i < SeatLabels.Length; i++)
+        {
+            ulong occupant = OccupantVar(i).Value;
+            if (occupant == 0) continue;
+
+            // We just got out locally and the server hasn't cleared the seat yet - don't re-sit ourselves.
+            if (occupant - 1 == NetworkManager.LocalClientId && _mySeatIndex != i) continue;
+
+            if (_posedRider[i] == null) SitRider(i, occupant - 1); // late joiner / rider spawned after the truck
+
+            PlayerModelSwapper swapper = _posedRider[i];
+            Transform seat = SeatPoint(i);
+            if (swapper == null || swapper.modelRoot == null || seat == null) continue;
+
+            // Same pose the model would have if the capsule were sitting exactly on the seat, plus the offset.
+            swapper.modelRoot.SetPositionAndRotation(
+                seat.TransformPoint(_posedModelLocalPos[i] + SeatedOffset(i)),
+                seat.rotation * _posedModelLocalRot[i]);
+            SetSeatedParams(swapper, cab: !IsBedSeat(i), bed: IsBedSeat(i));
+            if (i == DriverSeatIndex) HoldWheel(swapper, seat, i);
+        }
+    }
 
     private void Start()
     {
-        truckController.SetInputEnabled(false);
+        SetTruckInputEnabled(false);
+
+        // Unoccupied at scene start - the driving camera has no business being live
+        // until someone actually gets in. ExitVehicle() also turns this off, but that
+        // only covers the enter->exit round trip, not the initial state.
+        if (followCameraObject != null)
+            followCameraObject.SetActive(false);
 
         if (enterPromptUI != null)
             enterPromptUI.SetActive(false);
+
+        SetupSeatTriggers();
     }
 
-    private void OnTriggerEnter(Collider other)
+    // Spawns a small trigger sphere as a child of each seat empty. Each one only knows its own
+    // seatIndex, so entering is "whichever seat's trigger you're standing in", not a distance
+    // comparison across every seat on the vehicle.
+    private void SetupSeatTriggers()
     {
-        if (!other.CompareTag("Player")) return;
+        for (int i = 0; i < SeatLabels.Length; i++)
+        {
+            Transform seat = SeatPoint(i);
+            if (seat == null) continue;
 
-        // In multiplayer, ignore players we don't own
+            var triggerGO = new GameObject("EntryTrigger_" + SeatLabels[i]);
+            triggerGO.transform.SetParent(seat, false);
+            triggerGO.layer = seat.gameObject.layer;
+
+            var sphere = triggerGO.AddComponent<SphereCollider>();
+            sphere.isTrigger = true;
+            sphere.radius = seatEntryRadius;
+
+            triggerGO.AddComponent<SeatEntryTrigger>().Init(this, i);
+        }
+    }
+
+    private void SetTruckInputEnabled(bool enabled)
+    {
+        if (wheelColliderTruck != null) wheelColliderTruck.SetInputEnabled(enabled);
+        if (raycastTruck != null) raycastTruck.SetInputEnabled(enabled);
+        if (preconfiguredCarTruck != null) preconfiguredCarTruck.SetInputEnabled(enabled);
+    }
+
+    private Transform SeatPoint(int seatIndex) => seatIndex switch
+    {
+        0 => driverSeat,
+        1 => passengerSeat,
+        2 => bedSeatLeft,
+        3 => bedSeatRight,
+        _ => null
+    };
+
+    private NetworkVariable<ulong> OccupantVar(int seatIndex) => seatIndex switch
+    {
+        0 => _driverOccupant,
+        1 => _passengerOccupant,
+        2 => _bedLeftOccupant,
+        3 => _bedRightOccupant,
+        _ => null
+    };
+
+    private GameObject SeatCamera(int seatIndex) => seatIndex switch
+    {
+        0 => firstPersonCameraObject,
+        1 => passengerCameraObject,
+        2 => bedLeftCameraObject,
+        3 => bedRightCameraObject,
+        _ => null
+    };
+
+    /// <summary>Closest unoccupied in-range seat, or -1 if nothing is both in range and free.
+    /// Almost always there's exactly one seat in range at a time (each trigger sphere is small
+    /// and seats are spaced apart) - the distance check here is just a tie-breaker for the rare
+    /// case two neighboring seat spheres overlap.</summary>
+    private int NearestFreeSeatInRange()
+    {
+        if (playerRoot == null) return -1;
+
+        int best = -1;
+        float bestSqrDist = float.MaxValue;
+        for (int i = 0; i < SeatLabels.Length; i++)
+        {
+            if (!_seatInRange[i]) continue;
+            if (OccupantVar(i).Value != 0) continue; // taken
+
+            Transform point = SeatPoint(i);
+            if (point == null) continue;
+
+            float sqrDist = (point.position - playerRoot.transform.position).sqrMagnitude;
+            if (sqrDist < bestSqrDist)
+            {
+                bestSqrDist = sqrDist;
+                best = i;
+            }
+        }
+        return best;
+    }
+
+    /// <summary>Used by InteractPrompt: the seat E would put this player in right now, if any.</summary>
+    public bool TryGetSeatPrompt(Vector3 playerPosition, out string seatLabel)
+    {
+        seatLabel = null;
+        if (_mySeatIndex >= 0) return false;
+
+        int seat = NearestFreeSeatInRange();
+        if (seat < 0) return false;
+
+        seatLabel = SeatLabels[seat];
+        return true;
+    }
+
+    // Called by each seat's SeatEntryTrigger. Online: ignore players we don't own, same check
+    // the old shared-trigger OnTriggerEnter used to do.
+    public void NotifySeatRange(int seatIndex, Collider other, bool entered)
+    {
         var netObj = other.transform.root.GetComponent<Unity.Netcode.NetworkObject>();
-        if (netObj != null && !netObj.IsOwner) return;
+        if (netObj != null && netObj.IsSpawned && !netObj.IsOwner) return;
 
-        playerRoot = other.transform.root.gameObject;
-        playerInRange = true;
-        if (enterPromptUI != null && !inVehicle)
-            enterPromptUI.SetActive(true);
-    }
+        _seatInRange[seatIndex] = entered;
+        if (entered)
+            playerRoot = other.transform.root.gameObject;
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (!other.CompareTag("Player")) return;
-        playerInRange = false;
-        if (enterPromptUI != null)
-            enterPromptUI.SetActive(false);
+        if (enterPromptUI == null || _mySeatIndex >= 0) return;
+
+        bool anyInRange = false;
+        foreach (bool inRange in _seatInRange)
+            if (inRange) { anyInRange = true; break; }
+        enterPromptUI.SetActive(anyInRange);
     }
 
     private void Update()
     {
+        // Online: Keep the rider's body in the seat so other players see them ride along.
+        // (The capsule is what's network-synced, so move it rather than the root.) Every seat
+        // now has its own dedicated camera (see SeatCamera), which handles look-around locally
+        // via TruckFirstPersonLook - so the capsule itself can be fully pinned (position +
+        // rotation) for all seats, not just the driver.
+        if (_mySeatIndex >= 0 && _cc != null)
+        {
+            Transform seat = SeatPoint(_mySeatIndex);
+            _cc.transform.SetPositionAndRotation(seat.position, seat.rotation);
+        }
+
+        if (_mySeatIndex == DriverSeatIndex && Input.GetKeyDown(toggleViewKey))
+            ToggleCameraView();
+
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
-        if (!inVehicle && playerInRange)
-            EnterVehicle();
-        else if (inVehicle)
+        if (_mySeatIndex >= 0)
+        {
             ExitVehicle();
+            return;
+        }
+
+        int seatIndex = NearestFreeSeatInRange();
+        if (seatIndex >= 0) EnterVehicle(seatIndex);
     }
 
-    private void EnterVehicle()
+    private void ToggleCameraView()
     {
+        // Nothing to switch to if this truck doesn't have a first-person camera assigned.
+        if (firstPersonCameraObject == null) return;
+
+        firstPersonActive = !firstPersonActive;
+        followCameraObject.SetActive(!firstPersonActive);
+        firstPersonCameraObject.SetActive(firstPersonActive);
+    }
+
+    private void EnterVehicle(int seatIndex)
+    {
+        bool isDriver = seatIndex == DriverSeatIndex;
+
+        // Online: ask the host for the seat (and, for the driver, ownership of the truck so
+        // this machine's driving is what gets synced to everyone). Entering happens optimistically
+        // below rather than waiting for the server's ack - same simplification the single-seat
+        // version used; a simultaneous press by two players on the same seat is a known edge case.
+        if (IsSpawned)
+            RequestSeatRpc(seatIndex);
+
         // Cache and disable player components instead of deactivating the whole GO.
         // Deactivating a NetworkObject causes NGO lifecycle conflicts.
         // Components live on PlayerCapsule (child of NestedParent root), not the root itself.
-        _cc = playerRoot.GetComponentInChildren<CharacterController>();
-        _fpc = playerRoot.GetComponentInChildren<FirstPersonController>();
-        _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>();
-        _playerInput = playerRoot.GetComponentInChildren<PlayerInput>();
+        _cc = playerRoot.GetComponentInChildren<CharacterController>(true);
+        _fpc = playerRoot.GetComponentInChildren<StarterAssets.FirstPersonController>(true);
+        _inputs = playerRoot.GetComponentInChildren<StarterAssetsInputs>(true);
+        _playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
+        _playerCamera = playerRoot.GetComponentInChildren<Camera>(true);
+        _playerAudioListener = playerRoot.GetComponentInChildren<AudioListener>(true);
+        _playerRenderers = playerRoot.GetComponentsInChildren<Renderer>(true);
+        _playerColliders = playerRoot.GetComponentsInChildren<Collider>(true);
 
+        // The CharacterController above isn't the only collider on the player - PlayerCapsule
+        // has a separate solid CapsuleCollider (distinct from the CC) on its "Capsule" child.
+        // Leaving it enabled while the capsule gets teleported into the seat every frame means
+        // it keeps physically overlapping the truck's own chassis collider, and since a Rigidbody
+        // can't push a collider that's reset back every frame, the truck gets shoved instead.
         if (_cc != null) _cc.enabled = false;
+
+        // Disable FPC first so its Update can't call Move() on a CC we're about to deactivate.
+        // Every seat swaps to its own dedicated camera (SeatCamera), so the player's own camera/
+        // input/controller get frozen the same way regardless of which seat this is - only the
+        // driver additionally takes over the truck's own controls (below).
         if (_fpc != null) _fpc.enabled = false;
         if (_inputs != null) _inputs.enabled = false;
         if (_playerInput != null) _playerInput.enabled = false;
 
-        playerRoot.transform.position = driverSeat.position;
+        // The player's own camera must not stay live once a seat camera takes over - otherwise
+        // both cameras (and both AudioListeners) are active at once, and since the seat position
+        // is a seated Y (not the player's full standing height), the leftover standing camera
+        // ends up poking up above the vehicle roof instead of showing the seat's own eye line.
+        if (_playerCamera != null) _playerCamera.enabled = false;
+        if (_playerAudioListener != null) _playerAudioListener.enabled = false;
 
-        truckController.SetInputEnabled(true);
-        followCameraObject.SetActive(true);
+        // The capsule keeps getting repositioned to the seat every frame (above, for other players
+        // to see), but nothing stops its own mesh from rendering - without this the player's body
+        // would double-render oddly from its own first-person view. Toggling Renderer.enabled (not
+        // the GameObjects) keeps Animator/scripts intact for when NGO observers need the pose, it
+        // just stops drawing it locally.
+        if (_playerRenderers != null)
+        {
+            foreach (var renderer in _playerRenderers)
+                if (renderer != null) renderer.enabled = false;
+        }
 
-        if (enterPromptUI != null)
-            enterPromptUI.SetActive(false);
+        // On the host the occupant callback already ran inside RequestSeatRpc above (and posed us),
+        // so the blanket hide just now undid its "body stays on" - put that back. On a client the
+        // callback simply arrives a moment later and does the same thing.
+        if (_posedRider[seatIndex] != null)
+            ShowOnlyBody(playerRoot, _posedRider[seatIndex]);
+
+        if (_playerColliders != null)
+        {
+            foreach (var col in _playerColliders)
+                if (col != null) col.enabled = false;
+        }
+
+        Transform seat = SeatPoint(seatIndex);
+        _enterPosition = _cc != null ? _cc.transform.position : playerRoot.transform.position;
+
+        // Online: Move the capsule (the part that actually moves/syncs), not the root.
+        if (_cc != null) _cc.transform.SetPositionAndRotation(seat.position, seat.rotation);
+        else playerRoot.transform.position = seat.position;
+
+        if (isDriver)
+        {
+            SetTruckInputEnabled(true);
+
+            // E puts you straight in the driver's seat view; C can still flip to the chase cam.
+            // (Only the driver has a chase-cam option - passengers/bed riders just get their seat cam.)
+            firstPersonActive = firstPersonCameraObject != null;
+            followCameraObject.SetActive(!firstPersonActive);
+        }
+
+        GameObject seatCamera = SeatCamera(seatIndex);
+        if (seatCamera != null) seatCamera.SetActive(true);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        inVehicle = true;
+        if (enterPromptUI != null)
+            enterPromptUI.SetActive(false);
+
+        _mySeatIndex = seatIndex;
     }
 
     private void ExitVehicle()
     {
-        truckController.SetInputEnabled(false);
-        followCameraObject.SetActive(false);
+        int seatIndex = _mySeatIndex;
+        bool wasDriver = seatIndex == DriverSeatIndex;
 
-        playerRoot.transform.position = exitPoint.position;
+        if (wasDriver)
+        {
+            SetTruckInputEnabled(false);
+            followCameraObject.SetActive(false);
+        }
 
-        // Wait a fixed frame before re-enabling movement so the CharacterController
-        // has time to resolve its grounded state at the new position.
-        StartCoroutine(ReactivatePlayer());
+        GameObject seatCamera = SeatCamera(seatIndex);
+        if (seatCamera != null) seatCamera.SetActive(false);
 
-        inVehicle = false;
-        playerInRange = false;
-    }
+        // Stand our own model up right away rather than waiting a round trip for the occupant
+        // callback - otherwise it stays pinned in the seat while we've already been put outside.
+        StandRider(seatIndex);
 
-    private IEnumerator ReactivatePlayer()
-    {
-        yield return new WaitForFixedUpdate();
+        // Online: Free the seat for other players.
+        if (IsSpawned) ReleaseSeatRpc(seatIndex);
+
+        // Exit onto solid ground even if the truck is on its side or upside down: ExitPoint turns
+        // with the truck and can end up underground. Try spots around the truck, then where we got
+        // in, then the nearest spawn point; the old ExitPoint raycast is the last resort.
+        Vector3 spawnPos = exitPoint.position;
+        float radius = _cc != null ? _cc.radius : 0.5f, height = _cc != null ? _cc.height : 1.8f;
+        if (!SafeGround.TryFindExit(transform, radius, height, out spawnPos) &&
+            !SafeGround.TryGroundAt(_enterPosition, _enterPosition.y, transform, radius, height, out spawnPos, 1.5f) &&
+            !SafeGround.TryNearestSpawn(_enterPosition, radius, height, out spawnPos))
+        {
+            spawnPos = exitPoint.position;
+            if (Physics.Raycast(exitPoint.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 15f))
+                spawnPos = hit.point + Vector3.up * 0.1f;
+        }
+
+        // Stand the player upright, facing the truck's heading. While seated the capsule copies the
+        // seat's rotation, so after a flip it is upside down - and an upside-down CharacterController
+        // has its capsule below the feet, inside the ground, so the player sinks through the terrain.
+        var body = _cc != null ? _cc.transform : playerRoot.transform;
+        body.SetPositionAndRotation(spawnPos, SafeGround.Upright(transform));
+        Physics.SyncTransforms();
 
         if (_cc != null) _cc.enabled = true;
         if (_fpc != null) _fpc.enabled = true;
         if (_inputs != null) _inputs.enabled = true;
         if (_playerInput != null) _playerInput.enabled = true;
+        if (_playerCamera != null) _playerCamera.enabled = true;
+        if (_playerAudioListener != null) _playerAudioListener.enabled = true;
+        if (_playerRenderers != null)
+        {
+            foreach (var renderer in _playerRenderers)
+                if (renderer != null) renderer.enabled = true;
+        }
+        if (_playerColliders != null)
+        {
+            foreach (var col in _playerColliders)
+                if (col != null) col.enabled = true;
+        }
+
+        _mySeatIndex = -1;
+
+        // The exit teleport moves the player well clear of every seat sphere, but physics only
+        // reconciles that next step - clear the flags now so the prompt doesn't flash stale.
+        System.Array.Clear(_seatInRange, 0, _seatInRange.Length);
+    }
+
+    // ---------------------------------------------------------------------
+    // Online: Runs on the host: hand a seat to whoever asked for it.
+    // ---------------------------------------------------------------------
+    [Rpc(SendTo.Server, RequireOwnership = false)]
+    private void RequestSeatRpc(int seatIndex, RpcParams rpcParams = default)
+    {
+        NetworkVariable<ulong> occupant = OccupantVar(seatIndex);
+        if (occupant == null || occupant.Value != 0) return; // invalid seat, or someone got there first
+
+        ulong sender = rpcParams.Receive.SenderClientId;
+        occupant.Value = sender + 1;
+
+        if (seatIndex == DriverSeatIndex)
+            NetworkObject.ChangeOwnership(sender);
+    }
+
+    [Rpc(SendTo.Server, RequireOwnership = false)]
+    private void ReleaseSeatRpc(int seatIndex)
+    {
+        NetworkVariable<ulong> occupant = OccupantVar(seatIndex);
+        if (occupant != null) occupant.Value = 0;
     }
 }

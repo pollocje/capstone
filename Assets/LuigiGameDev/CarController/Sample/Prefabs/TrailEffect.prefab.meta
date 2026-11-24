@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e755ed1048555754aa67c4f464e0b0cb
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301925
+  packageName: Arcade/Simcade Car Physics
+  packageVersion: 3.4
+  assetPath: Assets/LuigiGameDev/CarController/Sample/Prefabs/TrailEffect.prefab
+  uploadId: 1010126
