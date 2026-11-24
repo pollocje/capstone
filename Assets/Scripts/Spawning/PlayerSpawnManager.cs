@@ -16,6 +16,10 @@ public class PlayerSpawnManager : MonoBehaviour
     [Header("Spawn Points (auto-found if empty)")]
     public List<SpawnPoint> spawnPoints = new();
 
+    [Header("Spawn Safety")]
+    [Tooltip("If a spawn point is blocked, look this far around it for clear ground.")]
+    public float clearSearchRadius = 3f;
+
     private string _lockedGroup = null;
     private readonly HashSet<SpawnPoint> _usedPoints = new();
     private readonly HashSet<ulong> _spawnedClients = new();
@@ -99,7 +103,7 @@ public class PlayerSpawnManager : MonoBehaviour
         }
 
         _usedPoints.Add(point);
-        var player = Instantiate(playerPrefab, point.transform.position, point.transform.rotation);
+        var player = Instantiate(playerPrefab, SafeSpawnPosition(point), point.transform.rotation);
         HookUpCamera(player);
         HookUpHotbar(player);
         return player;
@@ -126,7 +130,7 @@ public class PlayerSpawnManager : MonoBehaviour
         }
 
         _usedPoints.Add(point);
-        var player = Instantiate(playerPrefab, point.transform.position, point.transform.rotation);
+        var player = Instantiate(playerPrefab, SafeSpawnPosition(point), point.transform.rotation);
 
         var networkObject = player.GetComponent<NetworkObject>();
         if (networkObject == null)
@@ -217,6 +221,56 @@ public class PlayerSpawnManager : MonoBehaviour
             SpawnStrategy.RoundRobin => RoundRobin(candidates),
             _ => candidates[0],
         };
+    }
+
+    // Puts the player on the ground at the spawn point. If that spot is blocked (a roof, the fence,
+    // a prop or another player), tries spots in rings around it instead.
+    Vector3 SafeSpawnPosition(SpawnPoint point)
+    {
+        Vector3 start = point.transform.position;
+        var cc = playerPrefab.GetComponentInChildren<CharacterController>(true);
+        Physics.SyncTransforms(); // So players spawned a moment ago are counted
+
+        if (TryGroundSpot(start, cc, out var pos)) return pos;
+
+        for (float r = 1f; r <= clearSearchRadius; r += 1f)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                float angle = i * 45f * Mathf.Deg2Rad;
+                var offset = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * r;
+                if (TryGroundSpot(start + offset, cc, out pos)) return pos;
+            }
+        }
+
+        Debug.LogWarning($"PlayerSpawnManager: No clear ground near {point.name}, spawning at the point as-is.");
+        return start;
+    }
+
+    // True if there's open ground under this spot with room for the player to stand.
+    bool TryGroundSpot(Vector3 spot, CharacterController cc, out Vector3 pos)
+    {
+        pos = spot;
+        if (!Physics.Raycast(spot + Vector3.up * 2f, Vector3.down, out var hit, 10f, ~0, QueryTriggerInteraction.Ignore))
+            return false;
+
+        // Only stand on the ground itself (terrain, or something lying flat on it like a road),
+        // never on top of a roof or fence
+        var terrain = Terrain.activeTerrain;
+        bool onGround = hit.collider is TerrainCollider ||
+                        (terrain != null && hit.point.y - terrain.SampleHeight(hit.point) - terrain.transform.position.y < 0.5f);
+        if (!onGround) return false;
+
+        pos = hit.point + Vector3.up * 0.05f;
+
+        // Check the player's capsule fits here without touching anything
+        float radius = cc ? cc.radius : 0.5f;
+        float height = cc ? cc.height : 1.8f;
+        float centerY = cc ? cc.center.y : height / 2f;
+        Vector3 bottom = pos + Vector3.up * (centerY - height / 2f + radius + 0.05f);
+        Vector3 top = pos + Vector3.up * (centerY + height / 2f - radius);
+        var blockers = Physics.OverlapCapsule(bottom, top, radius, ~0, QueryTriggerInteraction.Ignore);
+        return blockers.All(c => c is TerrainCollider);
     }
 
     SpawnPoint RoundRobin(List<SpawnPoint> candidates)
