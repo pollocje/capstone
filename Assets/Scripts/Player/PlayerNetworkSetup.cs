@@ -38,6 +38,11 @@ public class PlayerNetworkSetup : NetworkBehaviour
             return;
         }
 
+        // Netcode creates our copy at the prefab's saved position and only then moves it to the
+        // spawn point. The CharacterController still thinks it's at the old spot, and its first
+        // Move() would snap us back there (outside the fence). Sync physics so it starts here.
+        Physics.SyncTransforms();
+
         // For the owning client, wait one frame before enabling so all non-owner
         // cameras/VCams are already disabled before ours comes online.
         SetPlayerControlsEnabled(true);
