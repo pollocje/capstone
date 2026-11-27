@@ -871,6 +871,7 @@ GameObject:
   - component: {fileID: 7169496426872894633}
   - component: {fileID: 6129748475456050644}
   - component: {fileID: 4910114915016771494}
+  - component: {fileID: 6919197490045815050}
   m_Layer: 0
   m_Name: NewPickup
   m_TagString: Untagged
@@ -1165,7 +1166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 695508704
+  GlobalObjectIdHash: 1477328149
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1314,6 +1315,39 @@ MonoBehaviour:
   maxWheelAngle: 120
   turnSpeed: 360
   invert: 0
+--- !u!114 &6919197490045815050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4081136511058153756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26ea689e09287d94786ed5a3a8b0ddc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TruckEngineAudio
+  vehicle: {fileID: 0}
+  carSettings: {fileID: 0}
+  body: {fileID: 0}
+  startClip: {fileID: 8300000, guid: b8187498d5633a54e91fdccebdae9024, type: 3}
+  idleClip: {fileID: 8300000, guid: c001b33c10428f9429af18b795431218, type: 3}
+  revClip: {fileID: 8300000, guid: a345818e410f86c4c88892605230db84, type: 3}
+  masterVolume: 0.8
+  startVolume: 0.963
+  startOffset: 1
+  maxDistance: 60
+  idlePitchMin: 1
+  idlePitchMax: 1.5
+  revPitchMin: 0.8
+  revPitchMax: 1.8
+  gearCount: 4
+  rpmAfterShift: 0.45
+  fallbackMaxSpeed: 25
+  fullThrottleAccel: 8
+  cutoffOffThrottle: 1800
+  cutoffOnThrottle: 22000
+  idleDuckWhenRevving: 0.642
 --- !u!1 &4303786029473205827
 GameObject:
   m_ObjectHideFlags: 0

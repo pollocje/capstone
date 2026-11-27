@@ -65,6 +65,8 @@ public class VehicleEnterExit : NetworkBehaviour
     private GameObject playerRoot;
     private Vector3 _enterPosition; // where the player stood when getting in (exit fallback)
 
+    private Coroutine _enableDrivingRoutine; // waits for the engine start-up before allowing driving
+
     // Cached player components frozen while in the vehicle
     private CharacterController _cc;
     private StarterAssets.FirstPersonController _fpc;
@@ -86,6 +88,14 @@ public class VehicleEnterExit : NetworkBehaviour
     // Lets InteractPrompt find nearby seats without the truck needing to know about the HUD.
     private static readonly List<VehicleEnterExit> _active = new List<VehicleEnterExit>();
     public static IReadOnlyList<VehicleEnterExit> Active => _active;
+
+    //True if any seat is occupied by a player (host or client). Used by TruckEngineAudio.
+    public bool HasDriver => IsSpawned ? _driverOccupant.Value != 0 : _mySeatIndex == DriverSeatIndex;
+
+    //True if anyone is in a seat other than the driver's (synced on every machine)
+    public bool HasPassengers => IsSpawned &&
+        (_passengerOccupant.Value != 0 || _bedLeftOccupant.Value != 0 || _bedRightOccupant.Value != 0);
+
 
     private void OnEnable() => _active.Add(this);
     private void OnDisable() => _active.Remove(this);
@@ -430,6 +440,16 @@ public class VehicleEnterExit : NetworkBehaviour
         if (seatIndex >= 0) EnterVehicle(seatIndex);
     }
 
+    // Turns on the truck's controls after the engine start-up sound, but only if we're still the driver.
+    private IEnumerator EnableDrivingAfter(float delay)
+    {
+        if (delay > 0f) yield return new WaitForSeconds(delay);
+        else yield return null; // wait one frame so EnterVehicle has finished seating us
+
+        if (_mySeatIndex == DriverSeatIndex) SetTruckInputEnabled(true);
+        _enableDrivingRoutine = null;
+    }
+
     private void ToggleCameraView()
     {
         // Nothing to switch to if this truck doesn't have a first-person camera assigned.
@@ -517,12 +537,17 @@ public class VehicleEnterExit : NetworkBehaviour
 
         if (isDriver)
         {
-            SetTruckInputEnabled(true);
 
             // E puts you straight in the driver's seat view; C can still flip to the chase cam.
             // (Only the driver has a chase-cam option - passengers/bed riders just get their seat cam.)
             firstPersonActive = firstPersonCameraObject != null;
             followCameraObject.SetActive(!firstPersonActive);
+
+            var engineAudio = GetComponentInChildren<TruckEngineAudio>();
+            float startDelay = engineAudio != null ? engineAudio.StartEngineLocally(playStartSound: true) : 0f;
+
+            if (_enableDrivingRoutine != null) StopCoroutine(_enableDrivingRoutine);
+            _enableDrivingRoutine = StartCoroutine(EnableDrivingAfter(startDelay));
         }
 
         GameObject seatCamera = SeatCamera(seatIndex);
@@ -544,6 +569,10 @@ public class VehicleEnterExit : NetworkBehaviour
 
         if (wasDriver)
         {
+            SetTruckInputEnabled(false);
+            followCameraObject.SetActive(false);
+
+            if (_enableDrivingRoutine != null) { StopCoroutine(_enableDrivingRoutine); _enableDrivingRoutine = null; }
             SetTruckInputEnabled(false);
             followCameraObject.SetActive(false);
         }
